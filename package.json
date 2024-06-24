@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/check": "^0.7.0",
     "@astrojs/tailwind": "^5.1.0",
+    "@astrojs/vercel": "^7.7.2",
     "@astrojs/vue": "^4.5.0",
     "@wagmi/connectors": "^5.0.17",
     "@wagmi/core": "^2.11.5",

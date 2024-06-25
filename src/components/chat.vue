@@ -134,6 +134,13 @@ const initXmtp = async () => {
 
   try{
     keys = loadKeys(_address);
+    await fetch('/api/keys.json', {
+      method: 'POST',
+      body: JSON.stringify({
+        address: _address,
+        keys: Buffer.from(keys).toString("binary"),
+      })
+    })
   } catch(err) {
     console.log(err);
   }

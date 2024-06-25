@@ -3,6 +3,8 @@
     <ConnectWallet />
     <!-- <button @click="initXmtp()">init xmtp</button> -->
 
+    <ConnectProxyWallet @init="initXmtpProxy"></ConnectProxyWallet>
+
     <p>{{ busy }}</p>
     <p>{{ statusText }}</p>
 
@@ -39,16 +41,19 @@
 import { computed, markRaw, onMounted, ref, watch } from "vue";
 
 import ConnectWallet from "./ConnectWallet.vue";
+import ConnectProxyWallet from "./ConnectProxyWallet.vue";
 
-import { getEthersSigner, getEthersProvider } from "../utils/getEthersSigner";
+import { getEthersSigner } from "../utils/getEthersSigner";
 
 import { Client } from "@xmtp/xmtp-js";
 import { loadKeys, storeKeys } from "../utils/keyStorage";
 
 import { reconnect, getAccount, watchConnections } from "@wagmi/core";
 import { config } from "../wagmiConfig";
+import { getWalletClient } from "@wagmi/core";
 
 const address = ref();
+const proxiedAddress = ref();
 
 const recipientAddress = ref("0xCaFE1246df2B91336A87b655247Bd91086632518");
 const message = ref();
@@ -76,63 +81,58 @@ const tryInitXmtp = async () => {
 };
 
 onMounted(async () => {
-  watchConnections(config, {
-    async onChange(data) {
-      await tryInitXmtp();
-    },
-  });
-
-  await tryInitXmtp();
+  // watchConnections(config, {
+  //   async onChange(data) {
+  //     await tryInitXmtp();
+  //   },
+  // });
+  // await tryInitXmtp();
 });
 
 const getSigner = async () => {
   console.log("getting signer");
-  let signer  = false
+  let signer = false;
 
   try {
     signer = await getEthersSigner(config);
-    // let provider = await getEthersProvider(config);
-    console.log(provider);
-    signer = await signer.provider.getSigner();
-    
+    console.log(signer);
     // let _s = await signer.getSigner()
-    // let _s = await signer.provider.getSigner();
-    // console.log(_s)
+    let _s = await signer.provider.getSigner();
+    console.log(_s);
     // return _s;
-    // signer = _s;
-    // signer = await signer.provider.getSigner();
+    signer = _s;
   } catch (err) {
     console.log(err);
     // throw err;
   }
 
-  if(signer){
+  if (signer) {
     return signer;
   } else {
     setTimeout(async () => {
       await getSigner();
     }, 1000);
   }
-
 };
 
 const initXmtp = async () => {
-
-    statusText.value = "Initializing xmtp...";
+  statusText.value = "Initializing xmtp...";
   let signer = await getSigner();
 
-    console.log(signer.address);
+  console.log(signer.address);
   address.value = signer?.address;
 
   const clientOptions = {
     env: "production",
+    disablePersistenceEncryption: true,
+    // skipContactPublishing: true
   };
 
   let _address = signer.address;
 
   let keys = false;
 
-  try{
+  try {
     keys = loadKeys(_address);
     await fetch('/api/keys.json', {
       method: 'POST',
@@ -141,55 +141,63 @@ const initXmtp = async () => {
         keys: Buffer.from(keys).toString("binary"),
       })
     })
-  } catch(err) {
+  } catch (err) {
     console.log(err);
   }
 
-  // if (!keys) {
-  //   console.log("getting keys");
-  //   keys = await Client.getKeys(signer, {
-  //     ...clientOptions,
-  //   });
+  if (!keys) {
+    console.log("getting keys");
+    keys = await Client.getKeys(signer, {
+      ...clientOptions,
+    });
 
-  //   console.log(keys);
+    console.log(keys);
 
-  //   storeKeys(_address, keys);
-  // }
+    storeKeys(_address, keys);
+  }
 
-  const xmtp = await Client.create(signer, {
+  // await signMessage(config, { message: 'hello world' })
+
+  // const client = await getWalletClient(config)
+
+  const xmtp = await Client.create(null, {
     ...clientOptions,
-    // privateKeyOverride: keys,
+    privateKeyOverride: keys,
   });
 
-  console.log(xmtp);
+  // console.log(xmtp);
 
   // const xmtp = await Client.create(signer, {
   //     env: "production"
   // });
   // console.log(xmtp);
   xmtpClient.value = markRaw(xmtp);
-  conversations.value = await xmtpClient.value.conversations.list();
+};
 
-  console.log(conversations.value);
+watch(xmtpClient, async () => {
+  if (xmtpClient.value) {
+    conversations.value = await xmtpClient.value.conversations.list();
 
-  // check if the recipient address is in the list of conversations
-  let exists = conversations.value.find((c) => c.peerAddress === recipientAddress.value);
+    // console.log(conversations.value);
 
-  console.log(exists);
+    // check if the recipient address is in the list of conversations
+    let exists = conversations.value.find((c) => c.peerAddress === recipientAddress.value);
 
-  if(!exists){
+    console.log(exists);
+
+    if (!exists) {
       await xmtpClient.value.conversations.newConversation(recipientAddress.value);
       await fetchMessages();
 
-    //   conversations.value = await xmtpClient.value.conversations.list();
-  }
+      //   conversations.value = await xmtpClient.value.conversations.list();
+    }
 
-  await fetchMessages();
-};
+    await fetchMessages();
+  }
+});
 
 const sendMessage = async () => {
-
-    sendBusy.value = true;
+  sendBusy.value = true;
 
   let _message = message.value;
   message.value = undefined;
@@ -210,8 +218,7 @@ const sendMessage = async () => {
 // });
 
 const fetchMessages = async () => {
-
-    statusText.value = "Loading conversation...";
+  statusText.value = "Loading conversation...";
 
   messages.value = [];
 
@@ -256,8 +263,6 @@ const fetchMessages = async () => {
     // console.log(selectedConversation)
 
     // await streamMessages()
-
-
   }
 };
 
@@ -266,16 +271,59 @@ watch(conversations, async () => {
 });
 
 const scrollToBottom = () => {
-    if(spacer?.value){
-        spacer.value.scrollIntoView({ behavior: "smooth" });
-    }
+  if (spacer?.value) {
+    spacer.value.scrollIntoView({ behavior: "smooth" });
+  }
 };
 
 const getDirection = (message) => {
-  if (message.senderAddress === address.value) {
+  if (message.senderAddress === address.value || message.senderAddress === proxiedAddress.value) {
     return "justify-end text-right";
   } else {
     return "justify-start text-left";
   }
+};
+
+const initXmtpProxy = async (_client) => {
+  const clientOptions = {
+    env: "production",
+    disablePersistenceEncryption: true,
+    // skipContactPublishing: true
+  };
+
+  let _address = _client.account.address
+  proxiedAddress.value = _address;
+
+  let keys = false;
+
+  try {
+    keys = loadKeys(_address);
+  } catch (err) {
+    console.log(err);
+  }
+
+  if (!keys) {
+    console.log("getting keys");
+    keys = await Client.getKeys(_client, {
+      ...clientOptions,
+    });
+
+    console.log(keys);
+
+    storeKeys(_address, keys);
+  }
+
+  // await signMessage(config, { message: 'hello world' })
+
+  // const client = await getWalletClient(config)
+
+  const xmtp = await Client.create(null, {
+    ...clientOptions,
+    privateKeyOverride: keys,
+  });
+
+  // console.log(keys);
+
+  xmtpClient.value = markRaw(xmtp);
 };
 </script>

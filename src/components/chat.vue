@@ -40,7 +40,7 @@ import { computed, markRaw, onMounted, ref, watch } from "vue";
 
 import ConnectWallet from "./ConnectWallet.vue";
 
-import { getEthersSigner } from "../utils/getEthersSigner";
+import { getEthersSigner, getEthersProvider } from "../utils/getEthersSigner";
 
 import { Client } from "@xmtp/xmtp-js";
 import { loadKeys, storeKeys } from "../utils/keyStorage";
@@ -86,15 +86,34 @@ onMounted(async () => {
 });
 
 const getSigner = async () => {
+  console.log("getting signer");
+  let signer  = false
+
   try {
-    let signer = await getEthersSigner(config);
+    signer = await getEthersSigner(config);
+    // let provider = await getEthersProvider(config);
+    console.log(provider);
+    signer = await signer.provider.getSigner();
+    
     // let _s = await signer.getSigner()
-    let _s = await signer.provider.getSigner();
-    console.log(_s)
-    return _s;
+    // let _s = await signer.provider.getSigner();
+    // console.log(_s)
+    // return _s;
+    // signer = _s;
+    // signer = await signer.provider.getSigner();
   } catch (err) {
     console.log(err);
+    // throw err;
   }
+
+  if(signer){
+    return signer;
+  } else {
+    setTimeout(async () => {
+      await getSigner();
+    }, 1000);
+  }
+
 };
 
 const initXmtp = async () => {
@@ -111,17 +130,28 @@ const initXmtp = async () => {
 
   let _address = signer.address;
 
-  let keys = loadKeys(_address);
+  let keys = false;
 
-  if (!keys) {
-    keys = await Client.getKeys(signer, {
-      ...clientOptions,
-    });
-    storeKeys(_address, keys);
+  try{
+    keys = loadKeys(_address);
+  } catch(err) {
+    console.log(err);
   }
-  const xmtp = await Client.create(null, {
+
+  // if (!keys) {
+  //   console.log("getting keys");
+  //   keys = await Client.getKeys(signer, {
+  //     ...clientOptions,
+  //   });
+
+  //   console.log(keys);
+
+  //   storeKeys(_address, keys);
+  // }
+
+  const xmtp = await Client.create(signer, {
     ...clientOptions,
-    privateKeyOverride: keys,
+    // privateKeyOverride: keys,
   });
 
   console.log(xmtp);

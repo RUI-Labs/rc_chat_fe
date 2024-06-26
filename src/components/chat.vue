@@ -181,7 +181,7 @@ const initXmtp = async () => {
       method: 'POST',
       body: JSON.stringify({
         address: _address,
-        keys: Buffer.from(keys).toString("binary"),
+        keys: Buffer.from(keys).toString("hex"),
       })
     })
   }

@@ -1,16 +1,16 @@
 <template>
 
     <div>
-        <p>address: {{address}} </p>
+        <p>wallet address: {{address}} </p>
 
         <div v-for="connector of filteredConnector">
             <button @click="selectConnector(connector)" class="border p-2 rounded-xl">{{ connector.name }}</button>
         </div>
 
-        <button @click="createCBWallet()">Create Wallet</button>
+        <!-- <button @click="createCBWallet()">Create Wallet</button> -->
         
         <!-- <button @click="connectWallet()">Connect Wallet</button> -->
-        <button @click="disconnectWallet()">Disconnect Wallet</button>
+        <!-- <button @click="disconnectWallet()">Disconnect Wallet</button> -->
     </div>
 
 </template>
@@ -28,7 +28,7 @@
 
     const checkAccount = async () => {
         try {
-            let _address = await getAccount(config)
+            let _address = getAccount(config)
 
             if (_address) {
                 address.value = _address.address
@@ -48,7 +48,7 @@
     onMounted( async () => {
         // console.log('aaa')
         connectors.value = getConnectors(config);
-        // console.log(connectors.value)
+        console.log(connectors.value)
 
         unwatch = watchConnections(config, {
             onChange(data) {
@@ -73,7 +73,7 @@
 
     const filteredConnector = computed( () => {
         if(connectors.value?.length > 0) {
-            return connectors.value.filter((connector) => connector.id !== 'injected')
+            return connectors.value.filter((connector) => connector.id !== 'injected' && connector.id !== "coinbaseWalletSDK")
         } return []
     })
 

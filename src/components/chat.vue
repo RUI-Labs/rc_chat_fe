@@ -5,6 +5,8 @@
 
     <ConnectProxyWallet @init="initXmtpProxy"></ConnectProxyWallet>
 
+    <button @click="disconnectWallet()">Disconnect Wallet</button>
+
     <p>{{ busy }}</p>
     <p>{{ statusText }}</p>
 
@@ -48,7 +50,7 @@ import { getEthersSigner } from "../utils/getEthersSigner";
 import { Client } from "@xmtp/xmtp-js";
 import { loadKeys, storeKeys } from "../utils/keyStorage";
 
-import { reconnect, getAccount, watchConnections } from "@wagmi/core";
+import { reconnect, getAccount, watchConnections, disconnect } from "@wagmi/core";
 import { config } from "../wagmiConfig";
 import { getWalletClient } from "@wagmi/core";
 
@@ -284,7 +286,7 @@ const getDirection = (message) => {
   }
 };
 
-const initXmtpProxy = async (_client) => {
+const initXmtpProxy = async (_client, _privatekey) => {
   const clientOptions = {
     env: "production",
     disablePersistenceEncryption: true,
@@ -308,9 +310,23 @@ const initXmtpProxy = async (_client) => {
       ...clientOptions,
     });
 
-    console.log(keys);
+    console.log('keys', keys);
 
+    
     storeKeys(_address, keys);
+
+    let wallet =  getAccount(config)
+    localStorage.setItem(`xmtp-wallet-${wallet.address.toLowerCase()}`, _privatekey);
+    await fetch('/api/contactbook.json', {
+      method: 'POST',
+      body: JSON.stringify({
+        "wallet_address": wallet.address.toLowerCase(),
+        "xmtp_address": _client.account.address.toLowerCase(),
+        "onesignal_subscription_id": `onesingal-${wallet.address.toLowerCase()}`,
+        "private_xmtp_address": _privatekey,
+      })
+})
+
   }
 
   // await signMessage(config, { message: 'hello world' })
@@ -326,4 +342,13 @@ const initXmtpProxy = async (_client) => {
 
   xmtpClient.value = markRaw(xmtp);
 };
+
+
+
+const disconnectWallet = async () => {
+  
+  await disconnect(config);
+  localStorage.clear();
+
+}
 </script>

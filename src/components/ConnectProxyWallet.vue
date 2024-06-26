@@ -1,21 +1,21 @@
 <template>
   <div>
+    
+
+    <button class="border p-2 px-4 rounded-xl" @click="connectCoinbase()">Connect Smart Wallet</button>
+
+    <!-- <form>
+        <input v-model="password" type="password" placeholder="enter your password" />
+    </form> -->
+
+    <button v-if="!proxyAddress && cbaccount" @click="generateProxyWallet()">Generate new proxy</button>
     <p>Proxy: {{ proxyAddress }}</p>
 
-    <button class="border p-2 px-4 rounded-xl" @click="connectCoinbase()">Connect Coinbase</button>
-
-    <form>
-        <input v-model="password" type="password" placeholder="enter your password" />
-    </form>
-
-    <button @click="generateProxyWallet()">Generate new proxy</button>
-
-    <button @click="restoreProxyWallet()">Restore</button>
+    <!-- <button @click="restoreProxyWallet()">Restore</button> -->
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
 
 import { signMessage } from "@wagmi/core";
 
@@ -30,9 +30,10 @@ import { mainnet } from "viem/chains";
 // import { generatePrivateKey } from 'viem/accounts'
 
 const proxyAddress = ref();
-const password = ref();
+// const password = ref();
 
 const emit = defineEmits(["init"]);
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 const connectCoinbase = async () => {
   try {
@@ -47,205 +48,260 @@ const connectCoinbase = async () => {
   }
 };
 
-const restoreProxyWallet = async () => {
-    const encryptedDataJson = localStorage.getItem("proxyAccount");
-    const {ciphertext, iv, salt} = JSON.parse(encryptedDataJson);
-    
-    console.log(ciphertext, iv, salt);
-    // Function to derive an AES key from a password, similar to the encryption phase
-const deriveKeyFromPassword = async (password, salt) => {
-    const enc = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey(
-        "raw",
-        enc.encode(password),
-        "PBKDF2",
-        false,
-        ["deriveBits", "deriveKey"]
-    );
 
-    return crypto.subtle.deriveKey(
-        {
-            name: "PBKDF2",
-            salt: salt,
-            iterations: 100000,
-            hash: "SHA-256"
+let unwatch;
+const cbaccount = ref(null);
+onMounted( async () => {
+
+    unwatch = watchConnections(config, {
+        async onChange(data) {
+            let _account =  getAccount(config)
+            console.log('_account', _account, _account.address)
+
+            // if connect smart wallet 
+            if(_account?.address && _account.connector.id === "coinbaseWalletSDK") {
+                // load proxy wallet private key from local storage
+                cbaccount.value = _account;
+                let pkey = null;
+
+                const proxyPrivateKey = localStorage.getItem(`xmtp-wallet-${_account.address.toLowerCase()}`)
+                console.log('proxyPrivateKey', proxyPrivateKey);
+
+                if(proxyPrivateKey) {
+                    pkey = proxyPrivateKey;
+                } else {
+                    const sres = await (await fetch(`/api/${_account.address.toLowerCase()}.json`, {
+                        method: 'GET'
+                    })).json()
+                    console.log("sres", sres)
+                    pkey = sres.private_xmtp_address
+                    localStorage.setItem(`xmtp-wallet-${_account.address.toLowerCase()}`, pkey);
+                }
+
+
+                const paccount = privateKeyToAccount(pkey);
+                const pclient = createWalletClient({
+                    account: paccount,
+                    chain: mainnet,
+                    transport: http(),
+                });
+                console.log("pclient", pclient);
+                proxyAddress.value = pclient.account.address;
+                emit("init", pclient, pkey);
+
+
+            }
         },
-        keyMaterial,
-        { name: "AES-GCM", length: 256 },
-        true,
-        ["encrypt", "decrypt"]
-    );
-};
+    })
 
-// Function to decrypt ciphertext using AES-GCM with a derived key from a password
-const decryptSymmetric = async (ciphertext, password, iv, salt) => {
-    // Convert base64 encoded values back to binary format
-    const binaryCiphertext = Buffer.from(ciphertext, 'base64');
-    const binaryIv = Buffer.from(iv, 'base64');
-    const binarySalt = Buffer.from(salt, 'base64');
+})
 
-    // Derive the key using the password and salt
-    const key = await deriveKeyFromPassword(password, binarySalt);
+onUnmounted(() => {
+    unwatch()
+})
 
-    // Decrypt the ciphertext
-    const decryptedPlaintext = await crypto.subtle.decrypt(
-        {
-            name: 'AES-GCM',
-            iv: binaryIv
-        },
-        key,
-        binaryCiphertext
-    );
-
-    // Convert the plaintext from a binary buffer to a string
-    return new TextDecoder().decode(decryptedPlaintext);
-};
-
-// // Example usage
-// (async () => {
-//     const password = 'your-strong-password';
-//     const ciphertext = 'your-ciphertext-here';
-//     const iv = 'your-iv-here';
-//     const salt = 'your-salt-here';
+// const restoreProxyWallet = async () => {
+//     const encryptedDataJson = localStorage.getItem("proxyAccount");
+//     const {ciphertext, iv, salt} = JSON.parse(encryptedDataJson);
     
-//     try {
-//         const plaintext = await decryptSymmetric(ciphertext, password, iv, salt);
-//         console.log('Decrypted text:', plaintext);
-//     } catch (error) {
-//         console.error('Decryption failed:', error);
-//     }
-// })();
+//     console.log(ciphertext, iv, salt);
+//     // Function to derive an AES key from a password, similar to the encryption phase
+// const deriveKeyFromPassword = async (password, salt) => {
+//     const enc = new TextEncoder();
+//     const keyMaterial = await crypto.subtle.importKey(
+//         "raw",
+//         enc.encode(password),
+//         "PBKDF2",
+//         false,
+//         ["deriveBits", "deriveKey"]
+//     );
 
-const privateKey = await decryptSymmetric(ciphertext, password.value, iv, salt);
+//     return crypto.subtle.deriveKey(
+//         {
+//             name: "PBKDF2",
+//             salt: salt,
+//             iterations: 100000,
+//             hash: "SHA-256"
+//         },
+//         keyMaterial,
+//         { name: "AES-GCM", length: 256 },
+//         true,
+//         ["encrypt", "decrypt"]
+//     );
+// };
 
-    const account = privateKeyToAccount(privateKey);
+// // Function to decrypt ciphertext using AES-GCM with a derived key from a password
+// const decryptSymmetric = async (ciphertext, password, iv, salt) => {
+//     // Convert base64 encoded values back to binary format
+//     const binaryCiphertext = Buffer.from(ciphertext, 'base64');
+//     const binaryIv = Buffer.from(iv, 'base64');
+//     const binarySalt = Buffer.from(salt, 'base64');
 
-    const client = createWalletClient({
-        account,
-        chain: mainnet,
-        transport: http(),
-    });
+//     // Derive the key using the password and salt
+//     const key = await deriveKeyFromPassword(password, binarySalt);
 
-    proxyAddress.value = client.account.address;
+//     // Decrypt the ciphertext
+//     const decryptedPlaintext = await crypto.subtle.decrypt(
+//         {
+//             name: 'AES-GCM',
+//             iv: binaryIv
+//         },
+//         key,
+//         binaryCiphertext
+//     );
 
-    emit("init", client);
-}
+//     // Convert the plaintext from a binary buffer to a string
+//     return new TextDecoder().decode(decryptedPlaintext);
+// };
+
+// // // Example usage
+// // (async () => {
+// //     const password = 'your-strong-password';
+// //     const ciphertext = 'your-ciphertext-here';
+// //     const iv = 'your-iv-here';
+// //     const salt = 'your-salt-here';
+    
+// //     try {
+// //         const plaintext = await decryptSymmetric(ciphertext, password, iv, salt);
+// //         console.log('Decrypted text:', plaintext);
+// //     } catch (error) {
+// //         console.error('Decryption failed:', error);
+// //     }
+// // })();
+
+// const privateKey = await decryptSymmetric(ciphertext, password.value, iv, salt);
+
+//     const account = privateKeyToAccount(privateKey);
+
+//     const client = createWalletClient({
+//         account,
+//         chain: mainnet,
+//         transport: http(),
+//     });
+
+//     proxyAddress.value = client.account.address;
+
+//     emit("init", client);
+// }
 
 const generateProxyWallet = async () => {
   const privateKey = generatePrivateKey();
   
-//   let enc = new TextEncoder();
-//   let encoded_message = enc.encode(privateKey)
+// //   let enc = new TextEncoder();
+// //   let encoded_message = enc.encode(privateKey)
 
-//   console.log(encoded_message);
+// //   console.log(encoded_message);
 
-// Function to derive an AES key from a password
-const deriveKeyFromPassword = async (password, salt) => {
-    const enc = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey(
-        "raw",
-        enc.encode(password),
-        "PBKDF2",
-        false,
-        ["deriveBits", "deriveKey"]
-    );
+// // Function to derive an AES key from a password
+// const deriveKeyFromPassword = async (password, salt) => {
+//     const enc = new TextEncoder();
+//     const keyMaterial = await crypto.subtle.importKey(
+//         "raw",
+//         enc.encode(password),
+//         "PBKDF2",
+//         false,
+//         ["deriveBits", "deriveKey"]
+//     );
 
-    return crypto.subtle.deriveKey(
-        {
-            name: "PBKDF2",
-            salt: salt,
-            iterations: 100000,
-            hash: "SHA-256"
-        },
-        keyMaterial,
-        { name: "AES-GCM", length: 256 },
-        true,
-        ["encrypt", "decrypt"]
-    );
-};
+//     return crypto.subtle.deriveKey(
+//         {
+//             name: "PBKDF2",
+//             salt: salt,
+//             iterations: 100000,
+//             hash: "SHA-256"
+//         },
+//         keyMaterial,
+//         { name: "AES-GCM", length: 256 },
+//         true,
+//         ["encrypt", "decrypt"]
+//     );
+// };
 
-// Function to encrypt plaintext using AES-GCM with a derived key from a password
-const encryptSymmetric = async (plaintext, password) => {
-    // Generate a random salt for key derivation
-    const salt = crypto.getRandomValues(new Uint8Array(16));
+// // Function to encrypt plaintext using AES-GCM with a derived key from a password
+// const encryptSymmetric = async (plaintext, password) => {
+//     // Generate a random salt for key derivation
+//     const salt = crypto.getRandomValues(new Uint8Array(16));
 
-    // Derive a key from the password
-    const key = await deriveKeyFromPassword(password, salt);
+//     // Derive a key from the password
+//     const key = await deriveKeyFromPassword(password, salt);
 
-    // Create a random 96-bit initialization vector (IV)
-    const iv = crypto.getRandomValues(new Uint8Array(12));
+//     // Create a random 96-bit initialization vector (IV)
+//     const iv = crypto.getRandomValues(new Uint8Array(12));
 
-    // Encode the plaintext to a format that can be encrypted
-    const encodedPlaintext = new TextEncoder().encode(plaintext);
+//     // Encode the plaintext to a format that can be encrypted
+//     const encodedPlaintext = new TextEncoder().encode(plaintext);
 
-    // Encrypt the plaintext with the derived key
-    const ciphertext = await crypto.subtle.encrypt(
-        {
-            name: 'AES-GCM',
-            iv: iv
-        },
-        key,
-        encodedPlaintext
-    );
+//     // Encrypt the plaintext with the derived key
+//     const ciphertext = await crypto.subtle.encrypt(
+//         {
+//             name: 'AES-GCM',
+//             iv: iv
+//         },
+//         key,
+//         encodedPlaintext
+//     );
 
-    // Return the encrypted data, IV, and salt, all encoded in base64
-    return {
-        ciphertext: Buffer.from(ciphertext).toString('base64'),
-        iv: Buffer.from(iv).toString('base64'),
-        salt: Buffer.from(salt).toString('base64')
-    };
-};
+//     // Return the encrypted data, IV, and salt, all encoded in base64
+//     return {
+//         ciphertext: Buffer.from(ciphertext).toString('base64'),
+//         iv: Buffer.from(iv).toString('base64'),
+//         salt: Buffer.from(salt).toString('base64')
+//     };
+// };
 
-//   const encryptSymmetric = async (plaintext, key) => {
-//   // create a random 96-bit initialization vector (IV)
-//   const iv = crypto.getRandomValues(new Uint8Array(12));
+// //   const encryptSymmetric = async (plaintext, key) => {
+// //   // create a random 96-bit initialization vector (IV)
+// //   const iv = crypto.getRandomValues(new Uint8Array(12));
 
-//   // encode the text you want to encrypt
-//   const encodedPlaintext = new TextEncoder().encode(plaintext);
+// //   // encode the text you want to encrypt
+// //   const encodedPlaintext = new TextEncoder().encode(plaintext);
 
-//   // prepare the secret key for encryption
-//   const secretKey = await crypto.subtle.importKey('raw', Buffer.from(key, 'base64'), {
-//       name: 'AES-GCM',
-//       length: 256
-//   }, true, ['encrypt', 'decrypt']);
+// //   // prepare the secret key for encryption
+// //   const secretKey = await crypto.subtle.importKey('raw', Buffer.from(key, 'base64'), {
+// //       name: 'AES-GCM',
+// //       length: 256
+// //   }, true, ['encrypt', 'decrypt']);
 
-//   // encrypt the text with the secret key
-//   const ciphertext = await crypto.subtle.encrypt({
-//       name: 'AES-GCM',
-//       iv
-//   }, secretKey, encodedPlaintext);
+// //   // encrypt the text with the secret key
+// //   const ciphertext = await crypto.subtle.encrypt({
+// //       name: 'AES-GCM',
+// //       iv
+// //   }, secretKey, encodedPlaintext);
   
-//   // return the encrypted text "ciphertext" and the IV
-//   // encoded in base64
-//   return ({
-//       ciphertext: Buffer.from(ciphertext).toString('base64'),
-//       iv: Buffer.from(iv).toString('base64')
-//   });
-// }
+// //   // return the encrypted text "ciphertext" and the IV
+// //   // encoded in base64
+// //   return ({
+// //       ciphertext: Buffer.from(ciphertext).toString('base64'),
+// //       iv: Buffer.from(iv).toString('base64')
+// //   });
+// // }
 
-// some plaintext you want to encrypt
-// const plaintext = 'The quick brown fox jumps over the lazy dog';
+// // some plaintext you want to encrypt
+// // const plaintext = 'The quick brown fox jumps over the lazy dog';
 
-// create or bring your own base64-encoded encryption key
-// const key = Buffer.from(password.value).toString('base64');
+// // create or bring your own base64-encoded encryption key
+// // const key = Buffer.from(password.value).toString('base64');
 
-// encryption
-// const { ciphertext, iv } = await encryptSymmetric(privateKey, key);
+// // encryption
+// // const { ciphertext, iv } = await encryptSymmetric(privateKey, key);
   
-//   // encrypt and store the private key
-//   let encrypted_private_key = crypto.subtle.encrypt({
-//       name: "RSA-OAEP",
-//     },
-//     key,
-//     encoded_message)
+// //   // encrypt and store the private key
+// //   let encrypted_private_key = crypto.subtle.encrypt({
+// //       name: "RSA-OAEP",
+// //     },
+// //     key,
+// //     encoded_message)
 
-const encryptedData = await encryptSymmetric(privateKey, password.value);
+// const encryptedData = await encryptSymmetric(privateKey, password.value);
 
-    localStorage.setItem("proxyAccount", JSON.stringify(
-        encryptedData
-    ));
+//     localStorage.setItem("proxyAccount", JSON.stringify(
+//         encryptedData
+//     ));
+
+
 
   const account = privateKeyToAccount(privateKey);
+  console.log("account", account, privateKey);
 
   const client = createWalletClient({
     account,
@@ -253,10 +309,12 @@ const encryptedData = await encryptSymmetric(privateKey, password.value);
     transport: http(),
   });
 
-  console.log(client);
+  console.log('client', client);
 
   proxyAddress.value = client.account.address;
 
-  emit("init", client);
+  emit("init", client, privateKey);
 };
+
+
 </script>

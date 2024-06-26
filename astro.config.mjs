@@ -6,7 +6,15 @@ import vercel from "@astrojs/vercel/serverless";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), vue()],
+  integrations: [tailwind({
+    applyBaseStyles: false,
+  }), vue({
+    template: {
+      compilerOptions: {
+        isCustomElement: (tag) => tag === "iconify-icon",
+      },
+    },
+  }),],
   output: "server",
   adapter: vercel()
 });

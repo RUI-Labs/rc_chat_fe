@@ -26,6 +26,8 @@
     const connectors = ref();
     const address = ref()
 
+    const emit = defineEmits(["init"]);
+
     const checkAccount = async () => {
         try {
             let _address = getAccount(config)
@@ -52,9 +54,13 @@
 
         unwatch = watchConnections(config, {
             onChange(data) {
-                let _account =  getAccount(config)
+                let _account = getAccount(config)
                 console.log(_account)
                 address.value = _account.address;
+
+                if(_account?.address && _account.connector.id !== "coinbaseWalletSDK") {
+                    emit("init");
+                }
             },
         })
         await reconnect(config)

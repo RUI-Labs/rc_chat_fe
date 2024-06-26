@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ConnectWallet />
+    <ConnectWallet @init="initXmtp" />
     <!-- <button @click="initXmtp()">init xmtp</button> -->
 
     <ConnectProxyWallet @init="initXmtpProxy"></ConnectProxyWallet>
@@ -57,7 +57,9 @@ import { getWalletClient } from "@wagmi/core";
 const address = ref();
 const proxiedAddress = ref();
 
+// const recipientAddress = ref("0x285d9979552a5f8172345c68686fde751384539c");
 const recipientAddress = ref("0xCaFE1246df2B91336A87b655247Bd91086632518");
+
 const message = ref();
 
 const xmtpClient = ref();
@@ -71,7 +73,7 @@ const sendBusy = ref(false);
 const spacer = ref();
 
 const tryInitXmtp = async () => {
-  let _address = await getAccount(config);
+  let _address = getAccount(config);
 
   if (_address.address != undefined) {
     await initXmtp();
@@ -121,7 +123,7 @@ const initXmtp = async () => {
   statusText.value = "Initializing xmtp...";
   let signer = await getSigner();
 
-  console.log(signer.address);
+  console.log('signer', signer);
   address.value = signer?.address;
 
   const clientOptions = {
@@ -136,16 +138,18 @@ const initXmtp = async () => {
 
   try {
     keys = loadKeys(_address);
-    await fetch('/api/keys.json', {
-      method: 'POST',
-      body: JSON.stringify({
-        address: _address,
-        keys: Buffer.from(keys).toString("binary"),
-      })
-    })
+    // await fetch('/api/keys.json', {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     address: _address,
+    //     keys: Buffer.from(keys).toString("binary"),
+    //   })
+    // })
   } catch (err) {
-    console.log(err);
+    console.log('ggggggggggggggg', err);
   }
+
+  console.log("keys", keys);
 
   if (!keys) {
     console.log("getting keys");
@@ -155,17 +159,41 @@ const initXmtp = async () => {
 
     console.log(keys);
 
+    let wallet = getAccount(config)
+    await fetch('/api/contactbook.json', {
+      method: 'POST',
+      body: JSON.stringify({
+        "wallet_address": wallet.address.toLowerCase(),
+        "xmtp_address": wallet.address.toLowerCase(),
+        "onesignal_subscription_id": `onesingal-${wallet.address.toLowerCase()}`,
+        "private_xmtp_address": `private-${wallet.address.toLowerCase()}`,
+      })
+    })
+
     storeKeys(_address, keys);
+    await fetch('/api/keys.json', {
+      method: 'POST',
+      body: JSON.stringify({
+        address: _address,
+        keys: Buffer.from(keys).toString("binary"),
+      })
+    })
   }
 
   // await signMessage(config, { message: 'hello world' })
 
   // const client = await getWalletClient(config)
+  console.log("keys", keys);
 
   const xmtp = await Client.create(null, {
     ...clientOptions,
     privateKeyOverride: keys,
   });
+
+  // const xmtp = await Client.create(signer, {
+  //   ...clientOptions,
+  //   // privateKeyOverride: keys,
+  // });
 
   // console.log(xmtp);
 
@@ -180,15 +208,16 @@ watch(xmtpClient, async () => {
   if (xmtpClient.value) {
     conversations.value = await xmtpClient.value.conversations.list();
 
-    // console.log(conversations.value);
+    console.log('conversations.value', conversations.value);
 
     // check if the recipient address is in the list of conversations
-    let exists = conversations.value.find((c) => c.peerAddress === recipientAddress.value);
+    let exists = conversations.value.find((c) => c.peerAddress.toLowerCase() === recipientAddress.value.toLowerCase());
 
-    console.log(exists);
+    console.log('exists', exists);
+
+    await xmtpClient.value.conversations.newConversation(recipientAddress.value);
 
     if (!exists) {
-      await xmtpClient.value.conversations.newConversation(recipientAddress.value);
       await fetchMessages();
 
       //   conversations.value = await xmtpClient.value.conversations.list();
@@ -204,11 +233,15 @@ const sendMessage = async () => {
   let _message = message.value;
   message.value = undefined;
 
+  console.log("xmtpClient.value", xmtpClient.value, recipientAddress.value);
+
   try {
     const conversation = await xmtpClient.value.conversations.newConversation(recipientAddress.value);
     let result = await conversation.send(_message);
-    console.log(result);
-  } catch (err) {}
+    console.log("sendMessage", result);
+  } catch (err) {
+    console.log("sendMessage", err);
+  }
 
   sendBusy.value = false;
 };
@@ -224,7 +257,7 @@ const fetchMessages = async () => {
 
   messages.value = [];
 
-  let selectedConversation = conversations.value.find((c) => c.peerAddress === recipientAddress.value);
+  let selectedConversation = conversations.value.find((c) => c.peerAddress.toLowerCase() === recipientAddress.value.toLowerCase());
 
   if (selectedConversation) {
     let _message = await selectedConversation.messages();
@@ -325,7 +358,7 @@ const initXmtpProxy = async (_client, _privatekey) => {
         "onesignal_subscription_id": `onesingal-${wallet.address.toLowerCase()}`,
         "private_xmtp_address": _privatekey,
       })
-})
+    })
 
   }
 

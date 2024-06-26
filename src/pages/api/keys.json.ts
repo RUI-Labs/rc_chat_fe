@@ -3,7 +3,6 @@ import type { APIRoute } from 'astro';
 export const POST: APIRoute = async ({ request }) => {
 
   const body = await request.json()
-
   await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/xmtp_keys', {
     method: "POST",
     headers: {
@@ -17,7 +16,7 @@ export const POST: APIRoute = async ({ request }) => {
   .then(res => res.json())
   .then(console.log)
 
-  return new Response(JSON.stringify({
+  return new Response(JSON.stringify(
     body
-  }))
+  ))
 }

@@ -7,6 +7,9 @@
 
     <button @click="disconnectWallet()">Disconnect Wallet</button>
 
+
+    <button @click="allowPushNotification()">Subscribe</button>
+
     <p>{{ busy }}</p>
     <p>{{ statusText }}</p>
 
@@ -49,6 +52,8 @@ import { getEthersSigner } from "../utils/getEthersSigner";
 
 import { Client } from "@xmtp/xmtp-js";
 import { loadKeys, storeKeys } from "../utils/keyStorage";
+import { insertLog } from "../utils/insertLog";
+import { getUserCookie, getUserSubscriptionId } from "../utils/userAuth";
 
 import { reconnect, getAccount, watchConnections, disconnect } from "@wagmi/core";
 import { config } from "../wagmiConfig";
@@ -165,7 +170,8 @@ const initXmtp = async () => {
       body: JSON.stringify({
         "wallet_address": wallet.address.toLowerCase(),
         "xmtp_address": wallet.address.toLowerCase(),
-        "onesignal_subscription_id": `onesingal-${wallet.address.toLowerCase()}`,
+        // "onesignal_subscription_id": `onesingal-${wallet.address.toLowerCase()}`,
+        "onesignal_subscription_id": getUserSubscriptionId(),
         "private_xmtp_address": `private-${wallet.address.toLowerCase()}`,
       })
     })
@@ -355,7 +361,8 @@ const initXmtpProxy = async (_client, _privatekey) => {
       body: JSON.stringify({
         "wallet_address": wallet.address.toLowerCase(),
         "xmtp_address": _client.account.address.toLowerCase(),
-        "onesignal_subscription_id": `onesingal-${wallet.address.toLowerCase()}`,
+        // "onesignal_subscription_id": `onesingal-${wallet.address.toLowerCase()}`,
+        "onesignal_subscription_id": getUserSubscriptionId(),
         "private_xmtp_address": _privatekey,
       })
     })
@@ -378,10 +385,34 @@ const initXmtpProxy = async (_client, _privatekey) => {
 
 
 
+
+const allowPushNotification = async () => {
+
+  console.log(getUserCookie());
+  console.log(getUserSubscriptionId());
+  
+  await window.OneSignal.Notifications.requestPermission();
+
+  console.log(getUserSubscriptionId());
+  
+  return;
+
+
+
+  
+
+
+  // this.log('subscribe', { address: this.address, path: window.location.pathname, subscription: subscriptionId }, this.getUserData());
+  // insertLog();
+
+}
+
 const disconnectWallet = async () => {
   
   await disconnect(config);
-  localStorage.clear();
+  // localStorage.clear();
+  let wallet =  getAccount(config)
+  localStorage.removeItem(`xmtp-wallet-${wallet.address.toLowerCase()}`);
 
 }
 </script>

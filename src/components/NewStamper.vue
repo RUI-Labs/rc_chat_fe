@@ -32,7 +32,7 @@
         <template v-if="page == 0">
           <h1 class="text-xl font-brand font-bold mt-8">What's your name?</h1>
           <p class="mb-2">Keep it short and simple ;)</p>
-          <Input type="text" placeholder="Example: Jesse" />
+          <Input v-model="nameInput" type="text" placeholder="Example: Jesse" />
   
           <Button @click="nextPage()">Next</Button>
         </template>
@@ -42,7 +42,7 @@
           
           <div class="w-full flex flex-col">
             <div  v-for="wallet in walletOptions" class="w-full py-1">
-              <Button @click="createWallet()" class="w-full font-brand font-bold text-blue-500 border-blue-500" variant="outline">{{ wallet.name }}</Button>
+              <Button @click="createWallet(wallet)" class="w-full font-brand font-bold text-blue-500 border-blue-500" variant="outline">{{ wallet.name }}</Button>
             </div>
           </div>
 
@@ -58,7 +58,7 @@
           <p class="mb-2">Please allow us to send you notifications</p>
   
           <div class="flex space-x-4">
-            <Button class="w-full bg-blue-500" @click="nextPage()">Allow</Button>
+            <Button class="w-full bg-blue-500" @click="allowNotification()">Allow</Button>
             <Button variant="outline" class="w-full" @click="nextPage()">Deny</Button>
           </div>
           <!-- <Button @click="nextPage()">Save</Button> -->
@@ -84,7 +84,9 @@
 
 <script setup>
 
-import { ref } from "vue";
+import { computed, markRaw, onMounted, ref, watch } from "vue";
+import { reconnect, getAccount, watchConnections, disconnect, getConnectors, connect } from "@wagmi/core";
+import { config } from "@/wagmiConfig";
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { VisuallyHidden } from "radix-vue";
@@ -96,17 +98,7 @@ import StampCircle from "./StampCircle.vue";
 const open = ref(false);
 const emit = defineEmits(['update']);
 
-let walletOptions = [
-  {
-    name: "Coinbase Smart Wallet",
-  },
-  {
-    name: "Metamask",
-  },
-  {
-    name: "Rabby Wallet",
-  },
-];
+
 
 const page = ref(0)
 
@@ -119,12 +111,95 @@ const nextPage = () => {
   page.value += 1;
 };
 
-const createWallet = () => {
-  nextPage();
+const createWallet = async (_wallet) => {
+  console.log("createWallet", _wallet)
+  const connected = await connectWallet(_wallet);
+  if(connected) nextPage();
 };
+
+const connectWallet = async (_connector) => {
+
+  const connectors = getConnectors(config);
+  const selectedConnector = connectors?.find((connector) => connector?.id === _connector?.id);
+
+  if(selectedConnector) {
+    try {
+      await connect(config, { connector: selectedConnector })
+      return true;
+    } catch(error) {
+      console.log('connectWallet', error);
+      return false;
+    }
+  }
+
+  return false;
+
+}
 
 const createNewWallet = () => {
   nextPage();
 };
+
+
+
+
+
+// let walletOptions = [
+//   {
+//     name: "Coinbase Smart Wallet",
+//     id: "coinbaseWalletSDK"
+//   },
+//   {
+//     name: "Metamask",
+//     id: "io.metamask"
+//   },
+//   {
+//     name: "Rabby Wallet",
+//     id: "io.rabby"
+//   },
+// ];
+const walletOptions = ref([])
+let unwatch;
+onMounted( async () => {
+
+  console.log(getConnectors(config))
+  walletOptions.value = getConnectors(config).filter(x => x.id !== "injected" && x.id !== "coinbaseWalletSDK");
+  walletOptions.value.push({
+    name: "Coinbase Smart Wallet",
+    id: "coinbaseWalletSDK"
+  })
+
+  await reconnect(config);
+  if((getAccount(config))?.address) emit("update");
+
+  unwatch = watchConnections(config, {
+
+    async onChange(data) {
+        const _account =  getAccount(config);
+        console.log("onChange wallet", _account);
+
+        if(_account?.address) {
+
+          emit('update');
+
+        }
+
+    }
+
+  })
+
+})
+
+
+const nameInput = ref();
+
+
+const allowNotification = async () => {
+
+
+
+  nextPage();
+
+}
 
 </script>

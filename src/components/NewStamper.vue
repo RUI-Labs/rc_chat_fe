@@ -71,10 +71,10 @@
           <div class="w-full h-full flex justify-center items-center mb-4">
 
             <!-- <div class="w-[250px] h-[250px] rounded-full border"></div> -->
-            <StampCircle address="0xcB35ed9B8a830fA472931cc63a62793910c59270" name="jesse"></StampCircle>
+            <StampCircle :address="walletAccount?.address" :name="nameInput"></StampCircle>
           </div>
   
-          <Button @click="nextPage()">Collect Stamp</Button>
+          <Button @click="collectStamp()">Collect Stamp</Button>
         </template>
 
       </DialogContent>
@@ -87,6 +87,9 @@
 import { computed, markRaw, onMounted, ref, watch } from "vue";
 import { reconnect, getAccount, watchConnections, disconnect, getConnectors, connect } from "@wagmi/core";
 import { config } from "@/wagmiConfig";
+import { getUserSubscriptionId } from "@/utils/userAuth"
+import { initXmtp, initUser } from "@/stores/stamp"
+import { $username, $userData } from "@/stores/stamp"
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { VisuallyHidden } from "radix-vue";
@@ -103,6 +106,11 @@ const emit = defineEmits(['update']);
 const page = ref(0)
 
 const nextPage = () => {
+
+  if(page.value == 0) {
+    $username.set(nameInput.value);
+  }
+
   if (page.value == 3) {
     open.value = false;
     emit('update');
@@ -119,9 +127,8 @@ const createWallet = async (_wallet) => {
 
 const connectWallet = async (_connector) => {
 
-  const connectors = getConnectors(config);
-  const selectedConnector = connectors?.find((connector) => connector?.id === _connector?.id);
-
+  const selectedConnector = getConnectors(config).find((connector) => connector?.id === _connector?.id);
+  console.log("selectedConnector", selectedConnector);
   if(selectedConnector) {
     try {
       await connect(config, { connector: selectedConnector })
@@ -136,8 +143,22 @@ const connectWallet = async (_connector) => {
 
 }
 
-const createNewWallet = () => {
-  nextPage();
+
+import { coinbaseWallet } from "@wagmi/connectors";
+const createNewWallet = async () => {
+  try {
+
+    await connect(config, {
+      connector: coinbaseWallet({
+        appName: "Ruilabs",
+        preference: "smartWalletOnly",
+      }),
+    });
+    nextPage();
+
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 
@@ -159,8 +180,11 @@ const createNewWallet = () => {
 //   },
 // ];
 const walletOptions = ref([])
+const walletAccount = ref()
 let unwatch;
 onMounted( async () => {
+
+  getUserSubscriptionId();
 
   console.log(getConnectors(config))
   walletOptions.value = getConnectors(config).filter(x => x.id !== "injected" && x.id !== "coinbaseWalletSDK");
@@ -171,17 +195,23 @@ onMounted( async () => {
 
   await reconnect(config);
   if((getAccount(config))?.address) emit("update");
+  walletAccount.value = getAccount(config);
+  initUser();
 
   unwatch = watchConnections(config, {
 
     async onChange(data) {
-        const _account =  getAccount(config);
+        const _account = getAccount(config);
         console.log("onChange wallet", _account);
+        walletAccount.value = _account;
+        // if(_account?.address) {
+        //   emit('update');
+        // }
 
-        if(_account?.address) {
-
+        await initUser();
+        if($userData.value) {
           emit('update');
-
+          initXmtp();
         }
 
     }
@@ -196,10 +226,38 @@ const nameInput = ref();
 
 const allowNotification = async () => {
 
+  try {
+
+    await window.OneSignal.Notifications.requestPermission();
+    if(window?.OneSignal?.Notifications.permission) {
+      nextPage();
+    } else {
+      alert("Please allow notification push at your application.")
+    }
+
+  } catch(error) {
+    consol.info('allowNotification', error)
+  }
 
 
+
+}
+
+const isCollecting = ref(false);
+const collectStamp = async () => {
+
+  if(isCollecting.value) return;
+  isCollecting.value = true;
+
+  await initXmtp();
+
+  isCollecting.value = false;
   nextPage();
 
 }
+
+
+
+
 
 </script>

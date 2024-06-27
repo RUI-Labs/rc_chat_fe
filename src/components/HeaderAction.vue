@@ -57,6 +57,8 @@
     };
 
     const disconnectWallet = async () => {
+        let wallet = getAccount(config)
+        localStorage.removeItem(`xmtp-wallet-${wallet.address.toLowerCase()}`);
         await disconnect(config);
         updateStamp();
     }

@@ -60,18 +60,18 @@ export const initXmtp = async () => {
             storeKeys(proxyAddress, xmtpBundleKeys);
 
             // save to supabase
-            fetch('/api/keys.json', {
-                method: 'POST',
-                body: JSON.stringify({
-                    address: proxyAddress.toLowerCase(),
-                    keys: Buffer.from(xmtpBundleKeys).toString("hex"),
-                })
-            })
+            // fetch('/api/keys.json', {
+            //     method: 'POST',
+            //     body: JSON.stringify({
+            //         address: proxyAddress.toLowerCase(),
+            //         keys: Buffer.from(xmtpBundleKeys).toString("hex"),
+            //     })
+            // })
 
             // save contact to supabase
             const wallet =  getAccount(config)
             localStorage.setItem(`xmtp-wallet-${wallet.address.toLowerCase()}`, privateKey);
-            fetch('/api/contactbook.json', {
+            await fetch('/api/contactbook.json', {
                 method: 'POST',
                 body: JSON.stringify({
                     "wallet_address": wallet.address.toLowerCase(),
@@ -106,13 +106,13 @@ export const initXmtp = async () => {
             storeKeys(signer.address, xmtpBundleKeys);
 
             // save to supabase
-            await fetch('/api/keys.json', {
-                method: 'POST',
-                body: JSON.stringify({
-                    address: signer.address.toLowerCase(),
-                    keys: Buffer.from(xmtpBundleKeys).toString("hex"),
-                })
-            })
+            // await fetch('/api/keys.json', {
+            //     method: 'POST',
+            //     body: JSON.stringify({
+            //         address: signer.address.toLowerCase(),
+            //         keys: Buffer.from(xmtpBundleKeys).toString("hex"),
+            //     })
+            // })
 
             // save contact to supabase
             const wallet = getAccount(config)

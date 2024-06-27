@@ -356,16 +356,16 @@ const sendMessage = async () => {
     let _message = messageInput.value;
     messageInput.value = ''
 
-    console.log("xmtpClient.value", $xmtpClient.value, project_info.value.owner_address.toLowerCase());
+    // console.log("xmtpClient.value", $xmtpClient.value, project_info.value.owner_address.toLowerCase());
 
     try {
         const conversation = await $xmtpClient.value.conversations.newConversation(project_info.value.owner_address.toLowerCase());
-        let result = await conversation.send(_message);
-        console.log("sendMessage", result);
+        await conversation.send(_message);
     } catch (err) {
         console.log("sendMessage", err);
     }
-
+    
+    if(messages.value.length == 0) fetchMessages();
     isMessageBusy.value = false;
     
 }

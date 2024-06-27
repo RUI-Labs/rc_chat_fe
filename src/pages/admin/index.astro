@@ -1,0 +1,84 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { Button } from "@/components/ui/button";
+import CardTooltip from "@/components/campaign/CardTooltip.vue";
+import NewCampaignDialog from "@/components/campaign/NewCampaignDialog.vue";
+
+let campaigns = [];
+for (let i = 0; i < 10; i++) {
+  campaigns.push({
+    id: i,
+    name: `Campaign ${i}`,
+    description: `Description ${i}`,
+    status: i % 2 === 0 ? "Active" : "Inactive",
+    startDate: new Date(),
+    endDate: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+}
+---
+
+<AdminLayout>
+  <div>
+    <div class="p-4 py-12 flex justify-between items-center">
+      <h1 class="text-3xl pl-4 font-brand font-bold">Campaigns</h1>
+
+      <NewCampaignDialog client:only="vue">
+        <Button>New</Button>
+      </NewCampaignDialog>
+    </div>
+
+    <div class="p-4">
+      <div class="w-full grid gap-4" style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr));">
+        {campaigns.map((campaign) => <a href="/admin/campaign/1">
+
+
+<div class="w-full h-48 border rounded-xl flex flex-col justify-between items-center p-4 group overflow-hidden cursor-pointer hover:ring-blue-500 hover:ring-2 hover:ring-offset-2 hover:shadow-xl duration-300">
+
+<div class="w-full h-full flex justify-center items-center group-hover:scale-150 duration-300">
+  <span class="text-4xl font-brand font-bold">TEST</span>
+</div>
+
+<div class="grid grid-cols-3 justify-center items-center w-full">
+    <CardTooltip client:load text="Unique Visits: 123">
+  <div class="flex justify-center items-center w-full">
+    <iconify-icon class="text-xl" icon="mdi:eye"></iconify-icon>&nbsp;123
+  </div>
+      
+    </CardTooltip>
+
+    <CardTooltip client:load text="Connected Wallet: 123">
+      <div class="flex justify-center items-center w-full">
+    <iconify-icon class="text-xl" icon="fluent:plug-connected-16-filled"></iconify-icon>
+    <iconify-icon class="text-xl" icon="material-symbols:wallet"></iconify-icon>
+
+    
+    &nbsp;123
+  </div>
+      
+    </CardTooltip>
+
+    <CardTooltip client:load text="Engaged: 123">
+      <div class="flex justify-center items-center w-full">
+    <iconify-icon class="text-xl" icon="gridicons:reader-following-conversation"></iconify-icon>&nbsp;50
+  </div>
+      
+    </CardTooltip>
+
+  
+
+  
+
+
+</div>
+
+
+
+</div>
+
+        </a>)}
+      </div>
+    </div>
+  </div>
+</AdminLayout>

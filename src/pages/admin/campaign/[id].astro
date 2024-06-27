@@ -1,0 +1,74 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { Button } from "@/components/ui/button";
+import CampaignLink from "@/components/campaign/CampaignLink.vue";
+import CampaignTable from "@/components/campaign/CampaignTable.vue";
+
+const steps = [
+    { id: '01', name: 'Visit', href: '#', count: 100},
+    { id: '02', name: 'Connect Wallet', href: '#', count: 67},
+    { id: '03', name: 'Enable Notification', href: '#', count: 33},
+    { id: '04', name: 'Engaged in Chat', href: '#', count: 20}
+  ]
+
+  const sampleData = [
+  {
+    id: '1',
+    name: 'Alice Johnson',
+    address: '0x123abc456def789ghi012jkl',
+    progress: 75
+  },
+  {
+    id: '2',
+    name: 'Bob Smith',
+    address: '0x234bcd567efg890jkl123mno',
+    progress: 50
+  },
+  {
+    id: '3',
+    name: 'Carol White',
+    address: '0x345cde678fgh901klm234nop',
+    progress: 90
+  },
+  {
+    id: '4',
+    name: 'Dave Brown',
+    address: '0x456def789ghi012mno345pqr',
+    progress: 30
+  },
+  {
+    id: '5',
+    name: 'Eve Black',
+    address: '0x567efg890jkl123nop456qrs',
+    progress: 100
+  }
+];
+---
+
+<AdminLayout>
+    <div>
+      <div class="p-4 pb-4 pt-4 grid grid-cols-6">
+        <div class="col-span-full">
+            <Button class="mb-10"  variant='secondary'>Back</Button>
+        </div>
+
+        <div class="col-span-4">
+            <p class="text-xl mb-2 font-brand font-bold">Campaign</p>
+            <h1 class="text-3xl font-brand font-bold">123</h1>
+            <div class="w-full flex justify-start items-center mt-2">
+                <div class="text-sm p-2 px-4 bg-gray-200 rounded-md" >
+                    tag_name
+                </div>
+            </div>
+        </div>
+        
+  
+        <div class="w-full flex justify-end items-center col-span-2">
+            <CampaignLink client:only="vue" link_text={'https://google.com'}></CampaignLink>
+        </div>
+      </div>
+
+      <CampaignTable steps={steps} data={sampleData} client:only="vue"></CampaignTable>
+    </div>
+  </AdminLayout>
+  

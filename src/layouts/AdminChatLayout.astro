@@ -1,0 +1,112 @@
+---
+import "@/styles/globals.css";
+import SignOutButton from "@/components/SignOutButton.vue";
+import { Button } from "@/components/ui/button";
+import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
+import NewChatDialog from "@/components/admin/NewChatDialog.vue";
+
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" crossorigin="anonymous" />
+  </head>
+
+  <body class="w-full h-screen grid grid-rows-[auto_auto_1fr] grid-cols-3">
+    <script>
+      import "iconify-icon";
+
+      import 'overlayscrollbars/overlayscrollbars.css';
+      import { 
+        OverlayScrollbars, 
+        ScrollbarsHidingPlugin, 
+        SizeObserverPlugin, 
+        ClickScrollPlugin 
+      } from 'overlayscrollbars';
+
+      if(document?.querySelector('#userlistParent') != null){
+        let _body = document.querySelector('#userlistParent') as any;
+        const osInstance = OverlayScrollbars( _body, {
+            scrollbars : {
+                autoHide: "leave",
+                autoHideDelay: 500
+            },
+        });
+      }
+
+      if(document?.querySelector('#chatParent') != null){
+        let _body = document.querySelector('#chatParent') as any;
+        const osInstance = OverlayScrollbars( _body, {
+            scrollbars : {
+                autoHide: "leave",
+                autoHideDelay: 500
+            },
+        });
+      }
+
+      
+
+
+    </script>
+
+    <nav class="w-full border-b p-4 grid grid-cols-3 col-span-full">
+      <div class="w-full flex justify-start items-center space-x-2 col-span-2">
+
+        <div class="font-brand font-bold text-lg ml-2 mr-4">REMO</div>
+
+        <div class="w-[200px] flex justify-center items-center">
+          <ProjectDropdown client:only="vue" />
+        </div>
+        <a href="/admin">
+          <Button variant="ghost">Campaigns</Button>
+        </a>
+        <a href="/admin/users">
+          <Button variant="ghost">Users</Button>
+        </a>
+        <a href="/admin/chat">
+          <Button variant="ghost">Chat</Button>
+        </a>
+      </div>
+
+      <div class="w-full flex justify-end items-center">
+        <SignOutButton client:only="vue" />
+      </div>
+    </nav>
+
+
+    <div class="p-4 flex justify-between items-center w-full col-span-full border-b">
+      <h1 class="text-3xl pl-4 font-brand font-bold">Chat</h1>
+
+      <NewChatDialog client:only="vue">
+        <Button>New</Button>
+      </NewChatDialog>
+    </div>
+
+    <div id="userlistParent"class="border-r h-full ">
+        <div id="userlist"></div>
+    </div>
+
+    <div class="col-span-2 grid grid-cols-1 grid-rows-[1fr_auto] overflow-hidden">
+        <div id="chatParent"class="h-full w-full col-span-2 relative ">
+            <div id="chatBox"></div>
+        </div>
+
+        <slot></slot>
+    </div>
+
+    
+    
+
+    
+
+
+  </body>
+</html>

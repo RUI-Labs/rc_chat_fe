@@ -71,7 +71,7 @@
 
             </div>
 
-            <p class="text-lg"> <span class="p-1 bg-blue-500 px-2 rounded-xl text-white font-brand font-semibold">Yao</span> from Ruilabs</p>
+            <p class="text-lg"> <span class="p-1 bg-blue-500 px-2 rounded-xl text-white font-brand font-semibold">Yao</span> from {{ project_info.token_name }}</p>
         </div>
     </div>
 

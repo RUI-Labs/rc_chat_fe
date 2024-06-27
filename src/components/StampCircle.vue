@@ -21,21 +21,24 @@
     const { address, name, diameter } = toRefs(props);
 
     const addressTokens = computed(() => {
-        /// chop address into characters
-        let tokens = address.value.split('');
-        // we shall make the address circular
-        // calculate the angle between each token by dividing 360 by the number of tokens
-        let angle = 360 / tokens.length;
 
-        // then calculate the rotated position of each token from the center of the circle
-        tokens = tokens.map((token, index) => {
-            let _angle = index * angle;
-            return {
-                token,
-                angle:_angle
-            };
-        });
-        return tokens;
+        if(address.value) {
+            /// chop address into characters
+            let tokens = address.value?.split('');
+            // we shall make the address circular
+            // calculate the angle between each token by dividing 360 by the number of tokens
+            let angle = 360 / tokens.length;
+    
+            // then calculate the rotated position of each token from the center of the circle
+            tokens = tokens.map((token, index) => {
+                let _angle = index * angle;
+                return {
+                    token,
+                    angle:_angle
+                };
+            });
+            return tokens;
+        }
     });
 
 </script>

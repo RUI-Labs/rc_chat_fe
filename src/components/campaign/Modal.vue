@@ -37,13 +37,13 @@
 
                     <div class="w-full grid grid-cols-3 justify-center items-center">
                       <div class="p-4 px-8 col-span-2 relative h-full">
-                        <h1 class="text-8xl font-brand font-semibold leading-[8rem] mb-12 text-left">Giveaway of 50 USD worth of Tokens</h1>
+                        <h1 class="text-8xl font-brand font-semibold leading-[8rem] mb-12 text-left">{{ campaign_info.message }}</h1>
 
                         <div class="flex justify-start items-center space-x-4">
                           <p class="text-3xl">You're invited by</p>
                           <div class="bg-blue-500 rounded-full p-3 text-4xl flex justify-start items-center pr-6">
                             <div class="h-16 aspect-square bg-white rounded-full mr-2"></div>
-                            <div class="text-white">Ruilabs</div>
+                            <div class="text-white">{{ project_info.token_name }}</div>
                           </div>
                         </div>
 
@@ -67,7 +67,8 @@
                           <template v-else>
                             <div ref="stampEl" :class="[zoomStamp ? 'scale-100' : 'scale-75', 'duration-300 transition-transform']" class="w-[300px] h-[300px] fixed z-40 bottom-0 left-0 pointer-events-none">
                               <div ref="stampCircleEl" v-if="!hideStamp">
-                                <StampCircle address="0xcB35ed9B8a830fA472931cc63a62793910c59270" name="jesse"></StampCircle>
+                                <p>{{ $userData?.wallet_address }}</p>
+                                <StampCircle :address="address" :name="name"></StampCircle>
                               </div>
                             </div>
                           </template>
@@ -94,19 +95,45 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, toRefs } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 // import { CheckIcon } from "@heroicons/vue/24/outline";
 // import Stamper from '@/components/Stamper.vue'
 
 import { toPng } from "html-to-image";
-import { $receiptImageData, $showReceipt } from "@/stores/stamp"
+import { $receiptImageData, $showReceipt, $userData, confirmStampAndSendMessage } from "@/stores/stamp"
+
+const props = defineProps([ "project_info", "campaign_info" ]);
+const { project_info, campaign_info } = toRefs(props);
 
 const open = ref(false);
 
 const toggleModal = () => {
   open.value = !open.value;
 };
+
+const address = ref()
+const name = ref()
+
+onMounted(() => {
+  
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const urlCampaign = urlParams.get('campaign')
+  console.log('urlCampaign', urlCampaign);
+
+  if(campaign_info.value?.id == urlCampaign) {
+    toggleModal();
+  }
+  
+  $userData.subscribe(() => {
+    console.log('$userData.value', $userData.value)
+    address.value = $userData.value?.wallet_address;
+    name.value = $userData.value?.name;
+  })
+
+
+})
 
 import { watch, computed } from "vue";
 import { Button } from "@/components/ui/button";
@@ -173,6 +200,8 @@ const stampCircleEl = ref(null);
 
 const confirmStamp = () => {
   if (noStamp.value) return;
+
+  confirmStampAndSendMessage(project_info.value);
 
   stampStop.value = true;
   zoomStamp.value = true;

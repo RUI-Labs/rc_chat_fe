@@ -22,6 +22,7 @@ const xmtpOptions = {
     disablePersistenceEncryption: true,
     // skipContactPublishing: true
 };
+
 export const initXmtp = async () => {
 
 
@@ -30,7 +31,7 @@ export const initXmtp = async () => {
     if(isSmartWalletConnected()) {
         
         let privateKey = null;
-        if($userData.value.private_xmtp_address) {
+        if($userData.value?.private_xmtp_address) {
             privateKey = $userData.value.private_xmtp_address;
         } else {
             // if no proxy wallet 
@@ -138,6 +139,7 @@ export const initXmtp = async () => {
         privateKeyOverride: xmtpBundleKeys,
     });
 
+    console.log("xmtp", xmtp);
     $xmtpClient.set(xmtp);
 
 }
@@ -193,3 +195,7 @@ export const initUser = async () => {
     $userData.set(sres);
 
 }
+
+
+
+

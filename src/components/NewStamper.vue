@@ -194,9 +194,12 @@ onMounted( async () => {
   })
 
   await reconnect(config);
-  if((getAccount(config))?.address) emit("update");
+  if((getAccount(config))?.address) {
+    emit("update");
+    await initUser();
+    initXmtp();
+  } 
   walletAccount.value = getAccount(config);
-  initUser();
 
   unwatch = watchConnections(config, {
 

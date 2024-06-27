@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-
+import { $projectData } from '@/stores/stamp';
 export const GET: APIRoute = async (context) => {
 
     const resp = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/projects?token_symbol=eq.${context.params.project?.toUpperCase()}&select=*,campaigns(*)`, {

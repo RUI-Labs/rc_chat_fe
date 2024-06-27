@@ -119,7 +119,7 @@
 <script setup>
 import { useMouseInElement } from "@vueuse/core";
 
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, toRefs, markRaw } from "vue";
 const chatbubbleEl = ref(null);
 const chatroomEl = ref(null);
 const sendButtonEl = ref(null)
@@ -131,13 +131,19 @@ import { useElementBounding } from '@vueuse/core'
 const { isOutside:isOutsideChatToggle } = useMouseInElement(chatbubbleEl);
 const { isOutside:isOutsideChatroom } = useMouseInElement(chatroomEl);
 
-import { $receiptImageData, $showReceipt } from "@/stores/stamp"
+import { $receiptImageData, $showReceipt, $xmtpClient } from "@/stores/stamp"
 
 const receiptImageData = ref(null)
 const showReceipt = ref(false)
 
 import anime from 'animejs/lib/anime.es.js';
+import { $userData } from "@/stores/stamp";
 const sendButtonElBounding = useElementBounding(sendButtonEl)
+
+const conversations = ref([])
+
+const props = defineProps([ "project_info" ]);
+const { project_info } = toRefs(props);
 
 onMounted(() => {
     $showReceipt.subscribe( value => {
@@ -148,6 +154,31 @@ onMounted(() => {
     $receiptImageData.subscribe( value => {
         receiptImageData.value = value
     })
+
+    $xmtpClient.subscribe( async (value) => {
+        if ($xmtpClient.value) {
+            conversations.value = await $xmtpClient.value.conversations.list();
+            // console.log(conversations.value)
+
+            // check if the recipient address is in the list of conversations
+            let exists = conversations.value.find((c) => c.peerAddress.toLowerCase() === project_info.value.owner_address.toLowerCase());
+
+            console.log('exists', exists);
+
+            try {
+                await $xmtpClient.value.conversations.newConversation(project_info.value.owner_address.toLowerCase());
+            } catch(error) {
+                console.log('bypass bypass', error)
+            }
+            
+            if (!exists) {
+                await fetchMessages();
+            }
+
+            await fetchMessages();
+        }
+    })
+
 })
 
 watch(showReceipt, async () => {
@@ -284,28 +315,29 @@ watch(isOutsideChatroom, () => {
   emit("update", isOutsideChatToggle.value && isOutsideChatroom.value);
 });
 
-const messages = [
-    {
-        type:'text',
-        content:'Hello, how can I help you today?',
-        sender:'Yao',
-    },
-    {
-        type:'text',
-        content:'I need help with my account',
-        sender:'me',
-    },
-    {
-        type:'text',
-        content:'Sure, what seems to be the problem?',
-        sender:'Yao',
-    },
-    {
-        type:'media',
-        // content:'I can\'t seem to login',
-        sender:'me',
-    },
-]
+// const messages = [
+//     {
+//         type:'text',
+//         content:'Hello, how can I help you today?',
+//         sender:'Yao',
+//     },
+//     {
+//         type:'text',
+//         content:'I need help with my account',
+//         sender:'me',
+//     },
+//     {
+//         type:'text',
+//         content:'Sure, what seems to be the problem?',
+//         sender:'Yao',
+//     },
+//     {
+//         type:'media',
+//         // content:'I can\'t seem to login',
+//         sender:'me',
+//     },
+// ]
+const messages = ref([])
 
 const authorDirection = (sender) => {
     return sender === 'me' ? 'text-right' : 'text-left'
@@ -315,8 +347,71 @@ const getDirection = (sender) => {
     return sender === 'me' ? 'flex-row-reverse' : 'flex-row'
 }
 
-const sendMessage = () => {
+const isMessageBusy = ref(false);
+const sendMessage = async () => {
+
+    if(isMessageBusy.value) return;
+    isMessageBusy.value = true;
+
+    let _message = messageInput.value;
     messageInput.value = ''
+
+    console.log("xmtpClient.value", $xmtpClient.value, project_info.value.owner_address.toLowerCase());
+
+    try {
+        const conversation = await $xmtpClient.value.conversations.newConversation(project_info.value.owner_address.toLowerCase());
+        let result = await conversation.send(_message);
+        console.log("sendMessage", result);
+    } catch (err) {
+        console.log("sendMessage", err);
+    }
+
+    isMessageBusy.value = false;
+    
 }
+
+
+const fetchMessages = async () => {
+
+    messages.value = [];
+
+    let selectedConversation = conversations.value.find((c) => c.peerAddress.toLowerCase() === project_info.value.owner_address.toLowerCase());
+    console.log('selectedConversation', selectedConversation)
+
+    if (selectedConversation) {
+        let _message = await selectedConversation.messages();
+        console.log('_message', _message);
+
+        messages.value = _message.map((m) => {
+            return {
+                content: m.content,
+                id: m.id,
+                senderAddress: m.senderAddress,
+                type: 'text',
+                sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+            };
+        });
+
+        // scrollToBottom();
+
+        for await (const message of await selectedConversation.streamMessages()) {
+
+            const exists = messages.value.find((m) => m.id === message.id);
+
+            if (!exists) {
+                messages.value.push({
+                    content: message.content,
+                    id: message.id,
+                    senderAddress: message.senderAddress,
+                    type: 'text',
+                    sender: message.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+                });
+            }
+
+            // scrollToBottom();
+        }
+
+    }
+};
 
 </script>

@@ -201,9 +201,9 @@ export const initUser = async () => {
 
 
 
-export const confirmStampAndSendMessage = async (_projectInfo) => {
+export const confirmStampAndSendMessage = async (_projectInfo, _campaign) => {
 
-    const _message = 'HAHA';
+    const _message = `campaign:${_campaign?.id}`;
     const conversation = await $xmtpClient.value.conversations.newConversation(_projectInfo.owner_address.toLowerCase());
     await conversation.send(_message);
 

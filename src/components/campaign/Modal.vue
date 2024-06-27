@@ -201,7 +201,7 @@ const stampCircleEl = ref(null);
 const confirmStamp = () => {
   if (noStamp.value) return;
 
-  confirmStampAndSendMessage(project_info.value);
+  confirmStampAndSendMessage(project_info.value, campaign_info.value);
 
   stampStop.value = true;
   zoomStamp.value = true;

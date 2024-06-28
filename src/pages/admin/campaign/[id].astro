@@ -4,45 +4,61 @@ import { Button } from "@/components/ui/button";
 import CampaignLink from "@/components/campaign/CampaignLink.vue";
 import CampaignTable from "@/components/campaign/CampaignTable.vue";
 
-const steps = [
-    { id: '01', name: 'Visit', href: '#', count: 100},
-    { id: '02', name: 'Connect Wallet', href: '#', count: 67},
-    { id: '03', name: 'Enable Notification', href: '#', count: 33},
-    { id: '04', name: 'Engaged in Chat', href: '#', count: 20}
-  ]
-
-  const sampleData = [
-  {
-    id: '1',
-    name: 'Alice Johnson',
-    address: '0x123abc456def789ghi012jkl',
-    progress: 75
-  },
-  {
-    id: '2',
-    name: 'Bob Smith',
-    address: '0x234bcd567efg890jkl123mno',
-    progress: 50
-  },
-  {
-    id: '3',
-    name: 'Carol White',
-    address: '0x345cde678fgh901klm234nop',
-    progress: 90
-  },
-  {
-    id: '4',
-    name: 'Dave Brown',
-    address: '0x456def789ghi012mno345pqr',
-    progress: 30
-  },
-  {
-    id: '5',
-    name: 'Eve Black',
-    address: '0x567efg890jkl123nop456qrs',
-    progress: 100
+const campaign = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaigns?select=*&id=eq.13', {
+  headers: {
+    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
   }
-];
+})
+.then(res =>res.json())
+.then(res => res[0])
+
+const metrics = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaign_metrics?select=*&campaign_id=eq.13', {
+  headers: {
+    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+  }
+})
+.then(res =>res.json())
+
+const steps = metrics.map((o, i) => {
+  return {
+    id: i,
+    name: o.name,
+    href: "#",
+    count: o.count,
+  }
+})
+
+const sampleData = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_events_by_campaign_id', {
+  method: "POST",
+  headers: {
+    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    _campaign_id: 13
+  })
+})
+  .then(res => res.json())
+  .then(res => res.map((o, i) => {
+    return {
+    id: o.user_id,
+    name: o.user_name,
+    address: o.user_address,
+    progress: o.events.reduce((a, o) => {
+      if (o === 'connect') {
+        a += 50;
+      }
+      if (o === 'visit') {
+        a += 50;
+      }
+      return a
+    }, 0)
+    }
+  }))
+
 ---
 
 <AdminLayout>
@@ -54,10 +70,10 @@ const steps = [
 
         <div class="col-span-4">
             <p class="text-xl mb-2 font-brand font-bold">Campaign</p>
-            <h1 class="text-3xl font-brand font-bold">123</h1>
+            <h1 class="text-3xl font-brand font-bold">{campaign.id}</h1>
             <div class="w-full flex justify-start items-center mt-2">
                 <div class="text-sm p-2 px-4 bg-gray-200 rounded-md" >
-                    tag_name
+                  {campaign.tag}
                 </div>
             </div>
         </div>

@@ -88,7 +88,8 @@ export default {
 	  fontFamily: {
 		// brand: ['"Playwrite US Trad"'],
 		// brandnz: ['"Playwrite NZ"'],
-		brand: ['"Rubik"'],
+		brand: ['"Sora"'],
+    brandserif: ['"Volkhov"']
 	  }
     },
   },

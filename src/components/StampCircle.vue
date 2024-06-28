@@ -3,10 +3,10 @@
     <div :class="[diameter?`w-[${diameter}px] h-[${diameter}px]`:'w-[300px] h-[300px]']" class=" border-4 border-black bg-white/50 rounded-full flex justify-center items-center pointer-events-none relative">
         
         <div class="w-full h-full flex justify-center items-center absolute">
-            <div v-for="token in addressTokens" :style="`rotate:${token.angle}deg;`" :class="[diameter?`h-[${diameter}px]`:'h-[300px]']" class="absolute font-brand font-bold text-xl flex justify-start">{{ token.token }}</div>
+            <div v-for="token in addressTokens" :style="`rotate:${token.angle}deg;${innerDiameter}`" class="absolute font-brand font-bold text-lg flex justify-start">{{ token.token }}</div>
         </div>
 
-        <p class="text-4xl font-bold">{{ name }}</p>
+        <p class="text-4xl font-bold font-brand cursor-pointer">{{ name }}</p>
 
     </div>
 
@@ -38,6 +38,15 @@
                 };
             });
             return tokens;
+        }
+    });
+    
+
+    const innerDiameter = computed(() => {
+        if(diameter.value) {
+            return `height:${diameter.value * 0.95}px`;
+        } else{
+            return `height:270px`;
         }
     });
 

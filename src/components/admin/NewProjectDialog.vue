@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { defineProps, toRefs, computed, h, ref } from "vue";
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -69,20 +69,39 @@ defineExpose({
   hide,
 });
 
+const props = defineProps(["wallet"]);
+const { wallet } = toRefs(props);
 const inputAddress = ref('');
 const inputName = ref('');
 const inputSymbol = ref('');
 
-const searchAddress = useDebounceFn(() => {
+const searchAddress = useDebounceFn(async () => {
+        const metadata = await fetch(`/api/token.json?token=${inputAddress.value}`)
+                .then(res => res.json() )
   
   // dummy search 
 
-  inputName.value = 'Dummy Name';
-  inputSymbol.value = 'DUM';
+  inputName.value = metadata.name;
+  inputSymbol.value = metadata.symbol;
 
 }, 300)
 
-const confirmCreateProject = () => {
+const confirmCreateProject = async () => {
+
+  await fetch(`/api/projects.json`, {
+          method: "POST",
+          headers: {
+                  'content-type': "application/json"
+          },
+          body: JSON.stringify({
+                  token_name: inputName.value,
+                  token_address: inputAddress.value,
+                  token_symbol: inputSymbol.value,
+                  owner_address: wallet.value 
+
+          })
+  })
+
   hide();
 }
 

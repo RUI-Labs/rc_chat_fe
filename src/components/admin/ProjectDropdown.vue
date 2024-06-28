@@ -10,6 +10,11 @@ const newProjectDialogRef  = ref(null);
 const newProject = () => {
   newProjectDialogRef.value.show();
 };
+import { defineProps, toRefs, computed, h, ref } from "vue";
+
+const props = defineProps(["wallet"]);
+const { wallet } = toRefs(props);
+console.log(16, wallet.value)
 
 </script>
 
@@ -34,6 +39,6 @@ const newProject = () => {
     </DropdownMenuContent>
   </DropdownMenu>
 
-  <NewProjectDialog ref="newProjectDialogRef"></NewProjectDialog>
+  <NewProjectDialog :wallet=wallet ref="newProjectDialogRef"></NewProjectDialog>
   </div>
 </template>

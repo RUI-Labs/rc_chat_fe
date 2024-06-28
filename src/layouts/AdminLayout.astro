@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import SignOutButton from "@/components/SignOutButton.vue";
 import { Button } from "@/components/ui/button";
 import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
+
 ---
 
 <html lang="en">
@@ -29,7 +30,7 @@ import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
         <div class="font-brand font-bold text-lg ml-2 mr-4">REMO</div>
 
         <div class="w-[200px] flex justify-center items-center">
-          <ProjectDropdown client:only="vue" />
+        <ProjectDropdown client:only="vue" wallet={Astro.locals.user.id}/>
         </div>
         <a href="/admin">
           <Button variant="ghost">Campaigns</Button>

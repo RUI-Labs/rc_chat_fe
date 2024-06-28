@@ -17,6 +17,8 @@ for (let i = 0; i < 10; i++) {
     updatedAt: new Date(),
   });
 }
+
+const { user, session } = Astro.locals
 ---
 
 <AdminLayout>
@@ -28,6 +30,10 @@ for (let i = 0; i < 10; i++) {
         <Button>New</Button>
       </NewCampaignDialog>
     </div>
+
+    {
+      JSON.stringify(user)
+    }
 
     <div class="p-4">
       <div class="w-full grid gap-4" style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr));">

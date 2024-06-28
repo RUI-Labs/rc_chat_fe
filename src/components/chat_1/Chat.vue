@@ -111,7 +111,7 @@
     <div class="z-50 w-full flex flex-col justify-center items-center">
       <h1 class="sm:text-6xl text-4xl font-brand font-bold mb-4">Welcome!</h1>
 
-      <h1 class="sm:text-2xl text-xl font-brand font-bold mb-4 text-center">To participate in events by <div class="bg-black text-white rounded-full mx-2 px-3 p-2">Ruilabs on REMO</div>, please get a stamp.</h1>
+      <h1 class="sm:text-2xl text-xl font-brand font-bold mb-4 text-center">To participate in events by <div class="bg-black text-white rounded-full mx-2 px-3 p-2 sm:my-0">Ruilabs on REMO</div> please get a stamp.</h1>
       
       <div class="w-full flex justify-center items-center py-8 px-8">
         <section id="campaignList" class="border-2 z-50 rounded-xl shadow-xl max-h-[300px] overflow-hidden w-full max-w-md">

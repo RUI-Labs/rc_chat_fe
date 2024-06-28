@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import CampaignLink from "@/components/campaign/CampaignLink.vue";
 import CampaignTable from "@/components/campaign/CampaignTable.vue";
 
-const campaign = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaigns?select=*&id=eq.13', {
+const { id } = Astro.params;
+
+const campaign = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaigns?select=*&id=eq.${id}`, {
   headers: {
     "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
@@ -13,7 +15,7 @@ const campaign = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/c
 .then(res =>res.json())
 .then(res => res[0])
 
-const metrics = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaign_metrics?select=*&campaign_id=eq.13', {
+const metrics = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaign_metrics?select=*&campaign_id=eq.${id}`, {
   headers: {
     "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
@@ -38,16 +40,16 @@ const sampleData = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    _campaign_id: 13
+    _campaign_id: id
   })
 })
   .then(res => res.json())
-  .then(res => res.map((o, i) => {
+  .then(res => res.map((o: any) => {
     return {
     id: o.user_id,
     name: o.user_name,
     address: o.user_address,
-    progress: o.events.reduce((a, o) => {
+    progress: o.events.reduce((a: number, o: string) => {
       if (o === 'connect') {
         a += 50;
       }

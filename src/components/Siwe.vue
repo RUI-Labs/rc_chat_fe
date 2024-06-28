@@ -1,16 +1,21 @@
 <template>
   <div class="w-full">
-    <div v-if="!address" class="w-full flex flex-col space-y-2 justify-center items-center">
-      <button @click="_connect(connector)" class="rounded-md border px-4 py-2 w-full" v-for="connector in connectors">{{ connector.name }}</button>
+    <div v-if="!address" class="w-full flex flex-col space-y-2 justify-center items-center p-4">
+      <button @click="_connect(connector)" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300" v-for="connector in connectors">{{ connector.name }}</button>
     </div>
 
     <div v-if="address"  class="w-full">
-      <div class="w-full flex justify-between items-center mb-12">
-        <p>Connected: {{ String(address).substr(0, 6) }}...{{ String(address).substr(-4) }}</p>
-        <Button variant="outline" @click="_disconnect()">Disconnect</Button>
+      <div class="w-full flex justify-between items-center mb-12 border-y border-stone-800 bg-white/5 p-4 ">
+        <div class="text-white">
+          <p class="text-sm font-semibold">Connected</p>
+          <p>{{ String(address).substr(0, 6) }}...{{ String(address).substr(-4) }}</p>
+        </div>
+        <Button variant="outline" class="bg-stone-700 border-stone-600 text-white" @click="_disconnect()">Disconnect</Button>
       </div>
 
-      <Button @click="startSIWE()" class="w-full">Sign In</Button>
+      <div class="w-full p-2">
+        <Button @click="startSIWE()" class="w-full bg-blue-500 hover:bg-blue-600 font-brand text-lg py-6">Sign In</Button>
+      </div>
     </div>
   </div>
 </template>
@@ -33,8 +38,11 @@ const checkAccount = async () => {
   } catch (err) {}
 };
 
+
 onMounted(async () => {
   connectors.value = getConnectors(config);
+
+  connectors.value = connectors.value.filter( _c => _c.id != "injected")
 
   await reconnect(config);
   await checkAccount();

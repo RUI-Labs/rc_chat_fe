@@ -14,32 +14,32 @@ import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
     <meta name="generator" content={Astro.generator} />
     <title>Astro</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet" crossorigin="anonymous" />
   </head>
 
-  <body class={`w-full h-full min-h-screen grid grid-rows-[auto_1fr] `}>
+  <body class=`w-full h-full min-h-screen grid grid-rows-[auto_1fr] bg-stone-900 `>
     <script>
       import "iconify-icon";
     </script>
 
-    <nav class="w-full border-b p-4 grid grid-cols-3">
+    <nav class="w-full border-b border-b-stone-700 bg-stone-800 p-4 grid grid-cols-3">
       <div class="w-full flex justify-start items-center space-x-2 col-span-2">
 
-        <div class="font-brand font-bold text-lg ml-2 mr-4">REMO</div>
+        <div class="font-brand font-bold text-lg ml-2 mr-4 text-white">REMO</div>
 
         <div class="w-[200px] flex justify-center items-center">
-        <ProjectDropdown client:only="vue" wallet={Astro.locals.user.id}/>
+          <ProjectDropdown client:only="vue" wallet={Astro.locals.user.id}/>
         </div>
         <a href="/admin">
-          <Button variant="ghost">Campaigns</Button>
+          <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Campaigns</Button>
         </a>
         <a href="/admin/users">
-          <Button variant="ghost">Users</Button>
+          <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Users</Button>
         </a>
         <a href="/admin/chat">
-          <Button variant="ghost">Chat</Button>
+          <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Chat</Button>
         </a>
       </div>
 

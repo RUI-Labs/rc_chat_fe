@@ -91,6 +91,12 @@
                         <!-- {{ message.content }} -->
                     </div>
                 </template>
+
+                <template v-if="message.type == 'attachment'">
+                    <div class="w-[100px] h-[100px] border rounded-md">
+                        <img :src="message.content" />
+                    </div>
+                </template>
             </div>
         </div>
 
@@ -131,7 +137,7 @@ import { useElementBounding } from '@vueuse/core'
 const { isOutside:isOutsideChatToggle } = useMouseInElement(chatbubbleEl);
 const { isOutside:isOutsideChatroom } = useMouseInElement(chatroomEl);
 
-import { $receiptImageData, $showReceipt, $xmtpClient } from "@/stores/stamp"
+import { $receiptImageData, $showReceipt, $xmtpClient, $refreshMessages } from "@/stores/stamp"
 
 const receiptImageData = ref(null)
 const showReceipt = ref(false)
@@ -147,7 +153,7 @@ const { project_info } = toRefs(props);
 
 onMounted(() => {
     $showReceipt.subscribe( value => {
-        console.log(value)
+        console.log('showReceipt', value)
         showReceipt.value = value
     })
 
@@ -177,6 +183,12 @@ onMounted(() => {
 
             await fetchMessages();
         }
+    })
+
+
+    $refreshMessages.subscribe(() => {
+        console.log("$refreshMessages.value", $refreshMessages.value)
+        fetchMessages();
     })
 
 })
@@ -370,6 +382,7 @@ const sendMessage = async () => {
     
 }
 
+import { ContentTypeRemoteAttachment, RemoteAttachmentCodec, AttachmentCodec } from "@xmtp/content-type-remote-attachment";
 
 const fetchMessages = async () => {
 
@@ -382,15 +395,69 @@ const fetchMessages = async () => {
         let _message = await selectedConversation.messages();
         console.log('_message', _message);
 
-        messages.value = _message.map((m) => {
-            return {
-                content: m.content,
-                id: m.id,
-                senderAddress: m.senderAddress,
-                type: 'text',
-                sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
-            };
-        });
+        
+        messages.value = await Promise.all(
+
+            _message.map( async (m) => {
+                
+                // return {
+                //         content: m.content,
+                //         id: m.id,
+                //         senderAddress: m.senderAddress,
+                //         type: 'text',
+                //         sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+                //     };
+    
+                if (m.contentType.sameAs(ContentTypeRemoteAttachment)) {
+    
+                    // console.log("aaaaaa", m)
+    
+                    try {
+                        
+                        const attachment = await RemoteAttachmentCodec.load(m.content, $xmtpClient.value);
+        
+                        // await RemoteAttachmentCodec.load()
+                        console.log("attachment", m, attachment)
+
+                        const objectURL = URL.createObjectURL(
+                            new Blob([Buffer.from(attachment.data)], {
+                                type: attachment.mimeType,
+                            }),
+                        );
+                        console.log('objectURL', objectURL)
+
+                        return {
+                            content: objectURL,
+                            id: m.id,
+                            senderAddress: m.senderAddress,
+                            type: 'attachment',
+                            sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+                        };
+    
+                    } catch(error) {
+
+                        // console.log("error attachment", m, error)
+                        return {
+                            content: '',
+                            id: m.id,
+                            senderAddress: m.senderAddress,
+                            type: 'media',
+                            sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+                        };
+                    }
+    
+                } else {
+                    return {
+                        content: m.content,
+                        id: m.id,
+                        senderAddress: m.senderAddress,
+                        type: 'text',
+                        sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+                    };
+                }
+    
+            })
+        )
 
         // scrollToBottom();
 

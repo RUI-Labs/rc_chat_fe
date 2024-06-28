@@ -1,6 +1,6 @@
 ---
 const { project } = Astro.params;
-const project_info = await fetch(`${Astro.url.origin}/api/${project}.json`).then(res => res.json())
+const project_info = await fetch(`${Astro.url.origin}/api/project/${project}.json`).then(res => res.json())
 // console.log(project_info)
 
 import Layout from '@/layouts/Layout.astro'
@@ -22,6 +22,7 @@ import CampaignModal from '@/components/campaign/Modal.vue'
 import ChatBubble from '@/components/ChatBubble.vue'
 
 import HeaderAction from '@/components/HeaderAction.vue'
+
 
 ---
 

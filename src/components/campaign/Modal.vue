@@ -27,7 +27,7 @@
 
                 
                 
-                  <main id="mainCard" class="w-full h-full min-h-full flex flex-col justify-center items-center bg-white relative">
+                  <main v-if="!stampFound" id="mainCard" class="w-full h-full min-h-full flex flex-col justify-center items-center bg-white relative">
                     <div class="w-full flex justify-start items-center p-2 absolute top-4 left-4">
                       <button @click="toggleModal()" class="p-2 px-6 text-xl bg-gray-200 rounded-xl mb-12 flex justify-center items-center duration-300 hover:scale-90 hover:ring-4 hover:ring-gray-100 hover:ring-offset-4">
                         <iconify-icon class="text-xl mr-4" icon="ep:back"></iconify-icon>
@@ -84,6 +84,11 @@
                       </div>
                     </div>
                   </main>
+
+                  <template v-else class="w-full h-full min-h-full flex flex-col justify-center items-center bg-white relative">
+                    <!-- {{ $receiptImageData.value }} -->
+                    <img :src="stampFound?.url" />
+                  </template>
                 
               </DialogPanel>
             </TransitionChild>
@@ -101,7 +106,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 // import Stamper from '@/components/Stamper.vue'
 
 import { toPng } from "html-to-image";
-import { $receiptImageData, $showReceipt, $userData, confirmStampAndSendMessage } from "@/stores/stamp"
+import { $receiptImageData, $showReceipt, $userData, confirmStampAndSendMessage, sendImage } from "@/stores/stamp"
 
 const props = defineProps([ "project_info", "campaign_info" ]);
 const { project_info, campaign_info } = toRefs(props);
@@ -110,10 +115,19 @@ const open = ref(false);
 
 const toggleModal = () => {
   open.value = !open.value;
+  if(open.value) {
+    console.log('view view view')
+    if(stampFound.value) {
+      setTimeout(() => {
+        open.value = false;
+      }, 1000); 
+    }
+  }
 };
 
 const address = ref()
 const name = ref()
+const stampFound = ref(false);
 
 onMounted(() => {
   
@@ -130,6 +144,19 @@ onMounted(() => {
     console.log('$userData.value', $userData.value)
     address.value = $userData.value?.wallet_address;
     name.value = $userData.value?.name;
+
+    const stamped = $userData.value?.stamps.find(x => Number(x.campaign_id) === Number(urlCampaign))
+    if(stamped) {
+      $showReceipt.set(true);
+      $receiptImageData.set(stamped.url);
+      setTimeout(() => {
+        open.value = false;
+      }, 1000); 
+      // noStamp.value = false;
+      updateStamp();
+      stampFound.value = stamped;
+    }
+
   })
 
 
@@ -199,9 +226,9 @@ const stampCircleEl = ref(null);
 // const receiptImageEl = ref(null);
 
 const confirmStamp = () => {
-  if (noStamp.value) return;
+  if (!noStamp.value) return;
 
-  confirmStampAndSendMessage(project_info.value, campaign_info.value);
+  // confirmStampAndSendMessage(project_info.value, campaign_info.value);
 
   stampStop.value = true;
   zoomStamp.value = true;
@@ -215,14 +242,17 @@ const confirmStamp = () => {
 
   let node = document.getElementById("mainCard");
   toPng(node)
-    .then((dataUrl) => {
+    .then( async (dataUrl) => {
       var img = new Image();
+      // console.log('img', img)
       img.src = dataUrl;
       // document.body.appendChild(img);
       stampedCardImage.value = dataUrl;
 
         $receiptImageData.set(dataUrl)
         $showReceipt.set(true)
+
+        await sendImage(project_info.value, campaign_info.value);
 
         open.value = false
     })
@@ -237,6 +267,9 @@ const confirmStamp = () => {
 };
 
 const updateStamp = () => {
-  noStamp.value = false;
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const urlCampaign = urlParams.get('campaign')
+  noStamp.value = !$userData.value?.stamps.find(x => Number(x.campaign_id) === Number(urlCampaign));
 };
 </script>

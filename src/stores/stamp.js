@@ -14,6 +14,7 @@ import { getEthersSigner } from "@/utils/getEthersSigner";
 import { config } from "@/wagmiConfig";
 import { getAccount } from "@wagmi/core";
 import { mainnet } from "viem/chains";
+import { ContentTypeAttachment, AttachmentCodec, RemoteAttachmentCodec, ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
 
 export const $xmtpClient = atom(null);
 
@@ -139,6 +140,9 @@ export const initXmtp = async () => {
         privateKeyOverride: xmtpBundleKeys,
     });
 
+    xmtp.registerCodec(new AttachmentCodec());
+    xmtp.registerCodec(new RemoteAttachmentCodec());
+
     console.log("xmtp", xmtp);
     $xmtpClient.set(xmtp);
 
@@ -199,12 +203,145 @@ export const initUser = async () => {
 
 
 
-
+export const $refreshMessages = atom(false);
 
 export const confirmStampAndSendMessage = async (_projectInfo, _campaign) => {
 
     const _message = `campaign:${_campaign?.id}`;
     const conversation = await $xmtpClient.value.conversations.newConversation(_projectInfo.owner_address.toLowerCase());
-    await conversation.send(_message);
+    
+    try {
+        await conversation.send(_message);
+        $refreshMessages.set( !$refreshMessages.value );
+    } catch(error) {
+        $refreshMessages.set( !$refreshMessages.value );
+    }
 
+}
+
+import supabase from "@/supabase";
+const SUPABASE_URL = "https://ojvozirqgxgiztlmasrm.supabase.co"
+
+export const sendImage = async (_projectInfo, _campaign) => {
+
+    const filename = `stamp:${_projectInfo.token_address.toLowerCase()}:${_campaign?.id}:${$userData.value.wallet_address.toLowerCase()}:${Date.now()}.png`
+    const encodedname = `enodedstamp:${_projectInfo.token_address.toLowerCase()}:${_campaign?.id}:${$userData.value.wallet_address.toLowerCase()}:${Date.now()}`
+    const imagetype = "image/png";
+    
+    const imagefile = base64ToFile($receiptImageData.value, filename, imagetype);
+    console.log('imagefile', imagefile)
+
+    const imagedata = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (reader.result instanceof ArrayBuffer) {
+                resolve(reader.result);
+            } else {
+                reject(new Error("Not an ArrayBuffer"));
+            }
+        };
+        reader.readAsArrayBuffer(imagefile);
+    });
+
+    console.log("imagedata", imagedata);
+
+    
+    
+    const attachment = {
+        // filename: image?.name,
+        "filename": filename,
+        // mimeType: image?.type,
+        "mimeType": imagetype,
+        // data: new Uint8Array(data),
+        "data": new Uint8Array(imagedata),
+    };
+
+    const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
+        attachment,
+        new AttachmentCodec(),
+    );
+
+    
+    // upload to supabase storage 
+    const imageUp = await supabase.storage.from('stamps').upload(filename, imagefile, { upsert:true })
+    const encodedUp = await supabase.storage.from('stamps').upload(encodedname, encryptedEncoded.payload, { upsert:true })
+
+    const url = `${SUPABASE_URL}/storage/v1/object/public/${imageUp.data.fullPath}`
+    const encoded_url = `${SUPABASE_URL}/storage/v1/object/public/${encodedUp.data.fullPath}`
+    console.log('url', url);
+
+    const upload = await fetch("/api/uploadstamp.json", {
+        method: "POST",
+        body: JSON.stringify({
+            "url": url,
+            "encoded_url": encoded_url,
+            "wallet_address": $userData.value.wallet_address.toLowerCase(),
+            "campaign_id": _campaign?.id,
+            "project_id": _projectInfo.token_address.toLowerCase(),
+        })
+    }).then(res => res.text()).then(result => JSON.parse(result)).catch(err => null)
+    console.log("upload", upload);
+
+
+    
+
+
+    const remoteAttachment = {
+        url: encoded_url,
+        contentDigest: encryptedEncoded.digest,
+        salt: encryptedEncoded.salt,
+        nonce: encryptedEncoded.nonce,
+        secret: encryptedEncoded.secret,
+        scheme: "https://",
+        filename: attachment.filename,
+        contentLength: attachment.data.byteLength,
+    };
+
+
+    // const reattachment = await RemoteAttachmentCodec.load(remoteAttachment, $xmtpClient.value);
+    // console.log('wwwwww', reattachment, objectURL)
+
+    // const objectURL = URL.createObjectURL(
+    //     new Blob([Buffer.from(reattachment.data)], {
+    //         type: reattachment.mimeType,
+    //     }),
+    // );
+    // console.log('wwwwww', reattachment, objectURL)
+
+    const conversation = await $xmtpClient.value.conversations.newConversation(_projectInfo.owner_address.toLowerCase());
+    
+    try {
+        await conversation.send(remoteAttachment, {
+            contentType: ContentTypeRemoteAttachment,
+        });
+        $refreshMessages.set( !$refreshMessages.value );
+    } catch(error) {
+        $refreshMessages.set( !$refreshMessages.value );
+    }
+
+
+}
+
+
+
+const base64ToFile = (base64, filename, contentType = 'image/jpg', sliceSize = 512) => {
+    const byteCharacters = atob(base64.split(',')[1]);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    const nblob = new Blob(byteArrays, { type: contentType });
+    const file = new File([nblob], `${filename}.jpg`, { type: contentType });
+
+    return file;
 }

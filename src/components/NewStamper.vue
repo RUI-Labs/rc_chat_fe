@@ -84,7 +84,7 @@
 
 <script setup>
 
-import { computed, markRaw, onMounted, ref, watch } from "vue";
+import { computed, markRaw, onMounted, ref, watch, onUnmounted } from "vue";
 import { reconnect, getAccount, watchConnections, disconnect, getConnectors, connect } from "@wagmi/core";
 import { config } from "@/wagmiConfig";
 import { getUserSubscriptionId } from "@/utils/userAuth"
@@ -181,7 +181,7 @@ const createNewWallet = async () => {
 // ];
 const walletOptions = ref([])
 const walletAccount = ref()
-let unwatch;
+let unwatch = undefined;
 onMounted( async () => {
 
   getUserSubscriptionId();
@@ -222,7 +222,9 @@ onMounted( async () => {
   })
 
 })
-
+onUnmounted(() => {
+  if(unwatch) unwatch();
+})
 
 const nameInput = ref();
 

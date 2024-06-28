@@ -7,14 +7,24 @@ import NewProjectDialog from "@/components/admin/NewProjectDialog.vue";
 
 const newProjectDialogRef  = ref(null);
 
+const selectProject = (project) => {
+        window.location.href = "/admin/project/" + project.token_symbol
+}
+
 const newProject = () => {
   newProjectDialogRef.value.show();
 };
-import { defineProps, toRefs, computed, h, ref } from "vue";
+import { onMounted, defineProps, toRefs, computed, h, ref } from "vue";
 
 const props = defineProps(["wallet"]);
 const { wallet } = toRefs(props);
-console.log(16, wallet.value)
+
+const projects = ref([])
+
+onMounted(async () => {
+        projects.value = await fetch(`/api/projects.json?owner=${wallet.value}`)
+        .then(res => res.json())
+})
 
 </script>
 
@@ -30,7 +40,7 @@ console.log(16, wallet.value)
     <DropdownMenuContent :align="'start'" class="bg-stone-800 border-stone-600 text-stone-100">
       <DropdownMenuLabel class="text-white">Select Project</DropdownMenuLabel>
       <DropdownMenuSeparator class="bg-stone-700" />
-      <DropdownMenuItem>Profile</DropdownMenuItem>
+      <DropdownMenuItem @click="selectProject(project)" v-for="project in projects">{{ project.token_name }}</DropdownMenuItem>
       <DropdownMenuSeparator class="bg-stone-700" />
       <DropdownMenuItem @click="newProject()">
           <iconify-icon icon="material-symbols:add" class="mr-2"></iconify-icon>

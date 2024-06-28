@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
 import NewChatDialog from "@/components/admin/NewChatDialog.vue";
 
+const emit = defineEmits(["selected"]);
+
+const selectedProject = (project) => {
+  console.log(project)
+//emit('selected', project)
+}
+
 ---
 
 <html lang="en">
@@ -63,7 +70,7 @@ import NewChatDialog from "@/components/admin/NewChatDialog.vue";
         <div class="font-brand font-bold text-lg ml-2 mr-4">REMO</div>
 
         <div class="w-[200px] flex justify-center items-center">
-          <ProjectDropdown client:only="vue" />
+          <ProjectDropdown @selected="" client:only="vue" />
         </div>
         <a href="/admin">
           <Button variant="ghost">Campaigns</Button>

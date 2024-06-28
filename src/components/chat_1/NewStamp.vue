@@ -7,7 +7,7 @@
         </TransitionChild>
 
         <div class="fixed inset-0 z-[54] w-screen h-screen">
-          <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div class="flex min-h-full items-end justify-center text-center sm:items-center">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
               <DialogPanel class="w-screen h-screen bg-gradient-to-b from-blue-500 to-blue-800 flex justify-center items-center">
 
@@ -16,9 +16,9 @@
                 </button>
 
                 <div ref="page_1" v-if="page == 1" class="flex flex-col justify-center items-center">
-                  <p id="text1-1" class="max-h-0 overflow-hidden text-white font-brand text-5xl mb-4">Let's make a new stamp!</p>
+                  <p id="text1-1" class="max-h-0 overflow-hidden whitespace-break-spaces text-white font-brand text-3xl sm:text-5xl mb-4">Let's make a new stamp!</p>
 
-                  <p id="text1-2" class="max-h-0 overflow-hidden text-white font-brand text-5xl">Connect your Wallet</p>
+                  <p id="text1-2" class="max-h-0 overflow-hidden text-white font-brand text-3xl sm:text-5xl">Connect your Wallet</p>
 
                   <div id="text1-3" class="max-h-0 overflow-hidden w-full flex justify-center items-center flex-col">
 
@@ -55,15 +55,15 @@
 
                 </div>
 
-                <div ref="page_2" id="page2" v-if="page == 2" class="scale-0 opacity-0 flex flex-col justify-center items-center">
-                  <p class="text-white font-brand text-5xl mb-4">What's your name?</p>
+                <div ref="page_2" id="page2" v-if="page == 2" class="scale-0 opacity-0 flex flex-col justify-center items-center w-full px-4">
+                  <p class="text-white font-brand text-2xl sm:text-5xl mb-4">What's your name?</p>
 
-                  <p class="text-white font-brand text-3xl mb-2">A simple one would do</p>
-                  <p class="text-white font-brand">(like the one you tell in Starbucks)</p>
+                  <p class="text-white font-brand text-2xl sm:text-3xl mb-2">A simple one would do</p>
+                  <p class="text-white font-brand sm:text-base text-sm">(like the one you tell in Starbucks)</p>
 
-                  <input v-model="nameInput" placeholder="Name the next billionare..." class="mt-8 mb-12 text-white placeholder:text-white placeholder:text-opacity-30 text-3xl w-full bg-transparent  border-b py-2 border-b-white rounded-none focus:outline-none text-center">
+                  <input v-model="nameInput" placeholder="Name the next billionare..." class="mt-8 mb-12 text-white placeholder:text-white placeholder:text-opacity-30 text-3xl w-full max-w-sm bg-transparent  border-b py-2 border-b-white rounded-none focus:outline-none text-center">
                  
-                  <button @click="confirmName()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">My name is {{ nameInput ? nameInput : '...' }} </button>
+                  <button @click="confirmName()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full max-w-sm rounded-md p-4 text-xl font-brand bg-white">My name is {{ nameInput ? nameInput : '...' }} </button>
                 </div>
 
                 <div v-if="page == 3" class="flex flex-col justify-center items-center">

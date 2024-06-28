@@ -79,7 +79,7 @@ export const initXmtp = async () => {
             // save contact to supabase
             const wallet =  getAccount(config)
             localStorage.setItem(`xmtp-wallet-${wallet.address.toLowerCase()}`, privateKey);
-            await fetch('/api/contactbook.json', {
+            fetch('/api/contactbook.json', {
                 method: 'POST',
                 body: JSON.stringify({
                     "wallet_address": wallet.address.toLowerCase(),
@@ -124,7 +124,7 @@ export const initXmtp = async () => {
 
             // save contact to supabase
             const wallet = getAccount(config)
-            await fetch('/api/contactbook.json', {
+            fetch('/api/contactbook.json', {
                 method: 'POST',
                 body: JSON.stringify({
                     "wallet_address": wallet.address.toLowerCase(),

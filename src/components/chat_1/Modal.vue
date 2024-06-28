@@ -31,7 +31,7 @@
                     </button>
                     <div class="p-8 mt-4">
                       <p class="mb-4">you're invited to join:</p>
-                      <h1 class="text-4xl font-brand font-bold">{{ campaign_info?.message }}</h1>
+                      <h1 class="text-4xl font-brand font-bold">{{ $selectedCampaign.value?.message }}</h1>
                     </div>
 
                     <div class="px-8 text-center pb-2">
@@ -166,7 +166,7 @@ const confirmStamp = () => {
   stampStop.value = true;
   zoomStamp.value = true;
 
-  confirmStampAndSendMessage(project_info.value, campaign_info.value);
+  confirmStampAndSendMessage(project_info.value, $selectedCampaign.value);
 
   let node = document.getElementById("mainCard");
   toPng(node).then( async (dataUrl) => {
@@ -181,7 +181,7 @@ const confirmStamp = () => {
         $showReceipt.set(true)
         
 
-        await sendImage(project_info.value, campaign_info.value);
+        await sendImage(project_info.value, $selectedCampaign.value);
 
         open.value = false;
         $showCampaignModal.set(false);

@@ -330,6 +330,8 @@ const sendMessage = () => {
 
 const showCampaignModalTrigger = (_c) => {
   console.log("showing modal from drawer");
+  console.log(_c);
+
   $selectedCampaign.set(null);
   $showCampaignModal.set(true);
   $selectedCampaign.set(_c);
@@ -495,7 +497,7 @@ onMounted( async () => {
   $xmtpClient.subscribe( async (value) => {
       if ($xmtpClient.value) {
           conversations.value = await $xmtpClient.value.conversations.list();
-          // console.log(conversations.value)
+          console.log('conversations.value', conversations.value)
 
           // check if the recipient address is in the list of conversations
           let exists = conversations.value.find((c) => c.peerAddress.toLowerCase() === project_info.value.owner_address.toLowerCase());
@@ -516,9 +518,17 @@ onMounted( async () => {
       }
   })
 
-  $refreshMessages.subscribe(() => {
+  $refreshMessages.subscribe( async () => {
       console.log("$refreshMessages.value", $refreshMessages.value)
-      fetchMessages();
+
+      if(messages.value.length == 0) {
+        console.log('gggggggg')
+        conversations.value = await $xmtpClient.value?.conversations.list();
+        fetchMessages();
+      } else {
+        fetchMessages();
+      } 
+
   })
 
 
@@ -634,8 +644,7 @@ import { ContentTypeRemoteAttachment, RemoteAttachmentCodec, AttachmentCodec } f
 const fetchMessages = async () => {
 
   messages.value = [];
-
-  let selectedConversation = conversations.value.find((c) => c.peerAddress.toLowerCase() === project_info.value.owner_address.toLowerCase());
+  let selectedConversation = conversations.value?.find((c) => c.peerAddress.toLowerCase() === project_info.value.owner_address.toLowerCase());
   console.log('selectedConversation', selectedConversation)
 
   if (selectedConversation) {
@@ -746,7 +755,11 @@ const pushXmtpMessage = async () => {
         console.log("sendMessage", err);
     }
     
-    if(messages.value.length == 0) fetchMessages();
+    if(messages.value.length == 0) {
+      console.log('gggggggg')
+      conversations.value = await $xmtpClient.value.conversations.list();
+      fetchMessages();
+    } 
     isMessageBusy.value = false;
     
 }

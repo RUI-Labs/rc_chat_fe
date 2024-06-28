@@ -22,7 +22,7 @@
 
                   <div id="text1-3" class="max-h-0 overflow-hidden w-full flex justify-center items-center flex-col">
 
-                    <div class="w-full max-w-sm space-y-4 mt-8">
+                    <div class="w-full max-w-sm space-y-4 mt-8 px-4">
                       <button @click="connectWallet()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Metamask</button>
                       <button @click="connectWallet()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Rabby</button>
                       <button @click="connectWallet()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Coinbase Smart Wallet</button>
@@ -30,7 +30,7 @@
   
                     <p class="text-white text-xl py-8">or create a new wallet ;)</p>
   
-                    <div class="w-full max-w-sm" >
+                    <div class="w-full max-w-sm px-4" >
                       <button @click="createWallet()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Create New Wallet</button>
                       <p class="text-white mt-2" >with Coinbase Smart Wallet</p>
                     </div>
@@ -67,9 +67,9 @@
                 </div>
 
                 <div v-if="page == 3" class="flex flex-col justify-center items-center">
-                  <p class="text-white font-brand text-5xl mb-4">Turn on notifications</p>
+                  <p class="text-white font-brand sm:text-5xl text-3xl mb-4">Turn on notifications</p>
 
-                  <p class="text-white font-brand text-3xl mb-2">We might need to announce a winner</p>
+                  <p class="text-white font-brand sm:text-3xl text-lg mb-2">We might need to announce a winner</p>
                   
                   <div class="p-8 aspect-square bg-white/10 flex justify-center items-center flex-col space-y-4 my-4 rounded-xl text-center">
                     <button @click="requestNotification()" class="w-28 h-28 bg-white rounded-full active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 group">
@@ -85,8 +85,8 @@
                 </div>
 
                 <div v-if="page == 4" class="flex flex-col justify-center items-center">
-                  <p class="text-white font-brand text-5xl mb-4">Your stamp is ready!</p>
-                  <p class="text-white font-brand text-3xl mb-2">Now you can stamp all invitations.</p>
+                  <p class="text-white font-brand text-2xl sm:text-5xl mb-4">Your stamp is ready!</p>
+                  <p class="text-white font-brand text-xl sm:text-3xl mb-2">Now you can stamp all invitations.</p>
 
                   <p class="text-white font-brand mt-8 mb-2">This stamp is yours forever. To restore this stamp, just connect your wallet.</p>
 
@@ -130,7 +130,7 @@ const page_2 = ref()
 
 watch(page_1, async (value) => {
   // console.log('page_1', value)
-  console.log(document.getElementById('1_1'))
+  // console.log(document.getElementById('1_1'))
 
   // await new Promise((resolve) => {
   //   setTimeout( () => {

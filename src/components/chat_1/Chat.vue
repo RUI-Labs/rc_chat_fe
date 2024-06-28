@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center w-full h-[60vh]">
+  <div class="flex justify-center items-center w-full h-full max-h-[70vh] lg:h-[60vh]">
     <div v-if="gotStamp" class="w-screen h-screen fixed top-0 left-0 z-10" :style="`background:${currentColor}20;`">
       <div class="w-full grid" style="grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr))">
         <div class="pointer-events-none changing-text w-full aspect-square flex justify-center items-center text-8xl filter font-brand font-black opacity-20" :style="`color:${currentColor};`" v-for="i in 200">{{ currentCharacter }}</div>
@@ -7,70 +7,113 @@
     </div>
 
     <NewStampModal></NewStampModal>
+    <ModalVue></ModalVue>
     <ConnectWallet></ConnectWallet>
 
     <div id="snapshotParent" v-if="showReceipt" class="w-screen h-screen top-0 left-0 z-[999] fixed flex justify-center items-center">
-        <div id="whiteFlash" class="bg-white w-full h-full absolute z-30"></div>
-        <img id="receiptImage" class="w-full h-full z-20 rounded-xl object-cover" :src="receiptImageData" alt="">
-        <div id="blackDrop" class="bg-black/50 w-full h-full absolute z-10"></div>
+      <div id="whiteFlash" class="bg-white w-full h-full absolute z-30"></div>
+      <img id="receiptImage" class="w-full h-full z-20 rounded-xl object-cover" :src="receiptImageData" alt="" />
+      <div id="blackDrop" class="bg-black/50 w-full h-full absolute z-10"></div>
     </div>
 
     <div v-if="showWelcome" id="showWelcomeEl" class="w-screen h-screen fixed top-0 left-0 z-[101] bg-[#EBE6DF] flex justify-center items-center flex-col opacity-0 scale-90">
-
       <h1 class="text-4xl font-brand font-bold mb-8 text-black">Welcome to</h1>
 
       <p class="text-black text-8xl font-brand font-semibold">Ruilabs</p>
 
-      <p class="text-black text-xl uppercase font-brand mt-8 ">on&nbsp;&nbsp;&nbsp;<span class="bg-blue-500 text-white px-4 py-2 rounded-full">REMO</span> </p>
-
+      <p class="text-black text-xl uppercase font-brand mt-8">
+        on&nbsp;&nbsp;&nbsp;
+        <span class="bg-blue-500 text-white px-4 py-2 rounded-full">REMO</span>
+      </p>
     </div>
 
     <template v-if="gotStamp">
+      <div class="w-full flex justify-center items-center p-4 sm:p-0 h-full">
+        <div class="w-full absolute hidden lg:grid grid-cols-[1fr_28rem_1fr] justify-center items-center">
+          <div class="flex flex-col justify-center items-center p-8">
+            <section ref="campaignList2" class="campaignList bg-white z-50 rounded-xl shadow-xl max-h-[300px] overflow-hidden w-full max-w-xs bg-opacity-20 hover:bg-opacity-100 duration-300 backdrop-blur-md">
+              <p class="text-left text-xl font-brand font-bold p-4 border-b bg-white sticky top-0">Active Campaigns</p>
 
-
-    
-
-    <div class="w-full flex justify-center items-center p-4 sm:p-0">
-      <div class="w-full absolute hidden xl:grid grid-cols-[1fr_28rem_1fr] justify-center items-center">
-        <div class="flex flex-col justify-center items-center p-8">
-          <section id="campaignList" class="bg-white z-50 rounded-xl shadow-xl max-h-[300px] overflow-hidden w-full max-w-xs bg-opacity-20 hover:bg-opacity-100 duration-300 backdrop-blur-md">
-            <p class="text-left text-xl font-brand font-bold p-4 border-b bg-white sticky top-0">Active Campaigns</p>
-
-            <div class="px-4">
-              <div class="py-2 flex justify-between items-center" v-for="i in 120">
-                <p class="font-brand text-lg">Lorem Ipsum</p>
-                <ModalVue>
-                    <button :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
-                </ModalVue>
+              <div class="px-4">
+                <div class="py-2 flex justify-between items-center" v-for="i in 120">
+                  <p class="font-brand text-lg">Lorem Ipsum</p>
+                  <button @click="showCampaignModalTrigger()" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
+                </div>
               </div>
-            </div>
-          </section>
-        </div>
-        <div></div>
-        <div class="w-full flex justify-center items-center flex-col">
-          <!-- <button class="w-[250px] h-[250px] bg-white rounded-full z-50">
+            </section>
+          </div>
+          <div></div>
+          <div class="w-full flex justify-center items-center flex-col">
+            <!-- <button class="w-[250px] h-[250px] bg-white rounded-full z-50">
 
           </button> -->
 
-          
             <StampCircle class="z-50" address="0xcB35ed9B8a830fA472931cc63a62793910c59270" name="lorem"></StampCircle>
             <button class="z-50 mt-8 px-4 py-2 rounded-full bg-red-100 text-lg font-brand border border-white hover:ring-2 hover:ring-red-500 hover:ring-offset-2 hover:bg-red-500 hover:text-white duration-300 text-red-500 active:scale-75">Disconnect</button>
-       
-      
-        </div>
-      </div>
-
-      <div class="w-full max-w-md h-full z-20">
-
-      
-          
-          <div class="xl:hidden -mt-12 pb-2">
-            <button class="bg-black text-white font-brand font-semibold p-3 px-4 rounded-xl duration-300 hover:ring-2 hover:ring-black hover:ring-offset-2 active:scale-90">View All Campaign (10)</button>
           </div>
-  
+        </div>
+
+        <div class="w-full max-w-md h-full z-20">
+          <div class="lg:hidden -mt-12 pb-2">
+
+            
+            
+            <div class="fixed top-2 right-0 z-50 p-2 flex justify-between items-center w-full">
+              <div class="flex justify-start items-center space-x-4">
+                
+
+                <DropdownMenu>
+    <DropdownMenuTrigger>
+      <button class="bg-white w-12 h-12 border rounded-xl shadow flex justify-center items-center">
+        <iconify-icon class="text-xl" icon="hugeicons:stamp-02"></iconify-icon>
+      </button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent class="p-4 rounded-xl" :align="'start'">
+      <StampCircle address="0xcB35ed9B8a830fA472931cc63a62793910c59270" name="lorem"></StampCircle>
+    </DropdownMenuContent>
+  </DropdownMenu>
+
+                <p class="font-brand text-lg">{{ _address.slice(0, 6) }}...{{ _address.slice(-4) }}</p>
+              </div>
+
+              <Button class="bg-red-100 text-red-500" variant="ghost">Disconnect</Button>
+            </div>
+            
+            <Drawer>
+              <DrawerTrigger>
+                <button class="bg-black text-white font-brand font-semibold p-3 px-4 rounded-xl duration-300 hover:ring-2 hover:ring-black hover:ring-offset-2 active:scale-90">View All Campaign (10)</button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>Active Campaign</DrawerTitle>
+                  <DrawerDescription>active campaign.</DrawerDescription>
+                </DrawerHeader>
+
+                <section class="bg-white z-50 rounded-xl shadow-xl max-h-[80vh] overflow-y-auto w-full">
+                  <!-- <p class="text-left text-xl font-brand font-bold p-4 border-b bg-white sticky top-0">Active Campaigns</p> -->
+
+                  <div class="px-4">
+                    <div class="py-2 flex justify-between items-center" v-for="i in 120">
+                      <p class="font-brand text-lg">Lorem Ipsum</p>
+
+                      <DrawerTrigger>
+                        <button @click="showCampaignModalTrigger()" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
+
+                      </DrawerTrigger>
+                      
+                      
+                      
+                    </div>
+                  </div>
+                </section>
+
+              </DrawerContent>
+            </Drawer>
+          </div>
+
           <div class="chat-parent shadow-xl w-full h-full rounded-xl p-4">
             <div class="w-full bg-gray-100 rounded-md p-4 font-brand font-bold">Yao from Ruilabs</div>
-  
+
             <div class="chat">
               <div class="mine messages">
                 <div class="message last">Dude</div>
@@ -86,79 +129,82 @@
               </div>
             </div>
           </div>
-  
+
           <form id="formEl" @submit.prevent="sendMessage()" class="w-full grid grid-cols-[1fr_3rem] items-center justify-center gap-2 pt-4">
             <div>
               <Input class="h-12 rounded-full text-lg pl-4 placeholder:italic font-brand" placeholder="Say Hi!" />
             </div>
-  
+
             <div>
               <button type="submit" class="w-12 h-12 flex justify-center items-center bg-green-500 shadow-md text-white rounded-full hover:shadow-sm duration-300 hover:ring-2 hover:ring-green-500 hover:scale-90 active:scale-75 hover:ring-offset-2">
                 <iconify-icon class="text-2xl" icon="fluent:send-28-filled"></iconify-icon>
               </button>
             </div>
           </form>
-
-
-
+        </div>
       </div>
-    </div>
+    </template>
 
-  </template>
+    <template v-else>
+      <div class="z-50 w-full flex flex-col justify-center items-center">
+        <h1 class="sm:text-6xl text-4xl font-brand font-bold mb-4">Welcome!</h1>
 
-  <template v-else>
+        <h1 class="sm:text-2xl text-xl font-brand font-bold mb-4 text-center">
+          To participate in events by
+          <div class="bg-black text-white rounded-full mx-2 px-3 p-2 sm:my-0">Ruilabs on REMO</div>
+          please get a stamp.
+        </h1>
 
-    <div class="z-50 w-full flex flex-col justify-center items-center">
-      <h1 class="sm:text-6xl text-4xl font-brand font-bold mb-4">Welcome!</h1>
-
-      <h1 class="sm:text-2xl text-xl font-brand font-bold mb-4 text-center">To participate in events by <div class="bg-black text-white rounded-full mx-2 px-3 p-2 sm:my-0">Ruilabs on REMO</div> please get a stamp.</h1>
-      
-      <div class="w-full flex justify-center items-center py-8 px-8">
-        <section id="campaignList" class="border-2 z-50 rounded-xl shadow-xl max-h-[300px] overflow-hidden w-full max-w-md">
+        <div class="w-full flex justify-center items-center py-8 px-8">
+          <section ref="campaignList1" class="campaignList border-2 z-50 rounded-xl shadow-xl max-h-[300px] overflow-hidden w-full max-w-md">
             <p class="text-left text-xl font-brand font-bold p-4 border-b bg-white sticky top-0">Active Campaigns</p>
 
             <div class="px-4">
               <div class="py-2 flex justify-between items-center" v-for="i in 120">
                 <p class="font-brand text-lg">Lorem Ipsum</p>
-                <ModalVue>
-                    <button :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
-                </ModalVue>
+                <button @click="showCampaignModalTrigger()" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
               </div>
             </div>
           </section>
-      </div>
-
-      
-      <div class="w-full grid grid-cols-2 gap-4 justify-center items-center max-w-sm">
-
-        <div>
-          <p class="text-sm text-center py-2">New User?</p>
-          <button @click="updateGotStamp()" class="bg-blue-500 w-full rounded-xl text-white py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Get a Stamp (free)</button>
         </div>
 
-       
-        <div>
-          <p class="text-sm text-center py-2">Already got stamp?</p>
-          <button @click="updateGotStamp()" class="bg-blue-50 w-full rounded-xl text-blue-500 py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Connect Wallet</button>
+        <div class="w-full grid grid-cols-2 gap-4 justify-center items-center max-w-sm">
+          <div>
+            <p class="text-sm text-center py-2">New User?</p>
+            <button @click="updateGotStamp()" class="bg-blue-500 w-full rounded-xl text-white py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Get a Stamp (free)</button>
+          </div>
+
+          <div>
+            <p class="text-sm text-center py-2">Already got stamp?</p>
+            <button @click="updateGotStamp()" class="bg-blue-50 w-full rounded-xl text-blue-500 py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Connect Wallet</button>
+          </div>
         </div>
       </div>
-    </div>
-
-
-  </template>
-  
+    </template>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, watch } from "vue";
-import ModalVue from "@/components/chat_1/Modal.vue"
-import NewStampModal from "@/components/chat_1/NewStamp.vue"
-import ConnectWallet from "@/components/chat_1/ConnectWallet.vue"
+import ModalVue from "@/components/chat_1/Modal.vue";
+import NewStampModal from "@/components/chat_1/NewStamp.vue";
+import ConnectWallet from "@/components/chat_1/ConnectWallet.vue";
 import StampCircle from "@/components/StampCircle.vue";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
-import { $receiptImageData, $showReceipt, $xmtpClient } from "@/stores/stamp"
+import { Button } from "@/components/ui/button";
 
+import { $receiptImageData, $showReceipt, $xmtpClient } from "@/stores/stamp";
+import { $showCampaignModal } from "@/stores/stamp_1";
+
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 
 import "overlayscrollbars/overlayscrollbars.css";
 import { OverlayScrollbars } from "overlayscrollbars";
@@ -174,11 +220,16 @@ const colors = ["#F5E804", "#EE7CF5", "#9EA3EB", "#038B56"];
 const currentCharacter = ref(characters[characterIndex]);
 const currentColor = ref(colors[0]);
 
-const receiptImageData = ref(null)
-const showReceipt = ref(false)
+const receiptImageData = ref(null);
+const showReceipt = ref(false);
 
-const gotStamp = ref(false)
-const showWelcome = ref(false)
+const gotStamp = ref(false);
+const showWelcome = ref(false);
+
+let _address = "0xcB35ed9B8a830fA472931cc63a62793910c59270"
+
+const campaignList1 = ref(null)
+const campaignList2 = ref(null)
 
 const sendMessage = () => {
   console.log("Sending message...");
@@ -229,9 +280,16 @@ const sendMessage = () => {
   currentColor.value = _excludeCurrentColor[Math.floor(Math.random() * _excludeCurrentColor.length)];
 };
 
-onMounted(() => {
-  if (document?.querySelector("#campaignList") != null) {
-    let _body = document.querySelector("#campaignList");
+const showCampaignModalTrigger = () => {
+  console.log("showing modal from drawer");
+  $showCampaignModal.set(true);
+}
+
+const enableOverlayScrollbars = () => {
+  if (document?.querySelector(".campaignList") != null) {
+    let _body = document.querySelector(".campaignList");
+
+    console.log("enabling overlay scrollbars");
     const osInstance = OverlayScrollbars(_body, {
       scrollbars: {
         autoHide: "leave",
@@ -239,82 +297,85 @@ onMounted(() => {
       },
     });
   }
+};
 
-  $showReceipt.subscribe( value => {
-        console.log(value)
-        showReceipt.value = value
-    })
-
-  $receiptImageData.subscribe( value => {
-        receiptImageData.value = value
-    })
-
-    watch(showReceipt, async () => {
-    if(showReceipt.value){
-
-      console.log('showing receipt')
-
-        //wait until whiteFlash is visible
-
-        let waitEl = () => {
-            return new Promise((resolve, reject) => {
-                let el = document.getElementById('whiteFlash')
-                if(el){
-                    resolve(el)
-                }else{
-                    setTimeout(() => {
-                        resolve(waitEl())
-                    }, 100)
-                }
-            })
-        }
-
-        await waitEl()
+onMounted(() => {
 
 
-        console.log('showing receipt')
+  $showReceipt.subscribe((value) => {
+    console.log(value);
+    showReceipt.value = value;
+  });
 
-        anime({
-            targets: '#whiteFlash',
-            opacity: 0,
-            duration: 300,
-            easing: 'easeInOutSine'
-        })
+  $receiptImageData.subscribe((value) => {
+    receiptImageData.value = value;
+  });
 
-        var tl = anime.timeline({
-            easing: 'easeInOutSine',
-            duration: 300,
-            delay: 300
+  watch(showReceipt, async () => {
+    if (showReceipt.value) {
+      console.log("showing receipt");
+
+      //wait until whiteFlash is visible
+
+      let waitEl = () => {
+        return new Promise((resolve, reject) => {
+          let el = document.getElementById("whiteFlash");
+          if (el) {
+            resolve(el);
+          } else {
+            setTimeout(() => {
+              resolve(waitEl());
+            }, 100);
+          }
         });
+      };
 
-        tl.add({
-            targets: '#receiptImage',
-            scale: 0.8,
-            rotate: '-6deg',
-            duration: 300,
-        },'-=150')
+      await waitEl();
 
-        // console.log(sendButtonElBounding.right.x, sendButtonElBounding.right.y)
+      console.log("showing receipt");
 
-        
+      anime({
+        targets: "#whiteFlash",
+        opacity: 0,
+        duration: 300,
+        easing: "easeInOutSine",
+      });
 
-        tl.add({
-            targets: '#receiptImage',
-            rotate: '0deg',
-            // scale: 0.1,
-            width: '200px',
-            height: '200px',
-            // translateY: 100,
+      var tl = anime.timeline({
+        easing: "easeInOutSine",
+        duration: 300,
+        delay: 300,
+      });
 
-            // translateX: sendButtonElBounding.right.value - 50,
-            // complete: function(){
-            //     let _el = document.getElementById('receiptImage')
-            //     _el.style.transformOrigin = 'bottom right'
-            // },
-            duration: 300
-        })
+      tl.add(
+        {
+          targets: "#receiptImage",
+          scale: 0.8,
+          rotate: "-6deg",
+          duration: 300,
+        },
+        "-=150"
+      );
 
-/*        tl.add({
+      // console.log(sendButtonElBounding.right.x, sendButtonElBounding.right.y)
+
+      tl.add({
+        targets: "#receiptImage",
+        rotate: "0deg",
+        // scale: 0.1,
+        width: "200px",
+        height: "200px",
+        // translateY: 100,
+
+        // translateX: sendButtonElBounding.right.value - 50,
+        // complete: function(){
+        //     let _el = document.getElementById('receiptImage')
+        //     _el.style.transformOrigin = 'bottom right'
+        // },
+        duration: 300,
+      });
+
+      /*        tl.add({
             targets: '#receiptImage',
             // translateX: '60vw',
             // translateX: sendButtonBounding.x - _elBounding.x,
@@ -323,63 +384,73 @@ onMounted(() => {
             easing: 'easeInOutSine'
         },"-=500")*/
 
-        tl.add({
-            targets: '#receiptImage',
-            translateY: -50,
-            duration: 300,
-            easing: 'easeInOutSine'
-        },"-=300")
+      tl.add(
+        {
+          targets: "#receiptImage",
+          translateY: -50,
+          duration: 300,
+          easing: "easeInOutSine",
+        },
+        "-=300"
+      );
 
-        tl.add({
-            targets: '#receiptImage',
-            opacity: 0,
-            translateY: 100,
-            duration: 200,
-            easing: 'easeInOutSine'
-        })
+      tl.add({
+        targets: "#receiptImage",
+        opacity: 0,
+        translateY: 100,
+        duration: 200,
+        easing: "easeInOutSine",
+      });
 
+      tl.add(
+        {
+          targets: "#blackDrop",
+          opacity: 0,
+          duration: 300,
+          easing: "easeInOutSine",
+        },
+        "-=300"
+      );
 
-
-        tl.add({
-            targets: '#blackDrop',
-            opacity: 0,
-            duration: 300,
-            easing: 'easeInOutSine'
-        },'-=300')
-        
-        tl.complete = () => {
-            // showReceipt.value = false
-            // console.log('doneee')
-            $showReceipt.set(false)
-            $receiptImageData.set(null)
-        }
-        
-
+      tl.complete = () => {
+        // showReceipt.value = false
+        // console.log('doneee')
+        $showReceipt.set(false);
+        $receiptImageData.set(null);
+      };
     }
-} )
+  });
 
+  watch(campaignList1, () => {
+    enableOverlayScrollbars();
+  });
+
+  watch(campaignList2, () => {
+    enableOverlayScrollbars();
+  });
+
+  enableOverlayScrollbars();
 });
 
 const updateGotStamp = async () => {
-
-  showWelcome.value = true
+  showWelcome.value = true;
 
   // wait for showWelcomeEl
 
   let waitEl = () => {
     return new Promise((resolve, reject) => {
-      let el = document.getElementById('showWelcomeEl')
-      if(el){
-        resolve(el)
-      }else{
+      let el = document.getElementById("showWelcomeEl");
+      if (el) {
+        resolve(el);
+      } else {
         setTimeout(() => {
-          resolve(waitEl())
-        }, 100)
+          resolve(waitEl());
+        }, 100);
       }
-    })
-  }
+    });
+  };
 
-  await waitEl()
+  await waitEl();
 
   let tl = anime.timeline({
     easing: "easeOutExpo",
@@ -395,8 +466,8 @@ const updateGotStamp = async () => {
     duration: 500,
     easing: "easeInOutQuad",
     complete: () => {
-      gotStamp.value = true
-    }
+      gotStamp.value = true;
+    },
   });
 
   tl.add({
@@ -408,13 +479,10 @@ const updateGotStamp = async () => {
     delay: 600,
     easing: "easeInOutQuad",
     complete: () => {
-      showWelcome.value = false
-    }
+      showWelcome.value = false;
+    },
   });
- 
-  
 };
-
 </script>
 
 <style scoped lang="scss">

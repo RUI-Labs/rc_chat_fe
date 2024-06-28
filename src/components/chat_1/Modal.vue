@@ -13,7 +13,7 @@
         <div class="fixed inset-0 z-[52] w-screen h-screen overflow-y-auto">
           <div class="flex items-center justify-center text-center w-full h-full">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-              <DialogPanel id="mainCard"  class="w-full h-full flex justify-center items-center">
+              <DialogPanel id="mainCard"  class="w-full h-full flex justify-center items-center relative">
 
                 <template v-if="stampedCardImage">
 
@@ -59,9 +59,9 @@
                   </div>
 
                   <div v-if="noStamp" class="p-4 space-y-2">
-                    <button @click="showConnectWalletModal()" class="bg-blue-100 w-full rounded-xl text-blue-500 py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Already have Stamp?</button>
+                    <button @click.stop="showConnectWalletModal()" class="bg-blue-100 w-full rounded-xl text-blue-500 py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Already have Stamp?</button>
 
-                    <button @click="showStampModal()" class="bg-blue-500 w-full rounded-xl text-white py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Get a Stamp (Free!)</button>
+                    <button @click.stop="showStampModal()" class="bg-blue-500 w-full rounded-xl text-white py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Get a Stamp (Free!)</button>
                   </div>
                 </section>
               </template>
@@ -77,7 +77,7 @@
 <script setup>
 import { ref, onMounted, toRefs, watch } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
-import { $showNewStampModal, $showWalletModal } from "@/stores/stamp_1";
+import { $showNewStampModal, $showWalletModal, $showCampaignModal} from "@/stores/stamp_1";
 import { useMouseInElement } from "@vueuse/core";
 import StampCircle from "@/components/StampCircle.vue";
 import { toPng } from "html-to-image";
@@ -90,15 +90,23 @@ const stampedCardImage = ref(null);
 
 const toggleModal = () => {
   open.value = !open.value;
+  if(!open.value) {
+    $showCampaignModal.set(false);
+  }
 };
 
 const showStampModal = () => {
+
+  console.log('123')
+
   $showNewStampModal.set(true);
+  $showCampaignModal.set(false);
   open.value = false;
 };
 
 const showConnectWalletModal = () => {
   $showWalletModal.set(true);
+  $showCampaignModal.set(false);
   open.value = false;
 };
 
@@ -109,6 +117,19 @@ const stampzoneEl = ref(null);
 const stampEl = ref(null);
 
 const { x, y, isOutside } = useMouseInElement(stampzoneEl);
+
+onMounted(() => {
+  $showCampaignModal.subscribe((val) => {
+    console.log('##')
+    let _value = $showCampaignModal.get()
+    if(_value) {
+      open.value = true
+    } else {
+      open.value = false
+    
+    }
+});
+})
 
 watch(x, (newX) => {
   if (stampStop.value) return;
@@ -156,6 +177,7 @@ const confirmStamp = () => {
 
         $receiptImageData.set(dataUrl)
         $showReceipt.set(true)
+        $showCampaignModal.set(false);
 
         open.value = false
     })

@@ -152,7 +152,7 @@ onMounted(() => {
       setTimeout(() => {
         open.value = false;
       }, 1000); 
-      // noStamp.value = false;
+      noStamp.value = false;
       updateStamp();
       stampFound.value = stamped;
     }
@@ -226,7 +226,8 @@ const stampCircleEl = ref(null);
 // const receiptImageEl = ref(null);
 
 const confirmStamp = () => {
-  if (!noStamp.value) return;
+  if (noStamp.value) return;
+  if (stampFound.value) return;
 
   // confirmStampAndSendMessage(project_info.value, campaign_info.value);
 
@@ -267,9 +268,6 @@ const confirmStamp = () => {
 };
 
 const updateStamp = () => {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const urlCampaign = urlParams.get('campaign')
-  noStamp.value = !$userData.value?.stamps.find(x => Number(x.campaign_id) === Number(urlCampaign));
+  noStamp.value = false;
 };
 </script>

@@ -6,8 +6,8 @@
       </div>
     </div>
 
-    <NewStampModal></NewStampModal>
-    <ModalVue></ModalVue>
+    <ModalVue :project_info="project_info" :campaign_info="$selectedCampaign.value"></ModalVue>
+    <NewStampModal @update="checkWalletAccount()"></NewStampModal>
     <ConnectWallet></ConnectWallet>
 
     <div id="snapshotParent" v-if="showReceipt" class="w-screen h-screen top-0 left-0 z-[999] fixed flex justify-center items-center">
@@ -19,7 +19,7 @@
     <div v-if="showWelcome" id="showWelcomeEl" class="w-screen h-screen fixed top-0 left-0 z-[101] bg-[#EBE6DF] flex justify-center items-center flex-col opacity-0 scale-90">
       <h1 class="text-4xl font-brand font-bold mb-8 text-black">Welcome to</h1>
 
-      <p class="text-black text-8xl font-brand font-semibold">Ruilabs</p>
+      <p class="text-black text-8xl font-brand font-semibold">{{ project_info?.token_name }}</p>
 
       <p class="text-black text-xl uppercase font-brand mt-8">
         on&nbsp;&nbsp;&nbsp;
@@ -35,9 +35,9 @@
               <p class="text-left text-xl font-brand font-bold p-4 border-b bg-white sticky top-0">Active Campaigns</p>
 
               <div class="px-4">
-                <div class="py-2 flex justify-between items-center" v-for="i in 120">
-                  <p class="font-brand text-lg">Lorem Ipsum</p>
-                  <button @click="showCampaignModalTrigger()" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
+                <div class="py-2 flex justify-between items-center" v-for="campaign in project_info?.campaigns">
+                  <p class="font-brand text-lg">{{ campaign?.tag }}</p>
+                  <button @click="showCampaignModalTrigger(campaign)" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
                 </div>
               </div>
             </section>
@@ -48,8 +48,8 @@
 
           </button> -->
 
-            <StampCircle class="z-50" address="0xcB35ed9B8a830fA472931cc63a62793910c59270" name="lorem"></StampCircle>
-            <button class="z-50 mt-8 px-4 py-2 rounded-full bg-red-100 text-lg font-brand border border-white hover:ring-2 hover:ring-red-500 hover:ring-offset-2 hover:bg-red-500 hover:text-white duration-300 text-red-500 active:scale-75">Disconnect</button>
+            <StampCircle class="z-50" :address="getAccount(config)?.address" :name="$userData.value?.name"></StampCircle>
+            <button @click="disconnectWallet()" class="z-50 mt-8 px-4 py-2 rounded-full bg-red-100 text-lg font-brand border border-white hover:ring-2 hover:ring-red-500 hover:ring-offset-2 hover:bg-red-500 hover:text-white duration-300 text-red-500 active:scale-75">Disconnect</button>
           </div>
         </div>
 
@@ -69,19 +69,19 @@
       </button>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="p-4 rounded-xl" :align="'start'">
-      <StampCircle address="0xcB35ed9B8a830fA472931cc63a62793910c59270" name="lorem"></StampCircle>
+      <StampCircle :address="getAccount(config)?.address" :name="$userData.value?.name"></StampCircle>
     </DropdownMenuContent>
   </DropdownMenu>
 
-                <p class="font-brand text-lg">{{ _address.slice(0, 6) }}...{{ _address.slice(-4) }}</p>
+                <p class="font-brand text-lg">{{ getAccount(config)?.address?.slice(0, 6) }}...{{ getAccount(config)?.address?.slice(-4) }}</p>
               </div>
 
-              <Button class="bg-red-100 text-red-500" variant="ghost">Disconnect</Button>
+              <Button @click="disconnectWallet()" class="bg-red-100 text-red-500" variant="ghost">Disconnect</Button>
             </div>
             
             <Drawer>
               <DrawerTrigger>
-                <button class="bg-black text-white font-brand font-semibold p-3 px-4 rounded-xl duration-300 hover:ring-2 hover:ring-black hover:ring-offset-2 active:scale-90">View All Campaign (10)</button>
+                <button class="bg-black text-white font-brand font-semibold p-3 px-4 rounded-xl duration-300 hover:ring-2 hover:ring-black hover:ring-offset-2 active:scale-90">View All Campaign ({{ project_info?.campaigns?.length }})</button>
               </DrawerTrigger>
               <DrawerContent>
                 <DrawerHeader>
@@ -93,11 +93,11 @@
                   <!-- <p class="text-left text-xl font-brand font-bold p-4 border-b bg-white sticky top-0">Active Campaigns</p> -->
 
                   <div class="px-4">
-                    <div class="py-2 flex justify-between items-center" v-for="i in 120">
-                      <p class="font-brand text-lg">Lorem Ipsum</p>
+                    <div class="py-2 flex justify-between items-center" v-for="campaign in project_info?.campaigns">
+                      <p class="font-brand text-lg">{{ campaign?.tag }}</p>
 
                       <DrawerTrigger>
-                        <button @click="showCampaignModalTrigger()" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
+                        <button @click="showCampaignModalTrigger(campaign)" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
 
                       </DrawerTrigger>
                       
@@ -112,10 +112,36 @@
           </div>
 
           <div class="chat-parent shadow-xl w-full h-full rounded-xl p-4">
-            <div class="w-full bg-gray-100 rounded-md p-4 font-brand font-bold">Yao from Ruilabs</div>
+            <div class="w-full bg-gray-100 rounded-md p-4 font-brand font-bold">Yao from {{ project_info?.token_name }}</div>
 
-            <div class="chat">
-              <div class="mine messages">
+            <div class="chat max-h-[500px] overflow-auto">
+
+
+              <div v-for="(message, index) in messages" >
+                <div :class="[ messages.length <= index && message?.sender !== messages[index+1]?.sender ? 'messages' : 'flex flex-col' , message?.sender === 'me' ? 'mine' : 'yours']" >
+                  <template v-if="message?.type == 'text'">
+                    <div :class="[message?.sender === messages[index+1]?.sender ? 'message' : 'message last']" >
+                      {{ message?.content }}
+                    </div>
+                  </template>
+
+                  <template v-else-if="message?.type == 'attachment'">
+                      <div class="w-[100px] h-[100px] border rounded-md">
+                          <img :src="message?.content" />
+                      </div>
+                  </template>
+
+                  <template v-else>
+                      <div class="w-[100px] h-[100px] border rounded-md">
+                        Unable to load content.
+                      </div>
+                  </template>
+
+                </div>
+              </div>
+
+
+              <!-- <div class="mine messages">
                 <div class="message last">Dude</div>
               </div>
               <div class="yours messages">
@@ -126,13 +152,22 @@
               <div class="mine messages">
                 <div class="message">Great thanks!</div>
                 <div class="message last">How about you?</div>
-              </div>
+              </div> -->
+
             </div>
           </div>
 
-          <form id="formEl" @submit.prevent="sendMessage()" class="w-full grid grid-cols-[1fr_3rem] items-center justify-center gap-2 pt-4">
+
+
+
+          
+
+
+
+  
+          <form id="formEl" @submit.prevent="pushXmtpMessage()" class="w-full grid grid-cols-[1fr_3rem] items-center justify-center gap-2 pt-4">
             <div>
-              <Input class="h-12 rounded-full text-lg pl-4 placeholder:italic font-brand" placeholder="Say Hi!" />
+              <Input v-model="messageInput" class="h-12 rounded-full text-lg pl-4 placeholder:italic font-brand" placeholder="Say Hi!" />
             </div>
 
             <div>
@@ -151,7 +186,7 @@
 
         <h1 class="sm:text-2xl text-xl font-brand font-bold mb-4 text-center">
           To participate in events by
-          <div class="bg-black text-white rounded-full mx-2 px-3 p-2 sm:my-0">Ruilabs on REMO</div>
+          <div class="bg-black text-white rounded-full mx-2 px-3 p-2 sm:my-0">{{ project_info?.token_name }} on REMO</div>
           please get a stamp.
         </h1>
 
@@ -160,9 +195,9 @@
             <p class="text-left text-xl font-brand font-bold p-4 border-b bg-white sticky top-0">Active Campaigns</p>
 
             <div class="px-4">
-              <div class="py-2 flex justify-between items-center" v-for="i in 120">
-                <p class="font-brand text-lg">Lorem Ipsum</p>
-                <button @click="showCampaignModalTrigger()" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
+              <div class="py-2 flex justify-between items-center" v-for="campaign in project_info?.campaigns">
+                <p class="font-brand text-lg">{{ campaign?.tag }}</p>
+                <button @click="showCampaignModalTrigger(campaign)" :style="`background:${currentColor};`" class="text-sm rounded-md px-4 py-1 hover:scale-105 active:scale-90 duration-300">Join</button>
               </div>
             </div>
           </section>
@@ -171,24 +206,28 @@
         <div class="w-full grid grid-cols-2 gap-4 justify-center items-center max-w-sm">
           <div>
             <p class="text-sm text-center py-2">New User?</p>
-            <button @click="updateGotStamp()" class="bg-blue-500 w-full rounded-xl text-white py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Get a Stamp (free)</button>
+            <button @click="showStampModal()" class="bg-blue-500 w-full rounded-xl text-white py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Get a Stamp (free)</button>
           </div>
 
           <div>
             <p class="text-sm text-center py-2">Already got stamp?</p>
-            <button @click="updateGotStamp()" class="bg-blue-50 w-full rounded-xl text-blue-500 py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Connect Wallet</button>
+            <button @click="showConnectWalletModal()" class="bg-blue-50 w-full rounded-xl text-blue-500 py-4 font-brand font-semibold text-lg hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 active:scale-75 duration-300">Connect Wallet</button>
           </div>
         </div>
       </div>
     </template>
-  </div>
+
+
+  
+  
+</div>
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
-import ModalVue from "@/components/chat_1/Modal.vue";
-import NewStampModal from "@/components/chat_1/NewStamp.vue";
-import ConnectWallet from "@/components/chat_1/ConnectWallet.vue";
+import { onMounted, ref, watch, toRefs } from "vue";
+import ModalVue from "@/components/chat_1/Modal.vue"
+import NewStampModal from "@/components/chat_1/NewStamp.vue"
+import ConnectWallet from "@/components/chat_1/ConnectWallet.vue"
 import StampCircle from "@/components/StampCircle.vue";
 import {
   DropdownMenu,
@@ -201,9 +240,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import { $receiptImageData, $showReceipt, $xmtpClient } from "@/stores/stamp";
-import { $showCampaignModal } from "@/stores/stamp_1";
-
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 
 import "overlayscrollbars/overlayscrollbars.css";
@@ -211,6 +247,16 @@ import { OverlayScrollbars } from "overlayscrollbars";
 
 import { Input } from "@/components/ui/input";
 import anime from "animejs/lib/anime.es.js";
+
+const props = defineProps([ "project_info" ]);
+const { project_info } = toRefs(props);
+
+import { connect, reconnect, getAccount, disconnect, getConnectors, watchConnections } from '@wagmi/core';
+import { config } from '@/wagmiConfig';
+
+import { $showNewStampModal, $showWalletModal, initUser, initXmtp, $userData, $receiptImageData, $showReceipt, $xmtpClient, $refreshMessages, $showCampaignModal, $selectedCampaign } from "@/stores/stamp_1";
+const conversations = ref([]);
+const messages = ref([]);
 
 const characters = ["R", "E", "M", "O"];
 let characterIndex = 0;
@@ -226,7 +272,7 @@ const showReceipt = ref(false);
 const gotStamp = ref(false);
 const showWelcome = ref(false);
 
-let _address = "0xcB35ed9B8a830fA472931cc63a62793910c59270"
+
 
 const campaignList1 = ref(null)
 const campaignList2 = ref(null)
@@ -280,9 +326,13 @@ const sendMessage = () => {
   currentColor.value = _excludeCurrentColor[Math.floor(Math.random() * _excludeCurrentColor.length)];
 };
 
-const showCampaignModalTrigger = () => {
+
+
+const showCampaignModalTrigger = (_c) => {
   console.log("showing modal from drawer");
+  $selectedCampaign.set(null);
   $showCampaignModal.set(true);
+  $selectedCampaign.set(_c);
 }
 
 const enableOverlayScrollbars = () => {
@@ -299,8 +349,8 @@ const enableOverlayScrollbars = () => {
   }
 };
 
-onMounted(() => {
 
+onMounted( async () => {
 
   $showReceipt.subscribe((value) => {
     console.log(value);
@@ -420,7 +470,7 @@ onMounted(() => {
       };
     }
   });
-
+  
   watch(campaignList1, () => {
     enableOverlayScrollbars();
   });
@@ -430,7 +480,86 @@ onMounted(() => {
   });
 
   enableOverlayScrollbars();
+
+  watchConnections(config, {
+      onChange(data) {
+          let _account = getAccount(config)
+          console.log('watchConnections', _account)
+          checkWalletAccount();
+      }
+  })
+
+  await reconnect(config)
+  checkWalletAccount();
+
+  $xmtpClient.subscribe( async (value) => {
+      if ($xmtpClient.value) {
+          conversations.value = await $xmtpClient.value.conversations.list();
+          // console.log(conversations.value)
+
+          // check if the recipient address is in the list of conversations
+          let exists = conversations.value.find((c) => c.peerAddress.toLowerCase() === project_info.value.owner_address.toLowerCase());
+
+          console.log('exists', exists);
+
+          try {
+              await $xmtpClient.value.conversations.newConversation(project_info.value.owner_address.toLowerCase());
+          } catch(error) {
+              console.log('bypass bypass', error)
+          }
+          
+          if (!exists) {
+              await fetchMessages();
+          }
+
+          await fetchMessages();
+      }
+  })
+
+  $refreshMessages.subscribe(() => {
+      console.log("$refreshMessages.value", $refreshMessages.value)
+      fetchMessages();
+  })
+
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const urlCampaign = urlParams.get('campaign')
+  console.log('urlCampaign', urlCampaign);
+
+  const _campaign = project_info.value?.campaigns.find(x => Number(x.id) === Number(urlCampaign))
+  if(_campaign) showCampaignModalTrigger(_campaign);
+
+  
 });
+
+const checkWalletAccount = async () => {
+
+  console.log(getAccount(config)?.address == true)
+  if(getAccount(config)?.address) {
+
+    await initUser();
+
+    if($userData.value) {
+      // wallet found in supabase
+      initXmtp();
+      updateGotStamp();
+      $showNewStampModal.set(false);
+
+    } else {
+      // wallet not found in supabase
+      
+      showStampModal();
+
+    }
+
+
+
+  } else {
+    gotStamp.value = false;
+  }
+
+}
 
 const updateGotStamp = async () => {
   showWelcome.value = true;
@@ -483,6 +612,145 @@ const updateGotStamp = async () => {
     },
   });
 };
+
+
+const disconnectWallet = async () => {
+  let wallet = getAccount(config)
+  localStorage.removeItem(`xmtp-wallet-${wallet.address.toLowerCase()}`);
+  $userData.set(null);
+  await disconnect(config);
+}
+
+const showStampModal = () => {
+  $showNewStampModal.set(true);
+};
+
+const showConnectWalletModal = () => {
+  $showWalletModal.set(true);
+};
+
+import { ContentTypeRemoteAttachment, RemoteAttachmentCodec, AttachmentCodec } from "@xmtp/content-type-remote-attachment";
+
+const fetchMessages = async () => {
+
+  messages.value = [];
+
+  let selectedConversation = conversations.value.find((c) => c.peerAddress.toLowerCase() === project_info.value.owner_address.toLowerCase());
+  console.log('selectedConversation', selectedConversation)
+
+  if (selectedConversation) {
+      let _message = await selectedConversation.messages();
+      console.log('_message', _message);
+
+      
+      messages.value = await Promise.all(
+
+          _message.map( async (m) => {
+              
+              // return {
+              //         content: m.content,
+              //         id: m.id,
+              //         senderAddress: m.senderAddress,
+              //         type: 'text',
+              //         sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+              //     };
+
+              if (m.contentType.sameAs(ContentTypeRemoteAttachment)) {
+
+                  try {
+                      
+                      const attachment = await RemoteAttachmentCodec.load(m.content, $xmtpClient.value);
+      
+                      // console.log("attachment", m, attachment)
+
+                      const objectURL = URL.createObjectURL(
+                          new Blob([Buffer.from(attachment.data)], {
+                              type: attachment.mimeType,
+                          }),
+                      );
+                      // console.log('objectURL', objectURL)
+
+                      return {
+                          content: objectURL,
+                          id: m.id,
+                          senderAddress: m.senderAddress,
+                          type: 'attachment',
+                          sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+                      };
+
+                  } catch(error) {
+
+                      // console.log("error attachment", m, error)
+                      return {
+                          content: '',
+                          id: m.id,
+                          senderAddress: m.senderAddress,
+                          type: 'media',
+                          sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+                      };
+                  }
+
+              } else {
+                  return {
+                      content: m.content,
+                      id: m.id,
+                      senderAddress: m.senderAddress,
+                      type: 'text',
+                      sender: m.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+                  };
+              }
+
+          })
+      )
+
+      // scrollToBottom();
+
+      for await (const message of await selectedConversation.streamMessages()) {
+
+          const exists = messages.value.find((m) => m.id === message.id);
+
+          if (!exists) {
+              messages.value.push({
+                  content: message.content,
+                  id: message.id,
+                  senderAddress: message.senderAddress,
+                  type: 'text',
+                  sender: message.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
+              });
+          }
+
+          // scrollToBottom();
+      }
+
+  }
+};
+
+
+const isMessageBusy = ref(false);
+const messageInput = ref('')
+const pushXmtpMessage = async () => {
+
+    if(isMessageBusy.value) return;
+    isMessageBusy.value = true;
+
+    let _message = messageInput.value;
+    messageInput.value = ''
+
+    // console.log("xmtpClient.value", $xmtpClient.value, project_info.value.owner_address.toLowerCase());
+
+    try {
+        const conversation = await $xmtpClient.value.conversations.newConversation(project_info.value.owner_address.toLowerCase());
+        sendMessage();
+        await conversation.send(_message);
+    } catch (err) {
+        console.log("sendMessage", err);
+    }
+    
+    if(messages.value.length == 0) fetchMessages();
+    isMessageBusy.value = false;
+    
+}
+
 </script>
 
 <style scoped lang="scss">

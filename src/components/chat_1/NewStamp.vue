@@ -23,9 +23,9 @@
                   <div id="text1-3" class="max-h-0 overflow-hidden w-full flex justify-center items-center flex-col">
 
                     <div class="w-full max-w-sm space-y-4 mt-8 px-4">
-                      <button @click="connectWallet()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Metamask</button>
-                      <button @click="connectWallet()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Rabby</button>
-                      <button @click="connectWallet()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Coinbase Smart Wallet</button>
+                      <button @click="connectWallet('io.metamask')" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Metamask</button>
+                      <button @click="connectWallet('io.rabby')" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Rabby</button>
+                      <button @click="connectWallet('coinbaseWalletSDK')" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-xl font-brand bg-white">Coinbase Smart Wallet</button>
                     </div>
   
                     <p class="text-white text-xl py-8">or create a new wallet ;)</p>
@@ -50,7 +50,7 @@
 
                   <p id="text1-5-1" class="max-h-0 overflow-hidden text-white font-brand text-5xl mb-4">Connected</p>
 
-                  <p id="text1-5-2" class="max-h-0 overflow-hidden text-xl text-white">0xcB35ed9B8a830fA472931cc63a62793910c59270</p>
+                  <p id="text1-5-2" class="max-h-0 overflow-hidden text-xl text-white">{{ connectedWalletAddress }}</p>
 
 
                 </div>
@@ -91,11 +91,13 @@
                   <p class="text-white font-brand mt-8 mb-2">This stamp is yours forever. To restore this stamp, just connect your wallet.</p>
 
                   <div class="w-full flex justify-center items-center py-12">
-                    <StampCircle :address="`0xcB35ed9B8a830fA472931cc63a62793910c59270`" :name="`Jay`" ></StampCircle>
+                    <StampCircle :address="getAccount(config)?.address" :name="$username.value" ></StampCircle>
                   </div>
 
 
-                  <button @click="completeStamp()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 px-12 font-bold rounded-md p-4 text-xl font-brand bg-white">Nice!</button>
+                  <button v-if="!isBusy" @click="completeStamp()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 px-12 font-bold rounded-md p-4 text-xl font-brand bg-white">Nice!</button>
+                  <button v-if="isBusy" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 px-12 font-bold rounded-md p-4 text-xl font-brand bg-white">Loading...</button>
+
 
                 </div>
 
@@ -109,14 +111,17 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 
-import { $showNewStampModal } from "@/stores/stamp_1";
+import { $showNewStampModal, $username, initXmtp } from "@/stores/stamp_1";
 import { Input } from '@/components/ui/input'
 
 import StampCircle from "../StampCircle.vue";
 import anime from "animejs/lib/anime.es.js";
+
+import { connect, reconnect, getAccount, disconnect, getConnectors, watchConnections } from '@wagmi/core';
+import { config } from '@/wagmiConfig';
 
 const page = ref(0);
 
@@ -250,7 +255,15 @@ onMounted(() => {
     // console.log('open', value)
     if (value) show();
     else hide();
+
+
+    if(getAccount(config)?.address) {
+      page.value = 1.5;
+    }
+
   });
+
+  
 
 });
 
@@ -266,36 +279,101 @@ const hide = () => {
 };
 
 
-const connectWallet = () => {
+const connectWallet = async (_connectorId) => {
   console.log("connectWallet");
-  page.value = 1.5;
+
+  const connector = getConnectors(config).find(x => x.id === _connectorId);
+  console.log(connector)
+  if(connector) {
+
+    try {
+      await connect(config, { connector })
+      page.value = 1.5;
+    } catch(error) {
+      console.log(error);
+      alert(`Wallet fail to connect : ${error?.message}`);
+    }
+
+  } else {
+    alert("No wallet found.")
+  }
+
+
+  // page.value = 1.5;
+
 };
 
-const createWallet = () => {
+const createWallet = async () => {
   console.log("createWallet");
-  page.value = 2;
+
+  const connector = getConnectors(config).find(x => x.id === 'coinbaseWalletSDK');
+  console.log(connector)
+  if(connector) {
+
+    try {
+      await connect(config, { connector })
+      page.value = 2;
+    } catch(error) {
+      console.log(error);
+      alert(`Wallet fail to connect : ${error?.message}`);
+    }
+
+  } else {
+    alert("Fail to create wallet. Please try again.")
+  }
+
+  // page.value = 2;
 };
 
 const confirmName = () => {
+  $username.set(nameInput.value);
   page.value = 3;
+  
 }
 
-const requestNotification = () => {
+const requestNotification = async () => {
   page.value = 3.5;
 
-  //dummy
+  try {
 
-  setTimeout(() => {
-    allowNotification();
-  }, 1000);
+    await window.OneSignal.Notifications.requestPermission();
+    if(window?.OneSignal?.Notifications.permission) {
+      allowNotification();
+    } else {
+      alert("Please allow notification push at your application.")
+    }
+
+  } catch(error) {
+    console.info('allowNotification', error)
+  }
+
+  //dummy
+  // setTimeout(() => {
+  //   allowNotification();
+  // }, 1000);
 }
 
-const allowNotification = () => {
+const allowNotification = async () => {
   page.value = 4;
 }
 
-const completeStamp = () => {
+const emit = defineEmits(["update"]);
+const isBusy = ref(false);
+const completeStamp = async () => {
+
+  if(isBusy.value) return;
+  isBusy.value = true;
+
+  await initXmtp();
+  emit("update");
   hide();
+
+  isBusy.value = false;
+
 }
+
+const connectedWalletAddress = computed(() => {
+  return getAccount(config)?.address;
+})
 
 </script>

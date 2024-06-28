@@ -1,0 +1,57 @@
+---
+import "@/styles/globals.css";
+import ChatVue from "@/components/chat_1/Chat.vue";
+
+const { project } = Astro.params;
+const project_info = await fetch(`${Astro.url.origin}/api/project/${project}.json`).then(res => res.json())
+// console.log(project_info)
+
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet" crossorigin="anonymous" />
+
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+		<script>
+			declare global {
+				interface Window {
+					OneSignalDeferred:any[];
+					OneSignal:any;
+				}
+			}
+			window.OneSignalDeferred = window?.OneSignalDeferred || [];
+			window.OneSignalDeferred.push(async function(OneSignal:any) {
+				window.OneSignal = OneSignal;
+				OneSignal.Debug.setLogLevel("info");
+				await OneSignal.init({
+					appId: "c2b79f79-a581-4577-bb70-1283e0626449",
+					safari_web_id: "web.onesignal.auto.665a394a-cbcf-449b-8277-1a86a5e1eeb9",
+					// notifyButton: {
+					//   enable: true,
+					// },
+					allowLocalhostAsSecureOrigin: true,
+				});
+			});
+		</script>
+  </head>
+  <body class="w-screen h-screen flex justify-center items-center">
+    <script>
+      import "iconify-icon";
+
+      import { Buffer } from "buffer";
+
+      window.Buffer = window.Buffer ?? Buffer;
+    </script>
+
+    <ChatVue client:only="vue" project_info={project_info} />
+  </body>
+</html>

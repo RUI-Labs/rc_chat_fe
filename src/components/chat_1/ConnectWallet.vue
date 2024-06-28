@@ -25,17 +25,21 @@
                   </div>
 
                   <div class="p-4 space-y-3">
-                    <button @click="_connect()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-lg font-brand bg-blue-100 text-blue-500 font-bold">Metamask</button>
+                    <button @click="_connect('io.metamask')" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-lg font-brand bg-blue-100 text-blue-500 font-bold">Metamask</button>
+                    <button @click="_connect('io.rabby')" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-lg font-brand bg-blue-100 text-blue-500 font-bold">Rabby</button>
+                    <button @click="_connect('coinbaseWalletSDK')" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-lg font-brand bg-blue-100 text-blue-500 font-bold">Coinbase Smart Wallet</button>
+                    
 
-                    <button @click="_connect()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-lg font-brand bg-blue-100 text-blue-500 font-bold">Rabby</button>
+
+                    <button @click="_connect('injected')" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-lg font-brand bg-blue-100 text-blue-500 font-bold">Injected Wallet</button>
+
                   </div>
 
                   <p class="mt-8 py-2">Sounds alien? Maybe you need a stamp.</p>
   
-  <div class="w-full px-4 pb-4" >
-    <button @click="createStamp()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-lg font-brand bg-blue-100 text-blue-500 font-bold">Create Stamp</button>
-    
-  </div>
+                  <div class="w-full px-4 pb-4" >
+                    <button @click="createStamp()" class="active:scale-90 hover:bg-blue-500 hover:text-white hover:ring-blue-300 hover:ring-4 hover:ring-offset-4 duration-300 w-full rounded-md p-4 text-lg font-brand bg-blue-100 text-blue-500 font-bold">Create Stamp</button>
+                  </div>
 
                 </div>
               </DialogPanel>
@@ -51,6 +55,9 @@
 import { ref, onMounted, toRefs } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import { $showWalletModal, $showNewStampModal } from "@/stores/stamp_1";
+
+import { connect, reconnect, getAccount, disconnect, getConnectors, watchConnections } from '@wagmi/core';
+import { config } from '@/wagmiConfig';
 
 const open = ref(false);
 
@@ -71,7 +78,26 @@ onMounted(() => {
   });
 });
 
-const _connect = () => {}
+const _connect = async (_connectorId) => {
+
+  console.log("_connect wallet");
+  const connector = getConnectors(config).find(x => x.id === _connectorId);
+  console.log(connector)
+  if(connector) {
+
+    try {
+      await connect(config, { connector });
+      hide();
+    } catch(error) {
+      console.log(error);
+      alert(`Wallet fail to connect : ${error?.message}`);
+    }
+
+  } else {
+    alert("No wallet found.")
+  }
+
+}
 
 const createStamp = () => {
     $showNewStampModal.set(true);

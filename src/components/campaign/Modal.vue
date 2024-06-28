@@ -229,7 +229,7 @@ const confirmStamp = () => {
   if (noStamp.value) return;
   if (stampFound.value) return;
 
-  // confirmStampAndSendMessage(project_info.value, campaign_info.value);
+  confirmStampAndSendMessage(project_info.value, campaign_info.value);
 
   stampStop.value = true;
   zoomStamp.value = true;

@@ -23,7 +23,7 @@ const metrics = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/ca
 })
 .then(res =>res.json())
 
-const steps = metrics.map((o, i) => {
+const steps = metrics.map((o: any, i: any) => {
   return {
     id: i,
     name: o.name,
@@ -61,23 +61,35 @@ const sampleData = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1
     }
   }))
 
+const url = Astro.url.pathname
+
+let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
 ---
 
 <AdminLayout>
     <div>
-      <div class="p-4 pb-4 pt-4 grid grid-cols-6">
-        <div class="col-span-full">
-            <Button class="mb-10"  variant='secondary'>Back</Button>
+      <div class="p-4 pb-4 pt-4 grid grid-cols-6 mb-2 items-end">
+        <div class="col-span-3 flex justify-start items-center mb-8">
+            <a href={`/admin/project/${projectSlug}`}>
+              <Button variant="ghost" class="text-white underline text-lg font-brand">
+                <iconify-icon icon="bi:arrow-left" class="mr-4"></iconify-icon>
+                Back
+              </Button>
+            </a>
         </div>
 
-        <div class="col-span-4">
-            <p class="text-xl mb-2 font-brand font-bold">Campaign</p>
-            <h1 class="text-3xl font-brand font-bold">{campaign.id}</h1>
-            <div class="w-full flex justify-start items-center mt-2">
-                <div class="text-sm p-2 px-4 bg-gray-200 rounded-md" >
+        <div class="col-span-3 flex justify-end items-center  mb-8">
+          <Button class="bg-stone-800 hover:bg-stone-700">Edit Campaign</Button>
+      </div>
+
+        <div class="col-span-4 pl-2">
+            <p class="text-lg mb-2 font-brand font-bold text-stone-400">Campaign</p>
+            <div class="w-full flex justify-start items-center my-3">
+                <div class="text-sm p-1 px-3 bg-blue-500 text-white font-brand font-bold rounded-md" >
                   {campaign.tag}
                 </div>
             </div>
+            <h1 class="text-4xl font-brand font-bold text-white">{campaign.id} (title)</h1>
         </div>
         
   

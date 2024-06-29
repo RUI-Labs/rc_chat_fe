@@ -114,7 +114,7 @@
 import { onMounted, ref, watch, computed } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 
-import { $showNewStampModal, $username, initXmtp } from "@/stores/stamp_1";
+import { $showNewStampModal, $username, initXmtp, $xmtpClient } from "@/stores/stamp_1";
 import { Input } from '@/components/ui/input'
 
 import StampCircle from "../StampCircle.vue";
@@ -328,7 +328,7 @@ const createWallet = async () => {
 const confirmName = () => {
   $username.set(nameInput.value);
   page.value = 3;
-  
+  initXmtp();
 }
 
 const requestNotification = async () => {
@@ -364,7 +364,18 @@ const completeStamp = async () => {
   if(isBusy.value) return;
   isBusy.value = true;
 
-  await initXmtp();
+  
+  await new Promise((resolve) => {
+    let interval = setInterval(() => {
+      if($xmtpClient.value) {
+        clearInterval(interval)
+        resolve();
+      }
+    }, 500)
+  })
+
+  console.log($xmtpClient.value);
+
   emit("update");
   hide();
 

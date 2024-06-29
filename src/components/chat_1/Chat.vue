@@ -332,6 +332,7 @@ const showCampaignModalTrigger = (_c) => {
   console.log("showing modal from drawer");
   console.log(_c);
 
+  $showCampaignModal.set(false);
   $selectedCampaign.set(null);
   $showCampaignModal.set(true);
   $selectedCampaign.set(_c);
@@ -553,7 +554,7 @@ const checkWalletAccount = async () => {
     if($userData.value) {
       // wallet found in supabase
       initXmtp();
-      updateGotStamp();
+      // updateGotStamp();
       $showNewStampModal.set(false);
 
     } else {

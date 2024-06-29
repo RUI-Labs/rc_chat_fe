@@ -16,13 +16,18 @@
               <DialogPanel id="mainCard"  class="w-full h-full flex justify-center items-center relative">
 
                 <template v-if="stampedCardImage">
-                  <img class="object-contain" :src="stampedCardImage" alt="">
+                  <div class="flex flex-col text-2xl font-bold font-brand text-white justify-center items-center relative">
+                    <img class="object-contain rotate-6 scale-90" :src="stampedCardImage" alt="">
+                    <div class="absolute bottom-[10vh]">
+                      You've participated
+                    </div>
+                  </div>
                 </template>
 
                 <template v-else>
 
                   <div v-if="!noStamp" ref="stampEl" :class="[zoomStamp ? 'scale-100' : 'scale-75', 'duration-300 transition-transform']" class="w-[300px] h-[300px] fixed z-40 bottom-0 left-0 pointer-events-none">
-                    <StampCircle :diameter="200" :address="$userData.value?.wallet_address" :name="$userData.value?.name"></StampCircle>
+                    <StampCircle :address="$userData.value?.wallet_address" :name="$userData.value?.name"></StampCircle>
                   </div>
 
                   <section class="w-full max-w-md bg-white relative rounded-xl">
@@ -229,11 +234,10 @@ onMounted(() => {
       if($userData.value?.stamps.find(x => Number(x?.campaign_id) === Number(urlCampaign))) {
         setTimeout(() => {
           $showCampaignModal.set(false);
-        }, 1000); 
+        }, 2000); 
       }
     }
   })
-
 
 
   $showCampaignModal.subscribe((val) => {

@@ -674,6 +674,10 @@ const afterWelcome = () => {
   
   const _campaign = project_info.value?.campaigns.find(x => Number(x.id) === Number(urlCampaign))
   if(_campaign) showCampaignModalTrigger(_campaign);
+
+  setTimeout(() => {
+    fetchMessages();
+  }, 5000)
   
 }
 

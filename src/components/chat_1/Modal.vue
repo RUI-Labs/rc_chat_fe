@@ -98,7 +98,7 @@ const stampedCardImage = ref(null);
 const toggleModal = () => {
   console.log('open.value', open.value);
 
-  
+
   open.value = !open.value;
   
   if(!open.value) {
@@ -117,9 +117,6 @@ const toggleModal = () => {
 };
 
 const showStampModal = () => {
-
-  console.log('123')
-
   $showNewStampModal.set(true);
   $showCampaignModal.set(false);
   open.value = false;
@@ -209,6 +206,8 @@ onMounted(() => {
   // }
   
   $userData.subscribe(() => {
+
+    noStamp.value = false;
     checkStamp();
 
   })

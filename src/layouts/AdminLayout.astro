@@ -37,7 +37,7 @@ window.Buffer = window.Buffer ?? Buffer;
         <div class="font-brand font-bold text-lg ml-2 mr-4 text-white">REMO</div>
 
         <div class="w-[200px] flex justify-center items-center">
-          <ProjectDropdown client:only="vue" wallet={Astro.locals.user.id}/>
+          <ProjectDropdown client:only="vue" wallet={Astro.locals.user?.id}/>
         </div>
         <a href={`/admin/project/${projectSlug}`}>
           <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Campaigns</Button>

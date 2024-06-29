@@ -358,7 +358,7 @@ onMounted( async () => {
 
   $showReceipt.subscribe((value) => {
     console.log(value);
-    showReceipt.value = value;
+    // showReceipt.value = value;
   });
 
   $receiptImageData.subscribe((value) => {
@@ -366,7 +366,7 @@ onMounted( async () => {
   });
 
   watch(showReceipt, async () => {
-    receiptAnimation();
+    // receiptAnimation();
   });
   
   watch(campaignList1, () => {
@@ -662,6 +662,8 @@ const pushXmtpMessage = async () => {
 
 const afterWelcome = () => {
 
+  showReceipt.value = true;
+  receiptAnimation();
   
   checkWalletAccount();
   updateGotStamp();
@@ -677,7 +679,7 @@ const afterWelcome = () => {
 }
 
 
-const receiptAnimation = () => {
+const receiptAnimation = async () => {
   if (showReceipt.value) {
       console.log("showing receipt");
 

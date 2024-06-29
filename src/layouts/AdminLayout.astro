@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import SignOutButton from "@/components/SignOutButton.vue";
 import { Button } from "@/components/ui/button";
 import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
+import Xmtpclient from "@/components/admin/Xmtpclient.vue";
 
 const url = Astro.url.pathname
 // match the pattern to get project slug /admin/project/<id>/...
@@ -50,6 +51,7 @@ window.Buffer = window.Buffer ?? Buffer;
       </div>
 
       <div class="w-full flex justify-end items-center">
+        <Xmtpclient client:only="vue" />
         <SignOutButton client:only="vue" />
       </div>
     </nav>

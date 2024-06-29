@@ -13,7 +13,9 @@ import { Client } from "@xmtp/xmtp-js";
 import { $xmtpClient } from "@/stores/admin";
 import { isSmartWalletConnected } from "@/utils/userAuth";
 import { ContentTypeAttachment, AttachmentCodec, RemoteAttachmentCodec, ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
-
+import { mainnet } from "viem/chains";
+import { createWalletClient, http } from "viem";
+import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
 
 const address = ref();
 const connectors = ref();
@@ -53,34 +55,53 @@ const clientOptions = {
 const initXmtp = async () => {
     
   let keys = false;
+  let _address = address.value;
 
+  try {
+    keys = loadKeys(_address);
+    if(keys){
+        await fetch('/api/keys.json', {
+          method: 'POST',
+          body: JSON.stringify({
+            address: _address,
+            keys: Buffer.from(keys).toString("hex"),
+          })
+        })
+    }
+  } catch (err) {
+    console.log(err);
+  }
 
   if(isSmartWalletConnected()) {
-
     
 
 
-  } else {
-    const signer = await getSigner();
-    let _address = address.value
-  
-      // console.log(signer);
-    try {
-      keys = loadKeys(_address);
-      if(keys){
-          await fetch('/api/keys.json', {
-            method: 'POST',
-            body: JSON.stringify({
-              address: _address,
-              keys: Buffer.from(keys).toString("hex"),
-            })
-          })
-      }
-    } catch (err) {
-      console.log(err);
+
+
+    if(!keys) {
+
+      const privateKey = generatePrivateKey();
+      const paccount = privateKeyToAccount(privateKey);
+      const pwallet = createWalletClient({
+            account: paccount,
+            chain: mainnet,
+            transport: http(),
+        });
+
+      keys = await Client.getKeys(pwallet, {
+                  ...clientOptions,
+              });
+              storeKeys(_address, keys);
     }
-  
+
+
+
+  } else {
+    
+    // console.log(signer);
+    
     if (!keys) {
+      const signer = await getSigner();
       console.log("getting keys");
       keys = await Client.getKeys(signer, {
         ...clientOptions,
@@ -89,6 +110,7 @@ const initXmtp = async () => {
       // console.log(keys);
       storeKeys(_address, keys);
     }
+
   }
 
 
@@ -151,10 +173,10 @@ const checkAccount = async () => {
 
     } else {
 
-      const connector = getConnectors(config)?.find(x => x.id === "injected")
-      // const connector = getConnectors(config)?.find(x => x.id === "coinbaseWalletSDK")
-      await connect(config, { connector })
-      checkAccount();
+      // const connector = getConnectors(config)?.find(x => x.id === "injected")
+      // // const connector = getConnectors(config)?.find(x => x.id === "coinbaseWalletSDK")
+      // await connect(config, { connector })
+      // checkAccount();
 
     }
   } catch (err) {}

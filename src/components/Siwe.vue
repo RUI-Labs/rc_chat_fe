@@ -1,7 +1,23 @@
 <template>
   <div class="w-full">
     <div v-if="!address" class="w-full flex flex-col space-y-2 justify-center items-center p-4">
-      <button @click="_connect(connector)" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300" v-for="connector in connectors">{{ connector.name }}</button>
+      
+      
+      
+      <!-- <button @click="_connect(connector)" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300" v-for="connector in connectors">{{ connector.name }}</button> -->
+    
+
+
+
+      <button @click="_connect('io.metamask')" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Metamask</button>
+      <button @click="_connect('io.rabby')" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Rabby</button>
+      <button @click="_connect('coinbaseWalletSDK')" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Coinbase Smart Wallet</button>
+    
+
+
+      <button @click="_connect('injected')" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Injected</button>
+    
+
     </div>
 
     <div v-if="address"  class="w-full">
@@ -30,7 +46,7 @@ const address = ref();
 
 const checkAccount = async () => {
   try {
-    let _address = await getAccount(config);
+    let _address = getAccount(config);
 
     if (_address) {
       address.value = _address.address;
@@ -48,7 +64,8 @@ onMounted(async () => {
   await checkAccount();
 });
 
-const _connect = async (connector) => {
+const _connect = async (_connector) => {
+  const connector = getConnectors(config).find(x => x.id === _connector);
   await connect(config, {
     connector,
   });
@@ -64,7 +81,7 @@ const _disconnect = async () => {
 const startSIWE = async () => {
   /// Get Nonce
 
-  let { address:_account, chainId: _chainId} = await getAccount(config)
+  let { address:_account, chainId: _chainId} = getAccount(config)
 
   console.log(_chainId)
 

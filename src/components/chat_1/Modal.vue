@@ -250,9 +250,31 @@ const checkStamp = () => {
   const urlCampaign = urlParams.get('campaign')
   console.log('urlCampaign', urlCampaign);
 
-  if($selectedCampaign.value?.id === Number(urlCampaign)) {
+  // if($selectedCampaign.value?.id === Number(urlCampaign)) {
 
-    const stamped = $userData.value?.stamps.find(x => Number(x.campaign_id) === Number(urlCampaign));
+  //   const stamped = $userData.value?.stamps.find(x => Number(x.campaign_id) === Number(urlCampaign));
+  //   if(stamped) {
+  //     $showReceipt.set(true);
+  //     $receiptImageData.set(stamped.url);
+  //     stampedCardImage.value = stamped.url;
+
+  //     setTimeout(() => {
+  //       $showCampaignModal.set(false);
+  //     }, 1000); 
+  //   }
+
+  // } else {
+
+  //   $showReceipt.set(null);
+  //   $receiptImageData.set(null);
+  //   stampedCardImage.value = null;
+
+  // }
+
+
+
+
+    const stamped = $userData.value?.stamps.find(x => Number(x.campaign_id) === Number($selectedCampaign.value?.id));
     if(stamped) {
       $showReceipt.set(true);
       $receiptImageData.set(stamped.url);
@@ -261,15 +283,16 @@ const checkStamp = () => {
       setTimeout(() => {
         $showCampaignModal.set(false);
       }, 1000); 
-    }
-
-  } else {
+    } else {
 
     $showReceipt.set(null);
     $receiptImageData.set(null);
     stampedCardImage.value = null;
 
-  }
+    }
+
+
+
 }
 
 </script>

@@ -7,7 +7,7 @@
     </div>
 
     <ModalVue :project_info="project_info" :campaign_info="$selectedCampaign.value" @stamped="showStampedAnimation()"></ModalVue>
-    <NewStampModal @update="afterWelcome()"></NewStampModal>
+    <NewStampModal :project_info="project_info" @update="afterWelcome()"></NewStampModal>
     <ConnectWallet></ConnectWallet>
 
     <div id="snapshotParent" v-if="showReceipt" class="w-screen h-screen top-0 left-0 z-[999] fixed flex justify-center items-center">

@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed, toRefs } from "vue";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 
 import { $showNewStampModal, $username, initXmtp, $xmtpClient } from "@/stores/stamp_1";
@@ -122,6 +122,9 @@ import anime from "animejs/lib/anime.es.js";
 
 import { connect, reconnect, getAccount, disconnect, getConnectors, watchConnections } from '@wagmi/core';
 import { config } from '@/wagmiConfig';
+
+const props = defineProps([ "project_info" ]);
+const { project_info } = toRefs(props);
 
 const page = ref(0);
 
@@ -263,8 +266,8 @@ onMounted(() => {
 
   });
 
-  
 
+  const campaignID = Number(getUrlParams())
 });
 
 const show = () => {
@@ -303,6 +306,13 @@ const connectWallet = async (_connectorId) => {
 
 };
 
+const getUrlParams = () => {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const urlCampaign = urlParams.get('campaign')
+  return urlCampaign
+}
+
 const createWallet = async () => {
   console.log("createWallet");
 
@@ -335,10 +345,24 @@ const requestNotification = async () => {
   page.value = 3.5;
 
   try {
-
     await window.OneSignal.Notifications.requestPermission();
     if(window?.OneSignal?.Notifications.permission) {
-      allowNotification();
+        allowNotification();
+        await fetch(`/api/logs.json`, {
+          method: "POST",
+          headers: {
+            'content-type': "application/json"
+          },
+          body: JSON.stringify({
+            payload: {
+              token_symbol: project_info.value.token_symbol,
+              token_address: project_info.value.token_address.toLowerCase(),
+              campaign: Number(getUrlParams()) 
+            },
+            name: "subccribe",
+            user_data: {address: getAccount(config)?.address.toLowerCase()},
+          }),
+        })
     } else {
       alert("Please allow notification push at your application.")
     }

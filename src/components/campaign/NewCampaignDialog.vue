@@ -58,13 +58,17 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, toRefs } from 'vue'
   import { Button } from '@/components/ui/button'
   import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from '@/components/ui/dialog'
   import { Input } from '@/components/ui/input'
   import { Label } from '@/components/ui/label'
   import { useDebounceFn } from '@vueuse/core'
   import { Textarea } from '@/components/ui/textarea'
+
+  const props = defineProps([ "project_id" ]);
+  const { project_id } = toRefs(props);
+
 
   const open  = ref(false);
   
@@ -101,7 +105,18 @@
   
   }, 300)
   
-  const confirmCreateCampaign = () => {
+  const confirmCreateCampaign = async () => {
+    await fetch('/api/campaigns.json', {
+            method: "POST",
+            headers: {
+                  "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                    project_id: project_id.value,
+                    tag: inputTag.value,
+                    message: inputReplyMessage.value,
+            })
+    })
     hide();
   }
   

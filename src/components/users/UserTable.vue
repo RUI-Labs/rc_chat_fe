@@ -13,6 +13,9 @@ interface User {
   tags: string[];
 }
 
+const props = defineProps(["project_id"]);
+const { project_id } = toRefs(props);
+
 // Sample data
 const users = ref<User[]>([
   { id: "1", name: "Alice", address: "123 Lane", subscribed: true, tags: ["premium", "new"] },

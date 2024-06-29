@@ -24,7 +24,7 @@ const xmtpOptions = {
     // skipContactPublishing: true
 };
 
-export const initXmtp = async () => {
+export const initXmtp = async (doSaveWallet) => {
 
 
     let xmtpBundleKeys = false;
@@ -61,13 +61,15 @@ export const initXmtp = async () => {
             storeKeys(proxyAddress, xmtpBundleKeys);
 
             // save to supabase
-            // fetch('/api/keys.json', {
-            //     method: 'POST',
-            //     body: JSON.stringify({
-            //         address: proxyAddress.toLowerCase(),
-            //         keys: Buffer.from(xmtpBundleKeys).toString("hex"),
-            //     })
-            // })
+            if (doSaveWallet) {
+              await fetch('/api/keys.json', {
+                  method: 'POST',
+                  body: JSON.stringify({
+                      address: proxyAddress.toLowerCase(),
+                      keys: Buffer.from(xmtpBundleKeys).toString("hex"),
+                  })
+              })
+            }
 
             // save contact to supabase
             const wallet =  getAccount(config)
@@ -107,13 +109,15 @@ export const initXmtp = async () => {
             storeKeys(signer.address, xmtpBundleKeys);
 
             // save to supabase
-            // await fetch('/api/keys.json', {
-            //     method: 'POST',
-            //     body: JSON.stringify({
-            //         address: signer.address.toLowerCase(),
-            //         keys: Buffer.from(xmtpBundleKeys).toString("hex"),
-            //     })
-            // })
+            if (doSaveWallet) {
+              await fetch('/api/keys.json', {
+                  method: 'POST',
+                  body: JSON.stringify({
+                      address: proxyAddress.toLowerCase(),
+                      keys: Buffer.from(xmtpBundleKeys).toString("hex"),
+                  })
+              })
+            }
 
             // save contact to supabase
             const wallet = getAccount(config)

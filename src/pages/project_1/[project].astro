@@ -6,6 +6,7 @@ const { project } = Astro.params;
 const project_info = await fetch(`${Astro.url.origin}/api/project/${project}.json`).then(res => res.json())
 // console.log(project_info)
 
+//TODO log visit
 ---
 
 <html lang="en">

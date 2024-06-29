@@ -26,6 +26,8 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
   <body class=`w-full h-full min-h-screen grid grid-rows-[auto_1fr] bg-stone-900 `>
     <script>
       import "iconify-icon";
+import { Buffer } from "buffer";
+window.Buffer = window.Buffer ?? Buffer;
     </script>
 
     <nav class="w-full border-b border-b-stone-700 bg-stone-800 p-4 grid grid-cols-3">

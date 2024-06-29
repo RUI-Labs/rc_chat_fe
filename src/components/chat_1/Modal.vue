@@ -285,9 +285,9 @@ const checkStamp = () => {
       }, 1000); 
     } else {
 
-    $showReceipt.set(null);
-    $receiptImageData.set(null);
-    stampedCardImage.value = null;
+      $showReceipt.set(null);
+      $receiptImageData.set(null);
+      stampedCardImage.value = null;
 
     }
 

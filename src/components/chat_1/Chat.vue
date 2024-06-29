@@ -788,7 +788,7 @@ const receiptAnimation = async () => {
       );
 
       tl.complete = () => {
-        // showReceipt.value = false
+        showReceipt.value = false
         // console.log('doneee')
         $showReceipt.set(false);
         $receiptImageData.set(null);

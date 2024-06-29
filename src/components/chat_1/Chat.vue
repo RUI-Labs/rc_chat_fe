@@ -6,7 +6,7 @@
       </div>
     </div>
 
-    <ModalVue :project_info="project_info" :campaign_info="$selectedCampaign.value"></ModalVue>
+    <ModalVue :project_info="project_info" :campaign_info="$selectedCampaign.value" @stamped="showStampedAnimation()"></ModalVue>
     <NewStampModal @update="afterWelcome()"></NewStampModal>
     <ConnectWallet></ConnectWallet>
 
@@ -662,8 +662,7 @@ const pushXmtpMessage = async () => {
 
 const afterWelcome = () => {
 
-  showReceipt.value = true;
-  receiptAnimation();
+  
   
   checkWalletAccount();
   updateGotStamp();
@@ -673,11 +672,15 @@ const afterWelcome = () => {
   const urlCampaign = urlParams.get('campaign')
   console.log('urlCampaign', urlCampaign);
   
-  const _campaign = $userData.value?.stamps.find(x => Number(x?.campaign_id) === Number(urlCampaign))
-  showCampaignModalTrigger(_campaign);
+  const _campaign = project_info.value?.campaigns.find(x => Number(x.id) === Number(urlCampaign))
+  if(_campaign) showCampaignModalTrigger(_campaign);
   
 }
 
+const showStampedAnimation = () => {
+  showReceipt.value = true;
+  receiptAnimation();
+}
 
 const receiptAnimation = async () => {
   if (showReceipt.value) {

@@ -80,22 +80,27 @@ onMounted(() => {
 
 const _connect = async (_connectorId) => {
 
-  console.log("_connect wallet");
-  const connector = getConnectors(config).find(x => x.id === _connectorId);
-  console.log(connector)
-  if(connector) {
-
-    try {
-      await connect(config, { connector });
-      hide();
-    } catch(error) {
-      console.log(error);
-      alert(`Wallet fail to connect : ${error?.message}`);
-    }
-
+  if(getAccount(config)?.address) {
+    createStamp();
   } else {
-    alert("No wallet found.")
+    console.log("_connect wallet");
+    const connector = getConnectors(config).find(x => x.id === _connectorId);
+    console.log(connector)
+    if(connector) {
+  
+      try {
+        await connect(config, { connector });
+        hide();
+      } catch(error) {
+        console.log(error);
+        alert(`Wallet fail to connect : ${error?.message}`);
+      }
+  
+    } else {
+      alert("No wallet found.")
+    }
   }
+
 
 }
 

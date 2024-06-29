@@ -36,7 +36,7 @@
                     </button>
                     <div class="p-8 mt-4">
                       <p class="mb-4">you're invited to join:</p>
-                      <h1 class="text-4xl font-brand font-bold">{{ $selectedCampaign.value?.message }}</h1>
+                      <h1 class="text-4xl font-brand font-bold">{{ $selectedCampaign.value?.title }}</h1>
                     </div>
 
                     <div class="px-8 text-center pb-2">
@@ -164,6 +164,8 @@ watch(isOutside, () => {
   zoomStamp.value = !isOutside.value;
 });
 
+const emit = defineEmits(["stamped"]);
+
 const confirmStamp = () => {
   if (noStamp.value) return;
   if (stampedCardImage.value) return;
@@ -190,6 +192,8 @@ const confirmStamp = () => {
 
         open.value = false;
         $showCampaignModal.set(false);
+
+        emit("stamped");
     })
     .catch(function (error) {
       console.error("oops, something went wrong!", error);
@@ -207,7 +211,10 @@ onMounted(() => {
   
   $userData.subscribe(() => {
 
-    noStamp.value = false;
+    if($userData.value?.wallet_address) {
+      noStamp.value = false;
+    }
+
     checkStamp();
 
   })

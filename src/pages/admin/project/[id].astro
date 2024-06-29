@@ -13,7 +13,7 @@ console.log(JSON.stringify(campaigns))
     <div class="p-4 py-12 flex justify-between items-center">
       <h1 class="text-3xl pl-4 font-brand font-bold text-white">Campaigns</h1>
 
-      <NewCampaignDialog client:only="vue">
+      <NewCampaignDialog project_id={Astro.params.id} client:only="vue">
         <Button class="bg-blue-500 text-white font-brand font-bold rounded-full text-xl py-6 px-8 hover:bg-blue-600 hover:text-white">New</Button>
       </NewCampaignDialog>
     </div>

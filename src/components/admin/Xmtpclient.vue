@@ -60,13 +60,6 @@ const initXmtp = async () => {
   try {
     keys = loadKeys(_address);
     if(keys){
-        await fetch('/api/keys.json', {
-          method: 'POST',
-          body: JSON.stringify({
-            address: _address,
-            keys: Buffer.from(keys).toString("hex"),
-          })
-        })
     }
   } catch (err) {
     console.log(err);
@@ -91,11 +84,13 @@ const initXmtp = async () => {
       keys = await Client.getKeys(pwallet, {
                   ...clientOptions,
               });
+
               storeKeys(_address, keys);
     }
 
 
 
+                        console.log(107)
   } else {
     
     // console.log(signer);
@@ -108,6 +103,14 @@ const initXmtp = async () => {
       });
   
       // console.log(keys);
+
+     await fetch('/api/keys.json', {
+       method: 'POST',
+       body: JSON.stringify({
+         address: _address,
+         keys: Buffer.from(keys).toString("hex"),
+       })
+     })
       storeKeys(_address, keys);
     }
 
@@ -183,7 +186,7 @@ const checkAccount = async () => {
 };
 
 onMounted(async () => {
-  // console.log('aaa')
+   console.log('aaa')
 
   await reconnect(config);
 

@@ -7,7 +7,7 @@
     </div>
 
     <ModalVue :project_info="project_info" :campaign_info="$selectedCampaign.value"></ModalVue>
-    <NewStampModal @update="checkWalletAccount()"></NewStampModal>
+    <NewStampModal @update="afterWelcome()"></NewStampModal>
     <ConnectWallet></ConnectWallet>
 
     <div id="snapshotParent" v-if="showReceipt" class="w-screen h-screen top-0 left-0 z-[999] fixed flex justify-center items-center">
@@ -333,8 +333,9 @@ const showCampaignModalTrigger = (_c) => {
   console.log(_c);
 
   $showCampaignModal.set(false);
-  $selectedCampaign.set(null);
   $showCampaignModal.set(true);
+
+  $selectedCampaign.set(null);
   $selectedCampaign.set(_c);
 }
 
@@ -365,113 +366,7 @@ onMounted( async () => {
   });
 
   watch(showReceipt, async () => {
-    if (showReceipt.value) {
-      console.log("showing receipt");
-
-      //wait until whiteFlash is visible
-
-      let waitEl = () => {
-        return new Promise((resolve, reject) => {
-          let el = document.getElementById("whiteFlash");
-          if (el) {
-            resolve(el);
-          } else {
-            setTimeout(() => {
-              resolve(waitEl());
-            }, 100);
-          }
-        });
-      };
-
-      await waitEl();
-
-      console.log("showing receipt");
-
-      anime({
-        targets: "#whiteFlash",
-        opacity: 0,
-        duration: 300,
-        easing: "easeInOutSine",
-      });
-
-      var tl = anime.timeline({
-        easing: "easeInOutSine",
-        duration: 300,
-        delay: 300,
-      });
-
-      tl.add(
-        {
-          targets: "#receiptImage",
-          scale: 0.8,
-          rotate: "-6deg",
-          duration: 300,
-        },
-        "-=150"
-      );
-
-      // console.log(sendButtonElBounding.right.x, sendButtonElBounding.right.y)
-
-      tl.add({
-        targets: "#receiptImage",
-        rotate: "0deg",
-        // scale: 0.1,
-        width: "200px",
-        height: "200px",
-        // translateY: 100,
-
-        // translateX: sendButtonElBounding.right.value - 50,
-        // complete: function(){
-        //     let _el = document.getElementById('receiptImage')
-        //     _el.style.transformOrigin = 'bottom right'
-        // },
-        duration: 300,
-      });
-
-      /*        tl.add({
-            targets: '#receiptImage',
-            // translateX: '60vw',
-            // translateX: sendButtonBounding.x - _elBounding.x,
-            // scale: 0.1,
-            duration: 300,
-            easing: 'easeInOutSine'
-        },"-=500")*/
-
-      tl.add(
-        {
-          targets: "#receiptImage",
-          translateY: -50,
-          duration: 300,
-          easing: "easeInOutSine",
-        },
-        "-=300"
-      );
-
-      tl.add({
-        targets: "#receiptImage",
-        opacity: 0,
-        translateY: 100,
-        duration: 200,
-        easing: "easeInOutSine",
-      });
-
-      tl.add(
-        {
-          targets: "#blackDrop",
-          opacity: 0,
-          duration: 300,
-          easing: "easeInOutSine",
-        },
-        "-=300"
-      );
-
-      tl.complete = () => {
-        // showReceipt.value = false
-        // console.log('doneee')
-        $showReceipt.set(false);
-        $receiptImageData.set(null);
-      };
-    }
+    receiptAnimation();
   });
   
   watch(campaignList1, () => {
@@ -555,6 +450,7 @@ const checkWalletAccount = async () => {
       // wallet found in supabase
       initXmtp();
       // updateGotStamp();
+      gotStamp.value = true;
       $showNewStampModal.set(false);
 
     } else {
@@ -757,13 +653,140 @@ const pushXmtpMessage = async () => {
     }
     
     if(messages.value.length == 0) {
-      console.log('gggggggg')
       conversations.value = await $xmtpClient.value.conversations.list();
       fetchMessages();
     } 
     isMessageBusy.value = false;
     
 }
+
+const afterWelcome = () => {
+
+  
+  checkWalletAccount();
+  updateGotStamp();
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const urlCampaign = urlParams.get('campaign')
+  console.log('urlCampaign', urlCampaign);
+  
+  const _campaign = $userData.value?.stamps.find(x => Number(x?.campaign_id) === Number(urlCampaign))
+  showCampaignModalTrigger(_campaign);
+  
+}
+
+
+const receiptAnimation = () => {
+  if (showReceipt.value) {
+      console.log("showing receipt");
+
+      //wait until whiteFlash is visible
+
+      let waitEl = () => {
+        return new Promise((resolve, reject) => {
+          let el = document.getElementById("whiteFlash");
+          if (el) {
+            resolve(el);
+          } else {
+            setTimeout(() => {
+              resolve(waitEl());
+            }, 100);
+          }
+        });
+      };
+
+      await waitEl();
+
+      console.log("showing receipt");
+
+      anime({
+        targets: "#whiteFlash",
+        opacity: 0,
+        duration: 300,
+        easing: "easeInOutSine",
+      });
+
+      var tl = anime.timeline({
+        easing: "easeInOutSine",
+        duration: 300,
+        delay: 300,
+      });
+
+      tl.add(
+        {
+          targets: "#receiptImage",
+          scale: 0.8,
+          rotate: "-6deg",
+          duration: 300,
+        },
+        "-=150"
+      );
+
+      // console.log(sendButtonElBounding.right.x, sendButtonElBounding.right.y)
+
+      tl.add({
+        targets: "#receiptImage",
+        rotate: "0deg",
+        // scale: 0.1,
+        width: "200px",
+        height: "200px",
+        // translateY: 100,
+
+        // translateX: sendButtonElBounding.right.value - 50,
+        // complete: function(){
+        //     let _el = document.getElementById('receiptImage')
+        //     _el.style.transformOrigin = 'bottom right'
+        // },
+        duration: 300,
+      });
+
+      /*        tl.add({
+            targets: '#receiptImage',
+            // translateX: '60vw',
+            // translateX: sendButtonBounding.x - _elBounding.x,
+            // scale: 0.1,
+            duration: 300,
+            easing: 'easeInOutSine'
+        },"-=500")*/
+
+      tl.add(
+        {
+          targets: "#receiptImage",
+          translateY: -50,
+          duration: 300,
+          easing: "easeInOutSine",
+        },
+        "-=300"
+      );
+
+      tl.add({
+        targets: "#receiptImage",
+        opacity: 0,
+        translateY: 100,
+        duration: 200,
+        easing: "easeInOutSine",
+      });
+
+      tl.add(
+        {
+          targets: "#blackDrop",
+          opacity: 0,
+          duration: 300,
+          easing: "easeInOutSine",
+        },
+        "-=300"
+      );
+
+      tl.complete = () => {
+        // showReceipt.value = false
+        // console.log('doneee')
+        $showReceipt.set(false);
+        $receiptImageData.set(null);
+      };
+    }
+}
+
 
 </script>
 

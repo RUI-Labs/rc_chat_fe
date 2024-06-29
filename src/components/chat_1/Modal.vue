@@ -96,6 +96,9 @@ const noStamp = ref(true);
 const stampedCardImage = ref(null);
 
 const toggleModal = () => {
+  console.log('open.value', open.value);
+
+  
   open.value = !open.value;
   
   if(!open.value) {
@@ -199,43 +202,21 @@ const confirmStamp = () => {
 
 onMounted(() => {
   
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const urlCampaign = urlParams.get('campaign')
-  console.log('urlCampaign', urlCampaign);
+  
 
   // if(campaign_info.value?.id == urlCampaign) {
   //   toggleModal();
   // }
   
   $userData.subscribe(() => {
-
-    const stamped = $userData.value?.stamps.find(x => Number(x.campaign_id) === Number(urlCampaign));
-    if ($userData.value?.wallet_address) noStamp.value = false;
-
-    if(stamped) {
-      $showReceipt.set(true);
-      $receiptImageData.set(stamped.url);
-      
-      setTimeout(() => {
-        console.log('qqq')
-        $showCampaignModal.set(false);
-      }, 1000); 
-      
-      // stampFound.value = stamped;
-      stampedCardImage.value = stamped.url;
-    }
+    checkStamp();
 
   })
 
 
   $selectedCampaign.subscribe((value) => {
     if(value) {
-      if($userData.value?.stamps.find(x => Number(x?.campaign_id) === Number(urlCampaign))) {
-        setTimeout(() => {
-          $showCampaignModal.set(false);
-        }, 2000); 
-      }
+        checkStamp();
     }
   })
 
@@ -255,5 +236,34 @@ onMounted(() => {
 
 })
 
+
+const checkStamp = () => {
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const urlCampaign = urlParams.get('campaign')
+  console.log('urlCampaign', urlCampaign);
+
+  if($selectedCampaign.value?.id === Number(urlCampaign)) {
+
+    const stamped = $userData.value?.stamps.find(x => Number(x.campaign_id) === Number(urlCampaign));
+    if(stamped) {
+      $showReceipt.set(true);
+      $receiptImageData.set(stamped.url);
+      stampedCardImage.value = stamped.url;
+
+      setTimeout(() => {
+        $showCampaignModal.set(false);
+      }, 1000); 
+    }
+
+  } else {
+
+    $showReceipt.set(null);
+    $receiptImageData.set(null);
+    stampedCardImage.value = null;
+
+  }
+}
 
 </script>

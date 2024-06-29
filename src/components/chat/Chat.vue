@@ -3,9 +3,9 @@
     <template v-if="address">
       <Teleport to="#userlist">
         <div class="w-full divide-y divide-stone-700 pb-[20vh]">
-          <div v-for="i in 20" class="w-full justify-center items-center duration-300 p-4 bg-white/5 hover:bg-white/10">
-            <p class="font-brand text-lg text-stone-200">Peter Lorem Ipsum</p>
-            <p class="text-sm pt-1 text-stone-500">0x1234123</p>
+          <div @click="pickConversation(conversation)" v-for="conversation in conversations" class="w-full justify-center items-center duration-300 p-4 bg-white/5 hover:bg-white/10">
+            <p class="font-brand text-lg text-stone-200">{{ conversation?.userData?.contact_books?.name }}</p>
+            <p class="text-sm pt-1 text-stone-500">{{ conversation?.peerAddress }}</p>
 
             <!-- <div class="flex justify-start items-center space-x-2 col-span-full pb-2 pl-1">
               <div v-for="i in 3" class="text-xs border px-2 py-1 rounded-full bg-white">Tag {{ i }}</div>
@@ -22,7 +22,7 @@
       <Teleport to="#chatBox">
         <div class="w-full grid grid-cols-1 grid-rows-[auto_1fr_auto] h-full justify-center items-center">
           <div class="w-full p-4 pb-2 grid grid-cols-3 justify-center items-center sticky top-0 bg-white/5 border-b border-b-white/10">
-            <p class="font-brand text-white text-xl ">Peter Lorem Ipsum</p>
+            <p class="font-brand text-white text-xl ">{{ selectedConversation?.userData?.contact_books?.name }}</p>
             <!-- <p class="text-sm col-span-2 text-right text-stone-500">Tags</p> -->
 
             
@@ -33,16 +33,22 @@
               </div>
             </div>
 
-            <p class="text-sm text-stone-400">0x1234123</p>
+            <p class="text-sm text-stone-400">{{ selectedConversation?.peerAddress }}</p>
           </div>
 
           <div class="w-full h-full space-y-4 flex flex-col justify-end p-4">
-            <div v-for="message in messages" class="w-full flex" :class="[getDirection(message.sender)]">
+            <div v-for="message in selectedConversation?.messages" class="w-full flex" :class="[getDirection(message.sender)]">
               <div :class="[getDirection(message.sender)]">
                 <!-- <p :class="[authorDirection(message.sender), 'w-full']">{{ message.sender }}</p> -->
                 <template v-if="message.type == 'text'">
                   <div class="p-2 px-3 rounded-xl bg-stone-700 text-stone-200">
                     {{ message.content }}
+                  </div>
+                </template>
+
+                <template v-else-if="message.type == 'attachment'">
+                  <div class="w-[100px] h-[100px] border rounded-md">
+                    <img :src="message.content" />
                   </div>
                 </template>
 
@@ -80,10 +86,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, toRefs } from "vue";
 import { Button } from "@/components/ui/button";
 import { connect, reconnect, getAccount, disconnect, getConnectors, watchConnections } from "@wagmi/core";
 import { config } from "@/wagmiConfig";
+import { $xmtpClient, fetchProjectStamp, $projectStampList } from "@/stores/admin";
 
 const address = ref();
 const connectors = ref();
@@ -103,6 +110,14 @@ const checkAccount = async () => {
 };
 let unwatch;
 
+
+const conversations = ref([]);
+const messages = ref([]);
+const props = defineProps([ "project_info" ]);
+const { project_info } = toRefs(props);
+import { ContentTypeRemoteAttachment, RemoteAttachmentCodec, AttachmentCodec } from "@xmtp/content-type-remote-attachment";
+const selectedConversation = ref(null);
+
 onMounted(async () => {
   // console.log('aaa')
   connectors.value = getConnectors(config);
@@ -118,75 +133,111 @@ onMounted(async () => {
   await reconnect(config);
 
   await checkAccount();
+
+
+
+  $xmtpClient.subscribe( async (value) => {
+      if ($xmtpClient.value) {
+          await fetchProjectStamp(project_info.value);
+          const _conversation = await $xmtpClient.value.conversations.list();
+          // console.log('_conversation', _conversation)
+          const contactList = [...new Set($projectStampList.value.map(x => x?.contact_books?.xmtp_address))]
+          console.log('contactList', contactList)
+          conversations.value = _conversation.filter((x) => contactList.includes(x.peerAddress.toLowerCase()))
+          
+          conversations.value = await Promise.all(
+            conversations.value.map( async (c) => {
+              c['userData'] = $projectStampList.value.find(x => x.contact_books?.xmtp_address.toLowerCase() === c?.peerAddress.toLowerCase());
+              c['messages'] = await processMessages(c)
+
+              streamMessage(c);
+
+              return c;
+            })
+          )
+
+          // for(let c of conversations.value) {
+          //   c['userData'] = $projectStampList.value.find(x => x.contact_books?.xmtp_address.toLowerCase() === c?.peerAddress.toLowerCase());
+          //   c['messages'] = await processMessages(c)
+          // }
+          
+          console.log('conversations.value', conversations.value)
+          selectedConversation.value = conversations.value[0];
+
+
+
+      }
+  })
+  
 });
 
-const messages = [
-  {
-    type: "text",
-    content: "Hello, how can I help you today?",
-    sender: "Yao",
-  },
-  {
-    type: "text",
-    content: "I need help with my account",
-    sender: "me",
-  },
-  {
-    type: "text",
-    content: "Sure, what seems to be the problem?",
-    sender: "Yao",
-  },
-  {
-    type: "text",
-    content: "Hello, how can I help you today?",
-    sender: "Yao",
-  },
-  {
-    type: "text",
-    content: "I need help with my account",
-    sender: "me",
-  },
-  {
-    type: "text",
-    content: "Sure, what seems to be the problem?",
-    sender: "Yao",
-  },
-  {
-    type: "text",
-    content: "Hello, how can I help you today?",
-    sender: "Yao",
-  },
-  {
-    type: "text",
-    content: "I need help with my account",
-    sender: "me",
-  },
-  {
-    type: "text",
-    content: "Sure, what seems to be the problem?",
-    sender: "Yao",
-  },
-  {
-    type: "text",
-    content: "Hello, how can I help you today?",
-    sender: "Yao",
-  },
-  {
-    type: "text",
-    content: "I need help with my account",
-    sender: "me",
-  },
-  {
-    type: "text",
-    content: "Sure, what seems to be the problem?",
-    sender: "Yao",
-  },
-  {
-    type: "media",
-    // content:'I can\'t seem to login',
-    sender: "me",
-  },
-];
+// const messages = [
+//   {
+//     type: "text",
+//     content: "Hello, how can I help you today?",
+//     sender: "Yao",
+//   },
+//   {
+//     type: "text",
+//     content: "I need help with my account",
+//     sender: "me",
+//   },
+//   {
+//     type: "text",
+//     content: "Sure, what seems to be the problem?",
+//     sender: "Yao",
+//   },
+//   {
+//     type: "text",
+//     content: "Hello, how can I help you today?",
+//     sender: "Yao",
+//   },
+//   {
+//     type: "text",
+//     content: "I need help with my account",
+//     sender: "me",
+//   },
+//   {
+//     type: "text",
+//     content: "Sure, what seems to be the problem?",
+//     sender: "Yao",
+//   },
+//   {
+//     type: "text",
+//     content: "Hello, how can I help you today?",
+//     sender: "Yao",
+//   },
+//   {
+//     type: "text",
+//     content: "I need help with my account",
+//     sender: "me",
+//   },
+//   {
+//     type: "text",
+//     content: "Sure, what seems to be the problem?",
+//     sender: "Yao",
+//   },
+//   {
+//     type: "text",
+//     content: "Hello, how can I help you today?",
+//     sender: "Yao",
+//   },
+//   {
+//     type: "text",
+//     content: "I need help with my account",
+//     sender: "me",
+//   },
+//   {
+//     type: "text",
+//     content: "Sure, what seems to be the problem?",
+//     sender: "Yao",
+//   },
+//   {
+//     type: "media",
+//     // content:'I can\'t seem to login',
+//     sender: "me",
+//   },
+// ];
 const authorDirection = (sender) => {
   return sender === "me" ? "text-right" : "text-left";
 };
@@ -194,8 +245,96 @@ const getDirection = (sender) => {
   return sender === "me" ? "flex-row-reverse" : "flex-row";
 };
 
+const isMessageBusy = ref(false);
 const messageInput = ref("");
-const sendMessage = () => {
-  messageInput.value = "";
+const sendMessage = async () => {
+
+
+  if(isMessageBusy.value) return;
+    isMessageBusy.value = true;
+
+    let _message = messageInput.value;
+    messageInput.value = ''
+
+    try {
+        const conversation = await $xmtpClient.value.conversations.newConversation(selectedConversation.value.peerAddress);
+        await conversation.send(_message);
+    } catch (err) {
+        console.log("sendMessage", err);
+    }
+    
+    isMessageBusy.value = false;
+
 };
+
+
+
+const processMessages = async (_conversation) => {
+
+  let _message = await _conversation.messages();
+  const pmessage = await Promise.all(
+    _message.map( async (m) => {
+      if (m.contentType.sameAs(ContentTypeRemoteAttachment)) {
+        try {
+
+          const attachment = await RemoteAttachmentCodec.load(m.content, $xmtpClient.value);
+          const objectURL = URL.createObjectURL(
+              new Blob([Buffer.from(attachment.data)], {
+                  type: attachment.mimeType,
+              }),
+          );
+          return {
+            content: objectURL,
+            id: m.id,
+            senderAddress: m.senderAddress,
+            type: 'attachment',
+            sender: m.senderAddress.toLowerCase() === $xmtpClient.value.address.toLowerCase() ? 'me' : m.senderAddress,
+          }
+
+        } catch(error) {
+          return {
+            content: '',
+            id: m.id,
+            senderAddress: m.senderAddress,
+            type: 'media',
+            sender: m.senderAddress.toLowerCase() === $xmtpClient.value.address.toLowerCase() ? 'me' : m.senderAddress,
+          }
+        }
+      } else {
+        return {
+          content: m.content,
+          id: m.id,
+          senderAddress: m.senderAddress,
+          type: 'text',
+          sender: m.senderAddress.toLowerCase() === $xmtpClient.value.address.toLowerCase() ? 'me' : m.senderAddress,
+        }
+      }
+    })
+  )
+
+  return pmessage;
+
+}
+
+const streamMessage = async (_c) => {
+  for await (const message of await _c.streamMessages()) {
+    const exists = _c?.messages.find((m) => m.id === message.id);
+    if(!exists) {
+      console.log('streamMessage', message.content)
+      _c.messages.push({
+        content: message.content,
+        id: message.id,
+        senderAddress: message.senderAddress,
+        type: 'text',
+        sender: message.senderAddress.toLowerCase() === $xmtpClient.value.address.toLowerCase() ? 'me' : message.senderAddress,
+      })
+    }
+  }
+}
+
+const pickConversation = (_c) => {
+  console.log('selectedConversation.value', _c)
+  selectedConversation.value = _c;
+}
+
 </script>

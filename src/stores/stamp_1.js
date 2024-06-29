@@ -270,14 +270,19 @@ export const sendImage = async (_projectInfo, _campaign) => {
 
     
     // upload to supabase storage 
-    const imageUp = await supabase.storage.from('stamps').upload(filename, imagefile, { upsert:true })
-    const encodedUp = await supabase.storage.from('stamps').upload(encodedname, encryptedEncoded.payload, { upsert:true })
+    // const imageUp = await supabase.storage.from('stamps').upload(filename, imagefile, { upsert:true })
+    // const encodedUp = await supabase.storage.from('stamps').upload(encodedname, encryptedEncoded.payload, { upsert:true })
+    const [imageUp, encodedUp] = await Promise.all([
+        supabase.storage.from('stamps').upload(filename, imagefile, { upsert:true }),
+        supabase.storage.from('stamps').upload(encodedname, encryptedEncoded.payload, { upsert:true }),
+    ])
 
     const url = `${SUPABASE_URL}/storage/v1/object/public/${imageUp.data.fullPath}`
     const encoded_url = `${SUPABASE_URL}/storage/v1/object/public/${encodedUp.data.fullPath}`
     console.log('url', url);
 
-    const upload = await fetch("/api/uploadstamp.json", {
+    // const upload = await fetch("/api/uploadstamp.json", {
+    fetch("/api/uploadstamp.json", {
         method: "POST",
         body: JSON.stringify({
             "url": url,
@@ -287,7 +292,7 @@ export const sendImage = async (_projectInfo, _campaign) => {
             "project_id": _projectInfo.token_address.toLowerCase(),
         })
     }).then(res => res.text()).then(result => JSON.parse(result)).catch(err => null)
-    console.log("upload", upload);
+    // console.log("upload", upload);
 
 
     

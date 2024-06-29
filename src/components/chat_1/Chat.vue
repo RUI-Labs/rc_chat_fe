@@ -436,6 +436,22 @@ onMounted( async () => {
   const _campaign = project_info.value?.campaigns.find(x => Number(x.id) === Number(urlCampaign))
   if(_campaign) showCampaignModalTrigger(_campaign);
 
+  await fetch(`/api/logs.json`, {
+    method: "POST",
+    headers: {
+      'content-type': "application/json"
+    },
+    body: JSON.stringify({
+      payload: {
+        token_symbol: project_info.value.token_symbol,
+        token_address: project_info.value.token_address,
+        campaign: parseInt(urlCampaign)
+      },
+      name: "visit",
+      user_data: {address: getAccount(config)?.address},
+    }),
+  })
+
   
 });
 

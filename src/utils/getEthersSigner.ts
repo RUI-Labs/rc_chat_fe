@@ -5,7 +5,7 @@ import type { Account, Chain, Client, Transport } from 'viem'
 export function clientToSigner(client: Client<Transport, Chain, Account>) {
   const { account, chain, transport } = client
   const network = {
-    chainId: chain.id,
+    chainId: chain.id || 8453,
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   }

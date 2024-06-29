@@ -1,13 +1,12 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu'
 import { Button } from "@/components/ui/button";
 import NewProjectDialog from "@/components/admin/NewProjectDialog.vue";
 
-const newProjectDialogRef  = ref(null);
+const newProjectDialogRef  = ref<any>(null);
 
-const selectProject = (project) => {
+const selectProject = (project:any) => {
         window.location.href = "/admin/project/" + project.token_symbol
 }
 
@@ -22,7 +21,7 @@ const { wallet } = toRefs(props);
 const projects = ref([])
 
 onMounted(async () => {
-        projects.value = await fetch(`/api/projects.json?owner=${wallet.value}`)
+        projects.value = await fetch(`/api/projects.json?owner=${wallet?.value}`)
         .then(res => res.json())
 })
 

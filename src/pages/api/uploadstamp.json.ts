@@ -19,7 +19,10 @@ export const POST: APIRoute = async ({ request }) => {
     // .then(res => res.text())
     // console.log(r)
 
-    const { data, error } = await supabase.from("stamps").upsert(body, { onConflict: ['wallet_address', 'campaign_id', 'project_id'] }).select();
+    // const { data, error } = await supabase.from("stamps").upsert(body, { onConflict: ['wallet_address', 'campaign_id', 'project_id'] }).select();
+
+    const { data } = await supabase.from("stamps").upsert(body).select();
+
     return new Response(JSON.stringify(data));
 
     // return new Response(JSON.stringify(body));

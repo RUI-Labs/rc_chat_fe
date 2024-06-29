@@ -21,7 +21,7 @@ const project_info = await fetch(`${Astro.url.origin}/api/project/${project}.jso
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet" crossorigin="anonymous" />
 
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script is:inline src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 		<script>
 			declare global {
 				interface Window {

@@ -2,6 +2,9 @@ import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async (context) => {
   const token = context.url.searchParams.get('token')
+  if (!token) {
+    return new Response('Token address is required', { status: 400 })
+  }
   const metadata = await fetchTokenMetadata(token)
 
   return new Response(JSON.stringify(metadata))

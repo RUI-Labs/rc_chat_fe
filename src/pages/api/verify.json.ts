@@ -1,9 +1,9 @@
 import { lucia } from '@/auth'
 import type { APIRoute } from 'astro';
 // import { SiweMessage } from 'siwe'
-import { verifyMessage } from 'ethers'
+// import { verifyMessage } from 'ethers'
 
-import { createPublicClient, createWalletClient, custom, http } from 'viem'
+import { createPublicClient, http } from 'viem'
 import { mainnet } from 'viem/chains'
 
 const publicClient = createPublicClient({

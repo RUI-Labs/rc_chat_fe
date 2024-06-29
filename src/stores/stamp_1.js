@@ -21,7 +21,7 @@ import { getEthersSigner } from "@/utils/getEthersSigner";
 import { config } from "@/wagmiConfig";
 import { getAccount } from "@wagmi/core";
 import { mainnet } from "viem/chains";
-import { ContentTypeAttachment, AttachmentCodec, RemoteAttachmentCodec, ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+import { AttachmentCodec, RemoteAttachmentCodec, ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
 
 export const $xmtpClient = atom(null);
 
@@ -195,7 +195,9 @@ export const initUser = async () => {
 
     const sres = await fetch(`/api/wallet/${wallet.address.toLowerCase()}.json`, {
         method: 'GET'
-    }).then(res => res.text()).then(result => JSON.parse(result)).catch(error => null)
+    }).then(res => res.text()).then(result => JSON.parse(result)).catch(error => {
+        console.log(error);
+    })
     // console.log(sres)
 
     if(isSmartWalletConnected() && sres?.private_xmtp_address) {
@@ -291,7 +293,9 @@ export const sendImage = async (_projectInfo, _campaign) => {
             "campaign_id": _campaign?.id,
             "project_id": _projectInfo.token_address.toLowerCase(),
         })
-    }).then(res => res.text()).then(result => JSON.parse(result)).catch(err => null)
+    }).then(res => res.text()).then(result => JSON.parse(result)).catch(err => {
+        console.log(err);
+    })
     // console.log("upload", upload);
 
 

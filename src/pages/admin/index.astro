@@ -19,9 +19,9 @@ for (let i = 0; i < 10; i++) {
   });
 }
 
-const { user, session } = Astro.locals;
+const { user } = Astro.locals;
 
-console.log()
+// console.log()
 
 let projects:any = await fetch(`${Astro.url.origin}/api/projects.json?owner=${user?.id}`)
 projects = await projects.json()

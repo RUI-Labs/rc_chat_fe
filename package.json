@@ -48,6 +48,7 @@
     "vue": "^3.4.30"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "sass": "^1.77.6"
   }
 }

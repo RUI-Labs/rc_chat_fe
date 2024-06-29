@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-async function createCampaign(campaign) {
+async function createCampaign(campaign:any) {
   return fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaigns?select=*', {
     method: "POST",
     headers: {

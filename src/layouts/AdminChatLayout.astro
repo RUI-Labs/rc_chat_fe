@@ -40,7 +40,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
 
       if(document?.querySelector('#userlistParent') != null){
         let _body = document.querySelector('#userlistParent') as any;
-        const osInstance = OverlayScrollbars( _body, {
+        OverlayScrollbars( _body, {
             scrollbars : {
                 autoHide: "leave",
                 autoHideDelay: 500
@@ -50,7 +50,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
 
       if(document?.querySelector('#chatParent') != null){
         let _body = document.querySelector('#chatParent') as any;
-        const osInstance = OverlayScrollbars( _body, {
+        OverlayScrollbars( _body, {
             scrollbars : {
                 autoHide: "leave",
                 autoHideDelay: 500
@@ -68,6 +68,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
 <nav class="col-span-full w-full border-b border-b-stone-700 bg-stone-800 p-4 grid grid-cols-3">
   <div class="w-full flex justify-start items-center space-x-2 col-span-2">
 
+    <img class="rounded-md overflow-hidden w-10 h-10" src="/logo.png">
     <div class="font-brand font-bold text-lg ml-2 mr-4 text-white">REMO</div>
 
     <div class="w-[200px] flex justify-center items-center">

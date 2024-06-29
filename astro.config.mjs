@@ -16,5 +16,10 @@ export default defineConfig({
     },
   }),],
   output: "server",
-  adapter: vercel()
+  adapter: vercel(),
+  vite: {
+    ssr: {
+      noExternal: ['path-to-regexp'],
+    },
+  },
 });

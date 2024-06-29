@@ -111,10 +111,10 @@
             </Drawer>
           </div>
 
-          <div class="chat-parent shadow-xl w-full h-full rounded-xl p-4">
-            <div class="w-full bg-gray-100 rounded-md p-4 font-brand font-bold">Yao from {{ project_info?.token_name }}</div>
+          <div id="chatWindow"  class="chat-parent shadow-xl w-full h-full rounded-xl p-4 pb-0 overflow-hidden max-h-[500px]">
+            <div class="w-full bg-white text-black  border-2 border-black/10 rounded-md p-4 font-brand font-bold sticky top-0 z-20">From {{ project_info?.token_name }}</div>
 
-            <div class="chat max-h-[500px] overflow-auto">
+            <div class="chat">
 
 
               <div v-for="(message, index) in messages" >
@@ -140,6 +140,7 @@
                 </div>
               </div>
 
+              <div ref="spacer" class="w-full h-4"></div>
 
               <!-- <div class="mine messages">
                 <div class="message last">Dude</div>
@@ -181,7 +182,10 @@
     </template>
 
     <template v-else>
-      <div class="z-50 w-full flex flex-col justify-center items-center">
+      <div class="z-50 w-full flex flex-col justify-center items-center bg-[#EBE6DF] h-screen">
+
+        <img class="fixed rounded-xl overflow-hidden top-4 right-4 w-20 h-20 border-4 border-black/60" src="/logo.png">
+
         <h1 class="sm:text-6xl text-4xl font-brand font-bold mb-4">Welcome!</h1>
 
         <h1 class="sm:text-2xl text-xl font-brand font-bold mb-4 text-center">
@@ -191,7 +195,7 @@
         </h1>
 
         <div class="w-full flex justify-center items-center py-8 px-8">
-          <section ref="campaignList1" class="campaignList border-2 z-50 rounded-xl shadow-xl max-h-[300px] overflow-hidden w-full max-w-md">
+          <section ref="campaignList1" class="campaignList border-2 z-50 rounded-xl shadow-xl max-h-[300px] overflow-hidden w-full max-w-md bg-white/50">
             <p class="text-left text-xl font-brand font-bold p-4 border-b bg-white sticky top-0">Active Campaigns</p>
 
             <div class="px-4">
@@ -271,6 +275,7 @@ const showReceipt = ref(false);
 
 const gotStamp = ref(false);
 const showWelcome = ref(false);
+const spacer = ref(null);
 
 
 
@@ -351,6 +356,25 @@ const enableOverlayScrollbars = () => {
       },
     });
   }
+
+  if (document?.querySelector("#chatWindow") != null) {
+    let _body = document.querySelector("#chatWindow");
+
+    console.log("enabling overlay scrollbars");
+    const osInstance = OverlayScrollbars(_body, {
+      scrollbars: {
+        autoHide: "leave",
+        autoHideDelay: 500,
+      },
+    });
+  }
+
+};
+
+const scrollToBottom = (args) => {
+  if (spacer?.value) {
+    spacer.value.scrollIntoView();
+  }
 };
 
 
@@ -375,6 +399,10 @@ onMounted( async () => {
 
   watch(campaignList2, () => {
     enableOverlayScrollbars();
+  });
+
+  watch(messages, () => {
+    scrollToBottom();
   });
 
   enableOverlayScrollbars();
@@ -452,6 +480,9 @@ onMounted( async () => {
     }),
   })
 
+
+  scrollToBottom();
+
   
 });
 
@@ -472,7 +503,7 @@ const checkWalletAccount = async () => {
     } else {
       // wallet not found in supabase
       
-      showStampModal();
+      // showStampModal();
 
     }
 
@@ -556,7 +587,7 @@ import { ContentTypeRemoteAttachment, RemoteAttachmentCodec, AttachmentCodec } f
 
 const fetchMessages = async () => {
 
-  messages.value = [];
+  // messages.value = [];
   let selectedConversation = conversations.value?.find((c) => c.peerAddress.toLowerCase() === project_info.value.owner_address.toLowerCase());
   console.log('selectedConversation', selectedConversation)
 
@@ -625,7 +656,7 @@ const fetchMessages = async () => {
           })
       )
 
-      // scrollToBottom();
+      scrollToBottom();
 
       for await (const message of await selectedConversation.streamMessages()) {
 
@@ -639,15 +670,21 @@ const fetchMessages = async () => {
                   type: 'text',
                   sender: message.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
               });
+              
+              
           }
 
-          // scrollToBottom();
+          scrollToBottom({
+              behavior: "smooth",
+          });
+
+
       }
 
   }
+
+  
 };
-
-
 const isMessageBusy = ref(false);
 const messageInput = ref('')
 const pushXmtpMessage = async () => {
@@ -673,6 +710,10 @@ const pushXmtpMessage = async () => {
       fetchMessages();
     } 
     isMessageBusy.value = false;
+
+    scrollToBottom({
+              behavior: "smooth",
+          });
     
 }
 
@@ -824,6 +865,7 @@ $yours-color: #ff22cb;
 
 .chat-parent {
   background: $background-color;
+  
 }
 
 .chat {

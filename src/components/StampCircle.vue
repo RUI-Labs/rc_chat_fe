@@ -1,6 +1,6 @@
 <template>
 
-    <div :class="[diameter?`w-[${diameter}px] h-[${diameter}px]`:'w-[300px] h-[300px]']" class=" border-4 border-black bg-white/50 rounded-full flex justify-center items-center pointer-events-none relative">
+    <div :class="[diameter?`w-[${diameter}px] h-[${diameter}px]`:'w-[200px] h-[200px]']" class=" border-4 border-black bg-white/50 rounded-full flex justify-center items-center pointer-events-none relative">
         
         <div class="w-full h-full flex justify-center items-center absolute">
             <div v-for="token in addressTokens" :style="`rotate:${token.angle}deg;${innerDiameter}`" class="absolute font-brand font-bold text-lg flex justify-start">{{ token.token }}</div>

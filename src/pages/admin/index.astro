@@ -1,0 +1,59 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+// import { Button } from "@/components/ui/button";
+// import CardTooltip from "@/components/campaign/CardTooltip.vue";
+// import NewCampaignDialog from "@/components/campaign/NewCampaignDialog.vue";
+import NewProjectFromFresh from "@/components/admin/NewProjectFromFresh.vue";
+
+let campaigns = [];
+for (let i = 0; i < 10; i++) {
+  campaigns.push({
+    id: i,
+    name: `Campaign ${i}`,
+    description: `Description ${i}`,
+    status: i % 2 === 0 ? "Active" : "Inactive",
+    startDate: new Date(),
+    endDate: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+}
+
+const { user } = Astro.locals;
+
+// console.log()
+
+let projects:any = await fetch(`${Astro.url.origin}/api/projects.json?owner=${user?.id}`)
+projects = await projects.json()
+
+---
+
+<AdminLayout>
+
+  <div class="w-full flex justify-center items-center text-white flex-col">
+    <p class="font-brand py-12">Pick a project to start</p>
+
+    <div class="flex justify-center items-center space-x-4">
+
+      {
+        projects.map((project:any) => (
+          <button class="w-[200px] h-[200px] bg-stone-800 border border-stone-700 rounded-xl hover:scale-105 duration-300">
+            <span class="text-xl font-brand font-semibold">{project.name}</span>
+          </button>
+        ))
+      }
+
+      <div class="flex flex-col justify-center items-center">
+        <NewProjectFromFresh wallet={user?.id} client:only="vue">
+          <button class="w-28 h-28 bg-blue-500 text-white rounded-full hover:scale-105 duration-300 mb-4 flex justify-center items-center">
+            <iconify-icon icon="mdi:plus" class="text-5xl"></iconify-icon>
+          </button>
+        </NewProjectFromFresh>
+        <span class="text-xl font-brand font-semibold -mb-4">New Project</span>
+      </div>
+
+    </div>
+  </div>
+
+
+</AdminLayout>

@@ -1,0 +1,83 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+// import { Button } from "@/components/ui/button";
+import CardTooltip from "@/components/campaign/CardTooltip.vue";
+import NewCampaignDialog from "@/components/campaign/NewCampaignDialog.vue";
+
+let campaigns = await fetch(`${Astro.url.origin}/api/projects/${Astro.params.id}/campaigns.json`).then(res => res.json())
+console.log(JSON.stringify(campaigns))
+
+const url = Astro.url.pathname
+let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
+
+---
+<AdminLayout>
+  <div>
+    <div class="p-4 py-12 flex justify-between items-center">
+      <h1 class="text-3xl pl-4 font-brand font-bold text-white">Campaigns</h1>
+
+
+
+      
+
+    </div>
+
+    <!-- {JSON.stringify(user)} -->
+
+    <div class="p-4">
+      <div class="w-full grid gap-4" style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr));">
+        {
+          campaigns.map((campaign:any) => (
+            <a href={`/admin/project/${projectSlug}/campaign/${campaign.campaign_id}`}>
+              <div class="w-full h-48 bg-stone-800 border-2 border-stone-800 rounded-xl flex flex-col justify-between items-center p-4 group overflow-hidden cursor-pointer hover:ring-stone-500 hover:ring-4 hover:shadow-xl duration-300">
+                <div class="w-full h-full flex justify-center items-center group-hover:scale-150 duration-300">
+                  <span class="text-3xl text-stone-50 tracking-widest font-bold">TEST</span>
+                </div>
+
+                <div class="grid grid-cols-3 justify-center items-center w-full text-stone-400">
+                  <CardTooltip client:load text={`Unique Visits: ${campaign.metrics.find((o:any) => o.name === 'visit').count}`}>
+                    <div class="flex justify-center items-center w-full">
+                      <iconify-icon class="text-xl" icon="mdi:eye" />
+                      &nbsp;{campaign.metrics.find((o:any) => o.name === 'visit').count}
+                    </div>
+                  </CardTooltip>
+
+                  <CardTooltip client:load text={`Connected Wallet: ${campaign.metrics.find((o:any) => o.name === 'connect').count}`}>
+                    <div class="flex justify-center items-center w-full">
+                      <iconify-icon class="text-xl" icon="fluent:plug-connected-16-filled" />
+                      <iconify-icon class="text-xl" icon="material-symbols:wallet" />
+                      &nbsp; {campaign.metrics.find( (o:any) => o.name === 'visit').count}
+                    </div>
+                  </CardTooltip>
+
+                  <CardTooltip client:load text={`Engaged: ${campaign.metrics.find((o:any) => o.name === 'engage')?.count || 0}`}>
+                    <div class="flex justify-center items-center w-full">
+                      <iconify-icon class="text-xl" icon="gridicons:reader-following-conversation" />
+                      &nbsp; {campaign.metrics.find( (o:any) => o.name === 'engage')?.count || 0}
+                    </div>
+                  </CardTooltip>
+                </div>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+
+
+
+      <div class="flex flex-col justify-center items-center">
+        <NewCampaignDialog project_id={Astro.params.id} client:only="vue">
+          <!-- <Button class="bg-blue-500 text-white font-brand font-bold rounded-full text-xl py-6 px-8 hover:bg-blue-600 hover:text-white">New</Button> -->
+          <button class="w-28 h-28 bg-blue-500 text-white rounded-full hover:scale-105 duration-300 mb-4 flex justify-center items-center">
+            <iconify-icon icon="mdi:plus" class="text-5xl"></iconify-icon>
+          </button>
+        </NewCampaignDialog>
+        <span class="text-xl font-brand font-semibold -mb-4 text-white">New Campaign</span>
+      </div>
+    </div>
+
+
+    
+  </div>
+</AdminLayout>
+

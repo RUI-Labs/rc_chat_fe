@@ -34,7 +34,19 @@ let steps =[{
   name: 'connect',
   href: "#",
   count: 0,
-}]
+}, {
+  id: 2,
+  name: 'subscribe',
+  href: "#",
+  count: 0,
+}, {
+  id: 3,
+  name: 'reply',
+  href: "#",
+  count: 0,
+},
+
+]
 
 if (metrics.length > 0) {
    steps.map((step, i) => {
@@ -73,6 +85,12 @@ await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_event
               a += 50;
             }
             if (o === "visit") {
+              a += 50;
+            }
+            if (o === "reply") {
+              a += 50;
+            }
+            if (o === "subscribe") {
               a += 50;
             }
             return a;

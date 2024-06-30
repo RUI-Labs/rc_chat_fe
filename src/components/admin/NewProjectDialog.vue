@@ -98,9 +98,9 @@ const confirmCreateProject = async () => {
          },
          body: JSON.stringify({
                  token_name: inputName.value,
-                 token_address: inputAddress.value,
+                 token_address: inputAddress.value.toLowerCase(),
                  token_symbol: inputSymbol.value,
-                 owner_address: wallet.value 
+                 owner_address: wallet.value.toLowerCase() 
 
          })
   })

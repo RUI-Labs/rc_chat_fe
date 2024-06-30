@@ -5,7 +5,6 @@ import CardTooltip from "@/components/campaign/CardTooltip.vue";
 import NewCampaignDialog from "@/components/campaign/NewCampaignDialog.vue";
 
 let campaigns = await fetch(`${Astro.url.origin}/api/projects/${Astro.params.id}/campaigns.json`).then(res => res.json())
-console.log(JSON.stringify(campaigns))
 
 const url = Astro.url.pathname
 let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
@@ -33,10 +32,10 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
                 </div>
 
                 <div class="grid grid-cols-3 justify-center items-center w-full text-stone-400">
-                  <CardTooltip client:load text={`Unique Visits: ${campaign.metrics.find((o:any) => o.name === 'visit').count}`}>
+                  <CardTooltip client:load text={`Unique Visits: ${campaign.metrics.find((o:any) => o.name === 'visit')?.count}`}>
                     <div class="flex justify-center items-center w-full">
                       <iconify-icon class="text-xl" icon="mdi:eye" />
-                      &nbsp;{campaign.metrics.find((o:any) => o.name === 'visit').count}
+                      &nbsp;{campaign.metrics.find((o:any) => o.name === 'visit')?.count}
                     </div>
                   </CardTooltip>
 

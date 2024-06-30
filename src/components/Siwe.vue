@@ -88,12 +88,14 @@ const startSIWERetryable = async () => {
   for (let i = 0; i < max_tries; i++) {
     try {
       await startSIWE();
-      break;
+      // break;
     } catch (err) {
       console.log(err);
-      await disconnect(config);
-      await reconnect(config);
+      
     }
+
+    await disconnect(config);
+    await reconnect(config);
   }
 
 };

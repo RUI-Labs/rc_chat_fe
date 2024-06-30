@@ -42,6 +42,7 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { config } from "@/wagmiConfig";
 import { connect, reconnect, getAccount, disconnect, getConnectors, watchConnections, signMessage } from "@wagmi/core";
 import { Button } from "@/components/ui/button";
+import { base } from '@wagmi/core/chains'
 
 const connectors = ref();
 const address = ref();
@@ -71,6 +72,7 @@ onMounted(async () => {
 const _connect = async (_connector) => {
   const connector = getConnectors(config).find(x => x.id === _connector);
   await connect(config, {
+    chainId: base.id, 
     connector,
   });
 

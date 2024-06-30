@@ -4,11 +4,11 @@ import type { APIRoute } from 'astro';
 // import { verifyMessage } from 'ethers'
 
 import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
+import { base } from 'viem/chains'
 
 const publicClient = createPublicClient({
-  chain: mainnet,
-  transport: http()
+  chain: base,
+  transport: http("https://base-mainnet.g.alchemy.com/v2/JcLkJFeLC7DUJyqb8vAA94MWeB6f_bSi")
 })
 
 export const POST: APIRoute = async ({cookies,request}) => {

@@ -25,6 +25,21 @@ onMounted(async () => {
         .then(res => res.json())
 })
 
+const currentProject = computed(() => {
+  // return projects.value.find((project: any) => project.token_symbol === wallet?.value)
+
+  let path = window.location.pathname
+
+  
+  let projectSlug = path.match(/\/admin\/project\/([^\/]*)/)?.[1]
+  
+
+  let project = projects.value.find((project: any) => String(project.token_name).toUpperCase() === String(projectSlug).toUpperCase())
+
+
+  return project ? project.token_name : "Select Project"
+})
+
 </script>
 
 <template>
@@ -33,7 +48,7 @@ onMounted(async () => {
     <DropdownMenuTrigger class="w-full">
         <Button variant="outline" class="flex justify-start items-center space-x-2 w-full bg-stone-700 text-stone-300 border-transparent hover:bg-stone-600 hover:text-stone-200">
             <iconify-icon icon="gravity-ui:nut-hex" class="text-stone-100"></iconify-icon>
-            <div>project name</div>
+            <div>{{currentProject}}</div>
         </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent :align="'start'" class="bg-stone-800 border-stone-600 text-stone-100">

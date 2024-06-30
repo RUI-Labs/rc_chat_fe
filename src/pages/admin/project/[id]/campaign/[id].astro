@@ -8,20 +8,19 @@ const { id } = Astro.params;
 
 const campaign = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaigns?select=*&id=eq.${id}`, {
   headers: {
-    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
-  }
+    apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+    Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+  },
 })
-.then(res =>res.json())
-.then(res => res[0])
+  .then((res) => res.json())
+  .then((res) => res[0]);
 
 const metrics = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaign_metrics?select=*&campaign_id=eq.${id}`, {
   headers: {
-    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
-  }
-})
-.then(res =>res.json())
+    apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+    Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+  },
+}).then((res) => res.json());
 
 const steps = metrics.map((o: any, i: any) => {
   return {
@@ -29,76 +28,80 @@ const steps = metrics.map((o: any, i: any) => {
     name: o?.name,
     href: "#",
     count: o?.count,
-  }
-})
+  };
+});
 
-const sampleData = await fetch('https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_events_by_campaign_id', {
+const sampleData = await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_events_by_campaign_id", {
   method: "POST",
   headers: {
-    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+    apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
+    Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    _campaign_id: id
-  })
+    _campaign_id: id,
+  }),
 })
-  .then(res => res.json())
-  .then(res => res.map((o: any) => {
-    return {
-    id: o.user_id,
-    name: o.user_name,
-    address: o.user_address,
-    progress: o.events.reduce((a: number, o: string) => {
-      if (o === 'connect') {
-        a += 50;
-      }
-      if (o === 'visit') {
-        a += 50;
-      }
-      return a
-    }, 0)
+  .then((res) => res.json())
+  .then((res) => {
+    if (res?.map) {
+      res.map((o: any) => {
+        return {
+          id: o.user_id,
+          name: o.user_name,
+          address: o.user_address,
+          progress: o.events.reduce((a: number, o: string) => {
+            if (o === "connect") {
+              a += 50;
+            }
+            if (o === "visit") {
+              a += 50;
+            }
+            return a;
+          }, 0),
+        };
+      });
     }
-  }))
+  });
 
-const url = Astro.url.pathname
+const url = Astro.url.pathname;
 
-let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
+let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1];
+
+console.log(campaign)
 ---
 
 <AdminLayout>
-    <div>
-      <div class="p-4 pb-4 pt-4 grid grid-cols-6 mb-2 items-end">
-        <div class="col-span-3 flex justify-start items-center mb-8">
-            <a href={`/admin/project/${projectSlug}`}>
-              <Button variant="ghost" class="text-white underline text-lg font-brand">
-                <iconify-icon icon="bi:arrow-left" class="mr-4"></iconify-icon>
-                Back
-              </Button>
-            </a>
-        </div>
-
-        <div class="col-span-3 flex justify-end items-center  mb-8">
-          <Button class="bg-stone-800 hover:bg-stone-700">Edit Campaign</Button>
+  <div>
+    <div class="p-4 pb-4 pt-4 grid grid-cols-6 mb-2 items-end">
+      <div class="col-span-3 flex justify-start items-center mb-8">
+        <a href={`/admin/project/${projectSlug}`}>
+          <Button variant="ghost" class="text-white underline text-lg font-brand">
+            <iconify-icon icon="bi:arrow-left" class="mr-4"></iconify-icon>
+            Back
+          </Button>
+        </a>
       </div>
 
-        <div class="col-span-4 pl-2">
-            <p class="text-lg mb-2 font-brand font-bold text-stone-400">Campaign</p>
-            <div class="w-full flex justify-start items-center my-3">
-                <div class="text-sm p-1 px-3 bg-blue-500 text-white font-brand font-bold rounded-md" >
-                  {campaign.tag}
-                </div>
-            </div>
-            <h1 class="text-4xl font-brand font-bold text-white">{campaign.id} (title)</h1>
-        </div>
-        
-  
-        <div class="w-full flex justify-end items-center col-span-2">
-            <CampaignLink client:only="vue" link_text={'https://google.com'}></CampaignLink>
-        </div>
+      <div class="col-span-3 flex justify-end items-center mb-8">
+        <Button class="bg-stone-800 hover:bg-stone-700">Edit Campaign</Button>
       </div>
 
-      <CampaignTable steps={steps} data={sampleData} client:only="vue"></CampaignTable>
+      <div class="col-span-4 pl-2">
+        <p class="text-lg mb-2 font-brand font-bold text-stone-400">Campaign</p>
+        <div class="w-full flex justify-start items-center my-3">
+          <div class="text-sm p-1 px-3 bg-blue-500 text-white font-brand font-bold rounded-md">
+            {campaign.tag}
+          </div>
+        </div>
+        <h1 class="text-4xl font-brand font-bold text-white">{campaign.title}</h1>
+      </div>
+
+      <div class="w-full flex justify-end items-center col-span-2">
+        <CampaignLink client:only="vue" link_text={`https://remo.re/mo/${campaign.id}`} />
+      </div>
     </div>
-  </AdminLayout>
-  
+
+    <CampaignTable steps={steps} data={sampleData} client:only="vue" />
+  </div>
+</AdminLayout>

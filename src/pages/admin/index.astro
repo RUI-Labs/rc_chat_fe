@@ -33,17 +33,22 @@ projects = await projects.json()
   <div class="w-full flex justify-center items-center text-white flex-col">
     <p class="font-brand py-12">Pick a project to start</p>
 
+    <!-- {JSON.stringify(projects)} -->
+
     <div class="flex justify-center items-center space-x-4">
 
       {
         projects.map((project:any) => (
-          <button class="w-[200px] h-[200px] bg-stone-800 border border-stone-700 rounded-xl hover:scale-105 duration-300">
-            <span class="text-xl font-brand font-semibold">{project.name}</span>
+          <a href={`/admin/project/${String(project.token_name).toUpperCase()}`}>
+            <button class="w-[200px] h-[200px] bg-stone-800 border border-stone-700 rounded-xl hover:scale-105 duration-300 p-8 flex flex-col justify-center items-center">
+            <span class="text-xl font-brand font-semibold mb-4">{project.token_name}</span>
+            <span class="font-mono text-stone-600 text-sm break-all">{project.token_address}</span>
           </button>
+          </a>
         ))
       }
 
-      <div class="flex flex-col justify-center items-center">
+      <div class="flex flex-col justify-center items-center p-8">
         <NewProjectFromFresh wallet={user?.id} client:only="vue">
           <button class="w-28 h-28 bg-blue-500 text-white rounded-full hover:scale-105 duration-300 mb-4 flex justify-center items-center">
             <iconify-icon icon="mdi:plus" class="text-5xl"></iconify-icon>

@@ -11,7 +11,29 @@ export const onRequest = defineMiddleware(async (context, next) => {
         return next()
     }
 
-	
+	//if the url matches 
+	// /mo/<id>
+	let url = context.url.pathname
+	if(url.match(/\/mo\/\d+/)){
+		// get the id
+		let id = url.split('/')[2]
+		console.log(id)
+
+		const resp = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaigns?id=eq.${id}&select=*,projects(*)`, {
+			method: "GET",
+			headers: {
+			  "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI4OTE2OTksImV4cCI6MjAyODQ2NzY5OX0.67EZHcTdMsVFc9XF2BC1AlrcV-I-H5ho9G_9HiqzO4E",
+			  "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI4OTE2OTksImV4cCI6MjAyODQ2NzY5OX0.67EZHcTdMsVFc9XF2BC1AlrcV-I-H5ho9G_9HiqzO4E",
+			}
+		  })
+
+		const result = await resp.json();
+		console.log(result)
+
+		let project = result[0].projects.token_name
+
+		return context.redirect(`/project_1/${project}?campaign=${id}`)
+	}
 
 	// console.log(context.url.pathname)
 

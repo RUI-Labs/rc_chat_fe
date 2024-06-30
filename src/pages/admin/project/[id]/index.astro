@@ -22,8 +22,6 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
 
     </div>
 
-    <!-- {JSON.stringify(user)} -->
-
     <div class="p-4">
       <div class="w-full grid gap-4" style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr));">
         {
@@ -31,7 +29,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
             <a href={`/admin/project/${projectSlug}/campaign/${campaign.campaign_id}`}>
               <div class="w-full h-48 bg-stone-800 border-2 border-stone-800 rounded-xl flex flex-col justify-between items-center p-4 group overflow-hidden cursor-pointer hover:ring-stone-500 hover:ring-4 hover:shadow-xl duration-300">
                 <div class="w-full h-full flex justify-center items-center group-hover:scale-150 duration-300">
-                  <span class="text-3xl text-stone-50 tracking-widest font-bold">TEST</span>
+                  <span class="text-3xl text-stone-50 tracking-widest font-bold">{campaign.tag}</span>
                 </div>
 
                 <div class="grid grid-cols-3 justify-center items-center w-full text-stone-400">
@@ -42,7 +40,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
                     </div>
                   </CardTooltip>
 
-                  <CardTooltip client:load text={`Connected Wallet: ${campaign.metrics.find((o:any) => o.name === 'connect').count}`}>
+                  <CardTooltip client:load text={`Connected Wallet: ${campaign.metrics.find((o:any) => o.name === 'connect')?.count}`}>
                     <div class="flex justify-center items-center w-full">
                       <iconify-icon class="text-xl" icon="fluent:plug-connected-16-filled" />
                       <iconify-icon class="text-xl" icon="material-symbols:wallet" />

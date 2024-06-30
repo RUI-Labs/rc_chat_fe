@@ -27,12 +27,7 @@ const users = ref<User[]>([
 
 
 onMounted(async () => {
-        users.value = await fetch(`/api/projects/${project_id.value}/users.json`).then(res => res.json()).then(res => res.map( o => {
-                delete o.project_id
-                delete o.status
-                return o
-
-        }))
+        users.value = await fetch(`/api/projects/${project_id.value}/users.json`).then(res => res.json())
         console.log(users.value)
 
 })
@@ -160,6 +155,8 @@ const bulkselect = () => {
 
 const openChat = (userId: string) => {
   console.log(`Opening chat for user ID: ${userId}`);
+  console.log(users.value[userId])
+  window.location.href = `/admin/project/${project_id.value}/chat?user_address=${users.value[userId].address}`
 
   // Implementation depends on how you handle chats in your app
   // For example, this could dispatch a Vuex action or emit an event

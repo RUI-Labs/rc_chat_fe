@@ -1,0 +1,131 @@
+{
+	"version": 3,
+	"routes": [
+		{
+			"src": "^/_astro/(.*)$",
+			"headers": {
+				"cache-control": "public, max-age=31536000, immutable"
+			},
+			"continue": true
+		},
+		{
+			"handle": "filesystem"
+		},
+		{
+			"src": "^\\/_image$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/admin\\/chat\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/admin\\/login\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/admin\\/project\\/([^/]+?)\\/campaign\\/([^/]+?)\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/admin\\/project\\/([^/]+?)\\/users\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/admin\\/project\\/([^/]+?)\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/admin\\/users\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/admin\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/campaigns\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/contactbook\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/keys\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/logout\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/logs\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/nonce\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/project\\/([^/]+?)\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/projects\\/([^/]+?)\\/campaigns\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/projects\\/([^/]+?)\\/users\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/projects\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/token\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/uploadstamp\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/verify\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/wallet\\/([^/]+?)\\.json\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/campaign\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/chat\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/new\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/project\\/([^/]+?)\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/project\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/project_1\\/([^/]+?)\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/$",
+			"dest": "_render"
+		}
+	]
+}

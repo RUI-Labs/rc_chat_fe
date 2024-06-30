@@ -160,6 +160,7 @@ const bulkselect = () => {
 
 const openChat = (userId: string) => {
   console.log(`Opening chat for user ID: ${userId}`);
+
   // Implementation depends on how you handle chats in your app
   // For example, this could dispatch a Vuex action or emit an event
 };

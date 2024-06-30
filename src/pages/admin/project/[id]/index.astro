@@ -50,10 +50,10 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
                     </div>
                   </CardTooltip>
 
-                  <CardTooltip client:load text={`Engaged: ${campaign.metrics.find((o:any) => o.name === 'engage')?.count || 0}`}>
+                  <CardTooltip client:load text={`Engaged: ${campaign.metrics.find((o:any) => o.name === 'reply')?.count || 0}`}>
                     <div class="flex justify-center items-center w-full">
                       <iconify-icon class="text-xl" icon="gridicons:reader-following-conversation" />
-                      &nbsp; {campaign.metrics.find( (o:any) => o.name === 'engage')?.count || 0}
+                      &nbsp; {campaign.metrics.find( (o:any) => o.name === 'reply')?.count || 0}
                     </div>
                   </CardTooltip>
                 </div>

@@ -498,6 +498,23 @@ const checkWalletAccount = async () => {
 
   if(getAccount(config)?.address) {
 
+     await fetch(`/api/logs.json`, {
+       method: "POST",
+       headers: {
+         'content-type': "application/json"
+       },
+       body: JSON.stringify({
+         payload: {
+           token_symbol: project_info.value.token_symbol,
+           token_address: project_info.value.token_address.toLowerCase(),
+           campaign: parseInt(urlCampaign)
+         },
+         name: "connect",
+         user_data: {address: getAccount(config)?.address.toLowerCase()},
+       }),
+     })
+
+
     await initUser();
 
     if($userData.value) {
@@ -506,22 +523,6 @@ const checkWalletAccount = async () => {
       // updateGotStamp();
       gotStamp.value = true;
       $showNewStampModal.set(false);
-
-      await fetch(`/api/logs.json`, {
-        method: "POST",
-        headers: {
-          'content-type': "application/json"
-        },
-        body: JSON.stringify({
-          payload: {
-            token_symbol: project_info.value.token_symbol,
-            token_address: project_info.value.token_address.toLowerCase(),
-            campaign: parseInt(urlCampaign)
-          },
-          name: "connect",
-          user_data: {address: getAccount(config)?.address.toLowerCase()},
-        }),
-      })
 
     } else {
       // wallet not found in supabase

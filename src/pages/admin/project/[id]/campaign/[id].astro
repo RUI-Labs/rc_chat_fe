@@ -15,12 +15,16 @@ const campaign = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/c
   .then((res) => res.json())
   .then((res) => res[0]);
 
+  console.log(18, campaign)
+
 const metrics = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaign_metrics?select=*&campaign_id=eq.${id}`, {
   headers: {
     apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
     Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
   },
 }).then((res) => res.json());
+
+  console.log(20, metrics)
 
 let steps =[{
   id: 0,
@@ -35,13 +39,16 @@ let steps =[{
 }]
 
 if (metrics.length > 0) {
-  const _steps = steps.map(step => {
-    const count = metrics.find((o: any) => o.name === step.name)
-    if (count > 0)
-      step.count = count
+   steps.map((step, i) => {
+    const metric = metrics.find((o: any) => o.name === step.name)
+    if (!metric) {
+        return
+    }
+    console.log(44, metric)
+    if (metric.count > 0)
+      steps[i].count = metric.count
     return step
   })
-  steps = _steps
 }
 
 const sampleData = [] as any

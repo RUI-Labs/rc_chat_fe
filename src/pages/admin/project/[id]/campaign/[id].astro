@@ -79,7 +79,7 @@ await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_event
         sampleData.push({
           id: o.user_id,
           name: o.user_name,
-          address: o.user_address,
+          address: o.user_address || o.user_cookie,
           progress: o.events.reduce((a: number, o: string) => {
             if (o === "connect") {
               a += 50;

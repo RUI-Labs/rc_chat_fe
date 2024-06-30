@@ -44,7 +44,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
                     <div class="flex justify-center items-center w-full">
                       <iconify-icon class="text-xl" icon="fluent:plug-connected-16-filled" />
                       <iconify-icon class="text-xl" icon="material-symbols:wallet" />
-                      &nbsp; {campaign.metrics.find( (o:any) => o && o.name === 'visit')?.count || 0}
+                      &nbsp; {campaign.metrics.find( (o:any) => o && o.name === 'connect')?.count || 0}
                     </div>
                   </CardTooltip>
 

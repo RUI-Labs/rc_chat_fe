@@ -106,6 +106,8 @@ const confirmCreateProject = async () => {
   })
 
   hide();
+
+  window.location.href = `/admin/project/${inputSymbol.value}`
 }
 
 </script>

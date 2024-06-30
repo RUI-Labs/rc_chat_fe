@@ -121,14 +121,14 @@
               <div v-for="(message, index) in messages" >
                 <div :class="[ messages.length <= index && message?.sender !== messages[index+1]?.sender ? 'messages' : 'flex flex-col' , message?.sender === 'me' ? 'mine' : 'yours']" >
                   <template v-if="message?.type == 'text'">
-                    <div :class="[message?.sender === messages[index+1]?.sender ? 'message' : 'message last']" >
+                    <div :class="[message?.sender === messages[index+1]?.sender ? 'message' : 'message last','max-w-[300px] break-all']" >
                       {{ message?.content }}
                     </div>
                   </template>
 
                   <template v-else-if="message?.type == 'attachment'">
                       <div class="w-[100px] h-[100px] border rounded-md">
-                          <img :src="message?.content" />
+                          <img class="w-full h-full object-cover" :src="message?.content" />
                       </div>
                   </template>
 
@@ -935,7 +935,7 @@ $yours-color: #ff22cb;
   display: inline-block;
   font-size: large;
   font-family: "Sora", serif;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .yours {

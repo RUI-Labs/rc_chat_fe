@@ -13,7 +13,7 @@
               <button class="bg-white text-xs border px-2 py-1 rounded-full">+ 4</button>
             </div> -->
           </div>
-          <div class="w-full border-t text-center pt-2">
+          <div class="w-full text-center pt-2">
             <p class="text-sm italic text-gray-500">-- Even good things will come to an end. --</p>
           </div>
         </div>

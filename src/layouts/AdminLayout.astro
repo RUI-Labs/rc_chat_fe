@@ -1,13 +1,16 @@
 ---
 import "@/styles/globals.css";
 import SignOutButton from "@/components/SignOutButton.vue";
-import { Button } from "@/components/ui/button";
-import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
+// import { Button } from "@/components/ui/button";
+// import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
 import Xmtpclient from "@/components/admin/Xmtpclient.vue";
+import NavButtons from "@/components/admin/NavButtons.vue";
 
 const url = Astro.url.pathname
 // match the pattern to get project slug /admin/project/<id>/...
 let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
+let _projectSlug = projectSlug
+
 
 ---
 
@@ -24,33 +27,38 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet" crossorigin="anonymous" />
   </head>
 
-  <body class=`w-full h-full min-h-screen grid grid-rows-[auto_1fr] bg-stone-900 `>
+  <body class=`w-full h-full min-h-screen grid grid-rows-[auto_1fr] bg-bremo-900 `>
     <script>
       import "iconify-icon";
+
+      
+
 import { Buffer } from "buffer";
 window.Buffer = window.Buffer ?? Buffer;
     </script>
 
-    <nav class="w-full border-b border-b-stone-700 bg-stone-800 p-4 grid grid-cols-3">
+    <!-- <script define:vars={{_projectSlug}}>
+
+      // import { $projectSlug } from "../stores/admin.js";
+
+      $projectSlug.set(_projectSlug)
+    </script> -->
+
+    <nav class="w-full border-b border-b-bremo-700 bg-bremo-800 p-4 grid grid-cols-3  h-18">
       <div class="w-full flex justify-start items-center space-x-2 col-span-2">
 
-        <a class="flex justify-start items-center" href="/admin">
-          <img class="rounded-md overflow-hidden w-9 h-9" src="/logo.png">
+        <a class="flex justify-start items-center flex-shrink-0" href="/admin">
+          <img class="rounded-md overflow-hidden  w-9 h-9 " src="/logo.png">
           <div class="hidden lg:block font-brand font-bold text-lg ml-2 mr-4 text-white">REMO</div>
         </a>
 
-        <div class="w-[200px] flex justify-center items-center">
+        <!-- <div class="w-[200px] flex justify-center items-center">
           <ProjectDropdown client:only="vue" wallet={Astro.locals.user?.id}/>
-        </div>
-        <a href={`/admin/project/${projectSlug}`}>
-          <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Campaigns</Button>
-        </a>
-        <a href={`/admin/project/${projectSlug}/users`}>
-          <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Users</Button>
-        </a>
-        <a href={`/admin/project/${projectSlug}/chat`}>
-          <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Chat</Button>
-        </a>
+        </div> -->
+
+        <NavButtons wallet={Astro.locals.user?.id} client:only="vue"></NavButtons>
+
+        
       </div>
 
       <div class="w-full flex justify-end items-center">
@@ -59,6 +67,10 @@ window.Buffer = window.Buffer ?? Buffer;
       </div>
     </nav>
 
-    <slot />
+    <main class="w-full h-full" id="swup">
+      <slot />
+    </main>
+
+
   </body>
 </html>

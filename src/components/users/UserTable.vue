@@ -47,7 +47,7 @@ const columns: ColumnDef<User>[] = [
       return h(
         "div",
         {},
-        row.getValue("tags").map((tag:any) => h("span", { class: "px-3 py-1.5 bg-stone-700 text-white mx-1 rounded-full" }, tag))
+        row.getValue("tags").map((tag:any) => h("span", { class: "px-3 py-1.5 bg-bremo-700 text-white mx-1 rounded-full" }, tag))
       );
     },
     filterFn: tagFilterFn
@@ -168,7 +168,7 @@ const openChat = (userId: string) => {
 <template>
   <div class="w-full h-full">
 
-    <div class="w-full p-4 py-2  text-white border-y border-y-stone-700 flex justify-between items-center">
+    <div class="w-full p-4 py-2  text-white border-y border-y-bremo-700 flex justify-between items-center">
       <div v-if="selectedRowIds.size != 0">
         Selected: {{ selectedRowIds.size }} rows
       </div>
@@ -177,17 +177,17 @@ const openChat = (userId: string) => {
       </div>
 
       <BroadcastDialog :recipients="broadcastRecipients" >
-        <Button @click="bulkselect()" :disabled="selectedRowIds.size == 0" class="bg-blue-500 disabled:bg-stone-700 text-white hover:bg-blue-700">Broadcast</Button>
+        <Button @click="bulkselect()" :disabled="selectedRowIds.size == 0" class="bg-blue-500 disabled:bg-bremo-700 text-white hover:bg-blue-700">Broadcast</Button>
       </BroadcastDialog>
     </div>
 
     <div class="w-full grid-cols-5 grid h-full">
 
-      <div class="w-full border-r border-r-stone-700 py-4 px-2">
+      <div class="w-full border-r border-r-bremo-700 py-4 px-2">
         <p class="mb-4 text-sm font-semibold text-white">Tags</p>
 
         <div v-for="tag_entry in uniqueTags" :key="tag_entry.tag" class="w-full">
-          <Button class="w-full text-left bg-stone-800 text-white mb-1" variant="ghost" @click="toggleTag(tag_entry.tag)">
+          <Button class="w-full text-left bg-bremo-800 text-white mb-1" variant="ghost" @click="toggleTag(tag_entry.tag)">
             <div class="w-full flex justify-between items-center"> 
               <span><strong>{{ tag_entry.tag }}</strong> ({{ tag_entry.count }})</span>
               <span v-if="selectedTags.includes(tag_entry.tag)">✓</span></div>
@@ -198,14 +198,14 @@ const openChat = (userId: string) => {
       <div class="w-full col-span-4">
         <Table>
           <TableHeader>
-            <TableRow class="bg-stone-800 hover:bg-stone-700" v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+            <TableRow class="bg-bremo-800 hover:bg-bremo-700" v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
               <TableHead v-for="header in headerGroup.headers" :key="header.id">
                 <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow class="border-b-stone-700 hover:bg-stone-700" v-for="row in table.getRowModel().rows" :key="row.id">
+            <TableRow class="border-b-bremo-700 hover:bg-bremo-700" v-for="row in table.getRowModel().rows" :key="row.id">
               <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                 <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
               </TableCell>

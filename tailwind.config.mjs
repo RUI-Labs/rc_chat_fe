@@ -53,6 +53,7 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        'bremo': {  DEFAULT: '#696B77',  50: '#EDEEEF',  100: '#DFDFE2',  200: '#C1C1C8',  300: '#A3A4AE',  400: '#858793',  500: '#696B77',  600: '#565761',  700: '#43444C',  800: '#303036',  900: '#1D1D20',  950: '#131316'},
       },
       borderRadius: {
       	xl: "calc(var(--radius) + 4px)",

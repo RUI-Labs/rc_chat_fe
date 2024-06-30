@@ -4,29 +4,29 @@
       
       
       
-      <!-- <button @click="_connect(connector)" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300" v-for="connector in connectors">{{ connector.name }}</button> -->
+      <!-- <button @click="_connect(connector)" class="rounded-md bg-bremo-700 border-bremo-600 border text-white p-4 w-full hover:bg-bremo-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300" v-for="connector in connectors">{{ connector.name }}</button> -->
     
 
 
 
-      <button @click="_connect('io.metamask')" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Metamask</button>
-      <button @click="_connect('io.rabby')" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Rabby</button>
-      <button @click="_connect('coinbaseWalletSDK')" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Coinbase Smart Wallet</button>
+      <button @click="_connect('io.metamask')" class="rounded-md bg-bremo-700 border-bremo-600 border text-white p-4 w-full hover:bg-bremo-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Metamask</button>
+      <button @click="_connect('io.rabby')" class="rounded-md bg-bremo-700 border-bremo-600 border text-white p-4 w-full hover:bg-bremo-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Rabby</button>
+      <button @click="_connect('coinbaseWalletSDK')" class="rounded-md bg-bremo-700 border-bremo-600 border text-white p-4 w-full hover:bg-bremo-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Coinbase Smart Wallet</button>
     
 
 
-      <button @click="_connect('injected')" class="rounded-md bg-stone-700 border-stone-600 border text-white p-4 w-full hover:bg-stone-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Injected</button>
+      <button @click="_connect('injected')" class="rounded-md bg-bremo-700 border-bremo-600 border text-white p-4 w-full hover:bg-bremo-600 hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 duration-300">Injected</button>
     
 
     </div>
 
     <div v-if="address"  class="w-full">
-      <div class="w-full flex justify-between items-center mb-12 border-y border-stone-800 bg-white/5 p-4 ">
+      <div class="w-full flex justify-between items-center mb-12 border-y border-bremo-800 bg-white/5 p-4 ">
         <div class="text-white">
           <p class="text-sm font-semibold">Connected</p>
           <p>{{ String(address).substr(0, 6) }}...{{ String(address).substr(-4) }}</p>
         </div>
-        <Button variant="outline" class="bg-stone-700 border-stone-600 text-white" @click="_disconnect()">Disconnect</Button>
+        <Button variant="outline" class="bg-bremo-700 border-bremo-600 text-white" @click="_disconnect()">Disconnect</Button>
       </div>
 
       <div class="w-full p-2">

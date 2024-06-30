@@ -2,10 +2,10 @@
   <div class="w-full h-full">
     <template v-if="address">
       <Teleport to="#userlist">
-        <div class="w-full divide-y divide-stone-700 pb-[20vh]">
+        <div class="w-full divide-y divide-bremo-700 pb-[20vh]">
           <div @click="pickConversation(conversation)" v-for="conversation in conversations" class="w-full justify-center items-center duration-300 p-4 bg-white/5 hover:bg-white/10">
-            <p class="font-brand text-lg text-stone-200">{{ conversation?.userData?.contact_books?.name }}</p>
-            <p class="text-sm pt-1 text-stone-500">{{ conversation?.peerAddress }}</p>
+            <p class="font-brand text-lg text-bremo-200">{{ conversation?.userData?.contact_books?.name }}</p>
+            <p class="text-sm pt-1 text-bremo-500">{{ conversation?.peerAddress }}</p>
 
             <!-- <div class="flex justify-start items-center space-x-2 col-span-full pb-2 pl-1">
               <div v-for="i in 3" class="text-xs border px-2 py-1 rounded-full bg-white">Tag {{ i }}</div>
@@ -23,17 +23,17 @@
         <div class="w-full grid grid-cols-1 grid-rows-[auto_1fr_auto] h-full justify-center items-center">
           <div class="w-full p-4 pb-2 grid grid-cols-3 justify-center items-center sticky top-0 bg-white/5 border-b border-b-white/10">
             <p class="font-brand text-white text-xl ">{{ selectedConversation?.userData?.contact_books?.name }}</p>
-            <!-- <p class="text-sm col-span-2 text-right text-stone-500">Tags</p> -->
+            <!-- <p class="text-sm col-span-2 text-right text-bremo-500">Tags</p> -->
 
             
 
             <div class="col-span-2 flex flex-col justify-center items-end row-span-2">
               <div class="flex flex-wrap gap-2 justify-start items-center">
-                <div v-for="i in 3" class="text-sm border px-3 py-1 rounded-full bg-stone-700 border-stone-500 text-white">Tag {{ i }}</div>
+                <div v-for="i in 3" class="text-sm border px-3 py-1 rounded-full bg-bremo-700 border-bremo-500 text-white">Tag {{ i }}</div>
               </div>
             </div>
 
-            <p class="text-sm text-stone-400">{{ selectedConversation?.peerAddress }}</p>
+            <p class="text-sm text-bremo-400">{{ selectedConversation?.peerAddress }}</p>
           </div>
 
           <div class="w-full h-full space-y-4 flex flex-col justify-end p-4">
@@ -41,7 +41,7 @@
               <div :class="[getDirection(message.sender)]">
                 <!-- <p :class="[authorDirection(message.sender), 'w-full']">{{ message.sender }}</p> -->
                 <template v-if="message.type == 'text'">
-                  <div class="p-2 px-3 rounded-xl bg-stone-700 text-stone-200">
+                  <div class="p-2 px-3 rounded-xl bg-bremo-700 text-bremo-200">
                     {{ message.content }}
                   </div>
                 </template>
@@ -63,7 +63,7 @@
         </div>
       </Teleport>
 
-      <form @submit.prevent="sendMessage()" class="w-full border-t border-t-stone-700 bg-stone-800 grid grid-cols-[1fr_auto] justify-center items-center p-2">
+      <form @submit.prevent="sendMessage()" class="w-full border-t border-t-bremo-700 bg-bremo-800 grid grid-cols-[1fr_auto] justify-center items-center p-2">
         <div class="">
           <input v-model="messageInput" ref="sendMessageinput" type="text" class="w-full h-full py-4 px-4 bg-transparent focus-visible:outline-none text-white" placeholder="Type a message..." />
         </div>

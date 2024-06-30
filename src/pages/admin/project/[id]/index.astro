@@ -27,12 +27,12 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
         {
           campaigns.map((campaign:any) => (
             <a href={`/admin/project/${projectSlug}/campaign/${campaign.campaign_id}`}>
-              <div class="w-full h-48 bg-stone-800 border-2 border-stone-800 rounded-xl flex flex-col justify-between items-center p-4 group overflow-hidden cursor-pointer hover:ring-stone-500 hover:ring-4 hover:shadow-xl duration-300">
+              <div class="w-full h-48 bg-bremo-800 border-2 border-bremo-800 rounded-xl flex flex-col justify-between items-center p-4 group overflow-hidden cursor-pointer hover:ring-bremo-500 hover:ring-4 hover:shadow-xl duration-300">
                 <div class="w-full h-full flex justify-center items-center group-hover:scale-150 duration-300">
-                  <span class="text-3xl text-stone-50 tracking-widest font-bold">{campaign.tag}</span>
+                  <span class="text-3xl text-bremo-50 tracking-widest font-bold">{campaign.tag}</span>
                 </div>
 
-                <div class="grid grid-cols-3 justify-center items-center w-full text-stone-400">
+                <div class="grid grid-cols-3 justify-center items-center w-full text-bremo-400">
                   <CardTooltip client:load text={`Unique Visits: ${campaign.metrics.find((o:any) => o && o.name === 'visit')?.count || 0}`}>
                     <div class="flex justify-center items-center w-full">
                       <iconify-icon class="text-xl" icon="mdi:eye" />

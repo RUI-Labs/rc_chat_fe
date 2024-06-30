@@ -1,10 +1,11 @@
 ---
 import "@/styles/globals.css";
 import SignOutButton from "@/components/SignOutButton.vue";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import ProjectDropdown from "@/components/admin/ProjectDropdown.vue";
 // import NewChatDialog from "@/components/admin/NewChatDialog.vue";
 import Xmtpclient from "@/components/admin/Xmtpclient.vue";
+import NavButtons from "@/components/admin/NavButtons.vue";
 
 
 const url = Astro.url.pathname
@@ -29,7 +30,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet" crossorigin="anonymous" />
   </head>
 
-  <body class="w-full h-screen grid grid-rows-[auto_auto_1fr] grid-cols-3 bg-stone-900">
+  <body class="w-full h-screen grid grid-rows-[auto_auto_1fr] grid-cols-3 bg-bremo-900">
     <script>
       import "iconify-icon";
 
@@ -65,26 +66,27 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
 
     </script>
 
-<nav class="col-span-full w-full border-b border-b-stone-700 bg-stone-800 p-4 grid grid-cols-3">
+<nav class="col-span-full w-full border-b border-b-bremo-700 bg-bremo-800 p-4 grid grid-cols-3 h-18">
   <div class="w-full flex justify-start items-center space-x-2 col-span-2">
 
-    <a class="flex justify-start items-center" href="/admin">
+    <a class="flex justify-start items-center flex-shrink-0" href="/admin">
       <img class="rounded-md overflow-hidden w-9 h-9" src="/logo.png">
       <div class="hidden lg:block font-brand font-bold text-lg ml-2 mr-4 text-white">REMO</div>
     </a>
 
-    <div class="w-[200px] flex justify-center items-center">
+    <!-- <div class="w-[200px] flex justify-center items-center">
       <ProjectDropdown client:only="vue" wallet={Astro.locals.user?.id}/>
-    </div>
-    <a href={`/admin/project/${projectSlug}`}>
-      <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Campaigns</Button>
+    </div> -->
+    <!-- <a href={`/admin/project/${projectSlug}`}>
+      <Button class="text-white hover:bg-bremo-700 hover:text-bremo-100" variant="ghost">Campaigns</Button>
     </a>
     <a href={`/admin/project/${projectSlug}/users`}>
-      <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Users</Button>
+      <Button class="text-white hover:bg-bremo-700 hover:text-bremo-100" variant="ghost">Users</Button>
     </a>
     <a href={`/admin/project/${projectSlug}/chat`}>
-      <Button class="text-white hover:bg-stone-700 hover:text-stone-100" variant="ghost">Chat</Button>
-    </a>
+      <Button class="text-white hover:bg-bremo-700 hover:text-bremo-100" variant="ghost">Chat</Button>
+    </a> -->
+    <NavButtons wallet={Astro.locals.user?.id}  client:only></NavButtons>
   </div>
 
   <div class="w-full flex justify-end items-center">
@@ -94,7 +96,8 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
 </nav>
 
 
-    <div class="p-4 py-6 flex justify-between items-center w-full col-span-full border-b border-b-stone-700 bg-stone-900">
+
+    <div class="p-4 py-6 flex justify-between items-center w-full col-span-full border-b border-b-bremo-700 bg-bremo-900">
       <h1 class="text-3xl pl-4 font-brand font-bold text-white">Chat</h1>
 
       <!-- <NewChatDialog client:only="vue">
@@ -102,7 +105,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
       </NewChatDialog> -->
     </div>
 
-    <div id="userlistParent"class="border-r border-r-stone-700 h-full ">
+    <div id="userlistParent"class="border-r border-r-bremo-700 h-full ">
         <div id="userlist"></div>
     </div>
 

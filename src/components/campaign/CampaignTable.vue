@@ -1,19 +1,19 @@
 <template>
   <div v-if="steps?.length > 0">
     <nav aria-label="Progress">
-      <ol role="list" class="divide-y  bg-stone-800 text-stone-50  md:flex md:divide-y-0">
-        <li @click="filterStep(stepIdx)" v-for="(step, stepIdx) in steps" :key="step.name" class="relative md:flex md:flex-1 cursor-pointer group pl-6 -ml-6 " :class="[isSelectedFilter(stepIdx) ?'bg-blue-500':'hover:bg-stone-700 hover:border-l  hover:border-l-stone-800']">
+      <ol role="list" class="divide-y  bg-bremo-800 text-bremo-50  md:flex md:divide-y-0">
+        <li @click="filterStep(stepIdx)" v-for="(step, stepIdx) in steps" :key="step.name" class="relative md:flex md:flex-1 cursor-pointer group pl-6 -ml-6 " :class="[isSelectedFilter(stepIdx) ?'bg-blue-500':'hover:bg-bremo-700 hover:border-l  hover:border-l-bremo-800']">
           <div class="group flex w-full items-center">
             <div class="flex items-center justify-between px-6 py-4 text-sm font-medium">
               
               <div class="flex justify-start items-center space-x-2">
                 <span class="font-brand text-xl">{{ step.count }}</span>
-                <iconify-icon icon="mdi:user" class="text-stone-400 text-3xl" />
+                <iconify-icon icon="mdi:user" class="text-bremo-400 text-3xl" />
               </div>
 
               <div class="ml-4">
                 <div class="text-lg font-medium text-white">{{ step.name }}</div>
-                <div class="text-sm text-stone-400" v-if="getSubtitle(stepIdx)">
+                <div class="text-sm text-bremo-400" v-if="getSubtitle(stepIdx)">
                   {{ getSubtitle(stepIdx) }}
                 </div>
               </div>
@@ -25,7 +25,7 @@
             <template v-if="isSelectedFilter(stepIdx)">
 
               <div class="absolute right-0 top-0 hidden h-full w-5 md:block duration-0" aria-hidden="true">
-                <svg class="h-full w-full text-stone-500 bg-stone-800" viewBox="0 0 22 80" fill="#3b82f6" preserveAspectRatio="none">
+                <svg class="h-full w-full text-bremo-500 bg-bremo-800" viewBox="0 0 22 80" fill="#3b82f6" preserveAspectRatio="none">
                   <path d="M0 -2L20 40L0 82" vector-effect="non-scaling-stroke" stroke="currentcolor" stroke-linejoin="round" />
                 </svg>
               </div>
@@ -35,13 +35,13 @@
             <template v-else>
 
               <div class="group-hover:opacity-0 absolute right-0 top-0 hidden h-full w-5 md:block duration-0" aria-hidden="true">
-                <svg class="h-full w-full text-stone-500 bg-stone-800" viewBox="0 0 22 80" fill="#292524" preserveAspectRatio="none">
+                <svg class="h-full w-full text-bremo-500 bg-bremo-800" viewBox="0 0 22 80" fill="#292524" preserveAspectRatio="none">
                   <path d="M0 -2L20 40L0 82" vector-effect="non-scaling-stroke" stroke="currentcolor" stroke-linejoin="round" />
                 </svg>
               </div>
   
               <div class="group-hover:opacity-100 opacity-0 absolute right-0 top-0 hidden h-full w-5 md:block duration-0" aria-hidden="true">
-                <svg class="h-full w-full text-stone-500 bg-stone-800" viewBox="0 0 22 80" fill="#44403c" preserveAspectRatio="none">
+                <svg class="h-full w-full text-bremo-500 bg-bremo-800" viewBox="0 0 22 80" fill="#44403c" preserveAspectRatio="none">
                   <path d="M0 -2L20 40L0 82" vector-effect="non-scaling-stroke" stroke="currentcolor" stroke-linejoin="round" />
                 </svg>
               </div>
@@ -67,15 +67,15 @@
     <div class="w-full">
     <div class="">
       <Table>
-        <TableHeader class="bg-stone-700">
-          <TableRow class="hover:bg-stone-700" v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+        <TableHeader class="bg-bremo-700">
+          <TableRow class="hover:bg-bremo-700" v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
             <TableHead v-for="header in headerGroup.headers" :key="header.id">
               <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow class="hover:bg-stone-800" v-for="row in table.getRowModel().rows" :key="row.id">
+          <TableRow class="hover:bg-bremo-800" v-for="row in table.getRowModel().rows" :key="row.id">
             <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
               <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
             </TableCell>
@@ -169,7 +169,7 @@ const columns = [
     header: ({ column }) => {
       return h(Button, {
         variant: 'ghost',
-        class: 'hover:bg-stone-800 text-white hover:text-white',
+        class: 'hover:bg-bremo-800 text-white hover:text-white',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
       }, () => [
         h('div', {

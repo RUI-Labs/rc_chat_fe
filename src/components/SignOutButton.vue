@@ -1,5 +1,5 @@
 <template>
-  <Button variant="outline" class="bg-stone-600 border-stone-500 text-stone-50" @click="logoutSIWE()">Sign Out</Button>
+  <Button variant="outline" class="bg-bremo-600 border-bremo-500 text-bremo-50" @click="logoutSIWE()">Sign Out</Button>
 </template>
 
 <script setup>

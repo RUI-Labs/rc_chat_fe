@@ -78,8 +78,8 @@ export const initXmtp = async () => {
             // })
 
             // save contact to supabase
-            localStorage.setItem(`xmtp-wallet-${wallet.address.toLowerCase()}`, privateKey);
             const wallet =  getAccount(config)
+            localStorage.setItem(`xmtp-wallet-${wallet.address.toLowerCase()}`, privateKey);
             fetch('/api/contactbook.json', {
                 method: 'POST',
                 body: JSON.stringify({

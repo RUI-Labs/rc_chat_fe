@@ -137,7 +137,7 @@ const initXmtp = async () => {
     await fetch('/api/keys.json', {
       method: 'POST',
       body: JSON.stringify({
-        address: _address,
+        address: _address.toLowerCase(),
         keys: Buffer.from(keys).toString("binary"),
       })
     })

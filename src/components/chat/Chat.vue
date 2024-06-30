@@ -293,7 +293,7 @@ const pushNotificationOnSent = async (_message, _to) => {
     })
 
 
-    
+
   // const myHeaders = new Headers();
   // myHeaders.append("Content-Type", "application/json");
 
@@ -365,14 +365,39 @@ const streamMessage = async (_c) => {
   for await (const message of await _c.streamMessages()) {
     const exists = _c?.messages.find((m) => m.id === message.id);
     if(!exists) {
+
       console.log('streamMessage', message.content)
-      _c.messages.push({
-        content: message.content,
-        id: message.id,
-        senderAddress: message.senderAddress,
-        type: 'text',
-        sender: message.senderAddress.toLowerCase() === $xmtpClient.value.address.toLowerCase() ? 'me' : message.senderAddress,
-      })
+
+
+      if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
+
+        const attachment = await RemoteAttachmentCodec.load(message.content, $xmtpClient.value);
+        const objectURL = URL.createObjectURL(
+            new Blob([Buffer.from(attachment.data)], {
+                type: attachment.mimeType,
+            }),
+        );
+        _c.messages.push({
+          content: objectURL,
+          id: message.id,
+          senderAddress: message.senderAddress,
+          type: 'attachment',
+          sender: message.senderAddress.toLowerCase() === $xmtpClient.value.address.toLowerCase() ? 'me' : message.senderAddress,
+        })
+
+      } else {
+        _c.messages.push({
+          content: message.content,
+          id: message.id,
+          senderAddress: message.senderAddress,
+          type: 'text',
+          sender: message.senderAddress.toLowerCase() === $xmtpClient.value.address.toLowerCase() ? 'me' : message.senderAddress,
+        })
+      }
+
+
+
+
     }
   }
 }

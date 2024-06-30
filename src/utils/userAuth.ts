@@ -21,7 +21,7 @@ export const getUserSubscriptionId = () => {
     const user = window?.OneSignal?.User;
     const subscriptionId = window?.OneSignal?.User.PushSubscription.id;
     const permitted = window?.OneSignal?.Notifications.permission; 
-    console.log('getUserSubscriptionId', userId, user, subscriptionId, permitted)
+    console.log('onesignal getUserSubscriptionId', userId, user, subscriptionId, permitted)
 
     let wallet : any = getAccount(config);
     return subscriptionId || `onesingal-${wallet?.address?.toLowerCase()}`;

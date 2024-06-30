@@ -368,7 +368,7 @@ const requestNotification = async () => {
     }
 
   } catch(error) {
-    console.info('allowNotification', error)
+    console.log('allowNotification', error)
   }
 
   //dummy

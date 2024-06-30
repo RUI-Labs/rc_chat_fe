@@ -7,27 +7,29 @@ import ChatVue from "@/components/chat/Chat.vue";
 
 const { id } = Astro.params;
 const project_info = await fetch(`${Astro.url.origin}/api/project/${id}.json`).then(res => res.json())
-console.log(project_info)
+// console.log(project_info)
 
 
-let campaigns = [];
-for (let i = 0; i < 10; i++) {
-  campaigns.push({
-    id: i,
-    name: `Campaign ${i}`,
-    description: `Description ${i}`,
-    status: i % 2 === 0 ? "Active" : "Inactive",
-    startDate: new Date(),
-    endDate: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
-}
+let campaigns : any = await fetch(`${Astro.url.origin}/api/projects/${Astro.params.id?.toUpperCase()}/campaigns.json`).then(res => res.json())
+
+// let campaigns = [];
+// for (let i = 0; i < 10; i++) {
+//   campaigns.push({
+//     id: i,
+//     name: `Campaign ${i}`,
+//     description: `Description ${i}`,
+//     status: i % 2 === 0 ? "Active" : "Inactive",
+//     startDate: new Date(),
+//     endDate: new Date(),
+//     createdAt: new Date(),
+//     updatedAt: new Date(),
+//   });
+// }
 ---
 
 <AdminChatLayout>
 
-    <ChatVue client:only="vue" project_info={project_info}></ChatVue>
+    <ChatVue client:only="vue" project_info={project_info} campaigns={campaigns}></ChatVue>
 
 
   </div>

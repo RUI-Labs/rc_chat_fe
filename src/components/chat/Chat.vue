@@ -5,7 +5,7 @@
         <div class="w-full divide-y divide-bremo-700 pb-[20vh]">
           <div @click="pickConversation(conversation)" v-for="conversation in conversations" class="w-full justify-center items-center duration-300 p-4 bg-white/5 hover:bg-white/10">
             <p class="font-brand text-lg text-bremo-200">{{ conversation?.userData?.contact_books?.name }}</p>
-            <p class="text-sm pt-1 text-bremo-500">{{ conversation?.peerAddress }}</p>
+            <p class="text-sm pt-1 text-bremo-500">{{ conversation?.userData?.contact_books?.wallet_address }}</p>
 
             <!-- <div class="flex justify-start items-center space-x-2 col-span-full pb-2 pl-1">
               <div v-for="i in 3" class="text-xs border px-2 py-1 rounded-full bg-white">Tag {{ i }}</div>
@@ -29,7 +29,7 @@
 
             <div class="col-span-2 flex flex-col justify-center items-end row-span-2">
               <div class="flex flex-wrap gap-2 justify-start items-center">
-                <div v-for="tag in selectedConversation.tags" class="text-sm border px-3 py-1 rounded-full bg-bremo-700 border-bremo-500 text-white">{{ tag }}</div>
+                <div v-for="tag in selectedConversation?.tags" class="text-sm border px-3 py-1 rounded-full bg-bremo-700 border-bremo-500 text-white">{{ formatTagDisplay(tag) }}</div>
               </div>
             </div>
 
@@ -113,8 +113,8 @@ let unwatch;
 
 const conversations = ref([]);
 const messages = ref([]);
-const props = defineProps([ "project_info" ]);
-const { project_info } = toRefs(props);
+const props = defineProps([ "project_info", "campaigns" ]);
+const { project_info, campaigns } = toRefs(props);
 import { ContentTypeRemoteAttachment, RemoteAttachmentCodec, AttachmentCodec } from "@xmtp/content-type-remote-attachment";
 const selectedConversation = ref(null);
 
@@ -415,6 +415,16 @@ const streamMessage = async (_c) => {
 const pickConversation = (_c) => {
   console.log('selectedConversation.value', _c)
   selectedConversation.value = _c;
+}
+
+
+const formatTagDisplay = (_tag) => {
+  // console.log('formatTagDisplay', _tag, campaigns.value)
+  if(_tag.includes("CAMPAIGN")) {
+    const ct = campaigns?.value.find((x) => x.campaign_id == Number(_tag.split(":")[1]))
+    return ct?.tag?.toUpperCase() || _tag
+  }
+  return _tag
 }
 
 </script>

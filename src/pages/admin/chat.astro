@@ -5,22 +5,23 @@ import AdminChatLayout from "@/layouts/AdminChatLayout.astro";
 // import NewChatDialog from "@/components/admin/NewChatDialog.vue";
 import ChatVue from "@/components/chat/Chat.vue";
 
-let campaigns = [];
-for (let i = 0; i < 10; i++) {
-  campaigns.push({
-    id: i,
-    name: `Campaign ${i}`,
-    description: `Description ${i}`,
-    status: i % 2 === 0 ? "Active" : "Inactive",
-    startDate: new Date(),
-    endDate: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
-}
+// let campaigns = [];
+// for (let i = 0; i < 10; i++) {
+//   campaigns.push({
+//     id: i,
+//     name: `Campaign ${i}`,
+//     description: `Description ${i}`,
+//     status: i % 2 === 0 ? "Active" : "Inactive",
+//     startDate: new Date(),
+//     endDate: new Date(),
+//     createdAt: new Date(),
+//     updatedAt: new Date(),
+//   });
+// }
 ---
 
 <AdminChatLayout>
+
 
     <ChatVue client:only="vue"></ChatVue>
 

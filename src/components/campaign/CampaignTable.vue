@@ -6,9 +6,9 @@
           <div class="group flex w-full items-center">
             <div class="flex items-center justify-between px-6 py-4 text-sm font-medium">
               
-              <div class="flex justify-start items-center space-x-2">
+              <div class="flex justify-start items-center space-x-2" :class="[isSelectedFilter(stepIdx)?'text-blue-900':'']">
                 <span class="font-brand text-xl">{{ step.count }}</span>
-                <iconify-icon icon="mdi:user" class="text-bremo-400 text-3xl" />
+                <iconify-icon icon="mdi:user" class="text-3xl" />
               </div>
 
               <div class="ml-4">
@@ -35,13 +35,13 @@
             <template v-else>
 
               <div class="group-hover:opacity-0 absolute right-0 top-0 hidden h-full w-5 md:block duration-0" aria-hidden="true">
-                <svg class="h-full w-full text-bremo-500 bg-bremo-800" viewBox="0 0 22 80" fill="#292524" preserveAspectRatio="none">
+                <svg class="h-full w-full text-bremo-500 bg-bremo-800" viewBox="0 0 22 80" fill="#303036" preserveAspectRatio="none">
                   <path d="M0 -2L20 40L0 82" vector-effect="non-scaling-stroke" stroke="currentcolor" stroke-linejoin="round" />
                 </svg>
               </div>
   
               <div class="group-hover:opacity-100 opacity-0 absolute right-0 top-0 hidden h-full w-5 md:block duration-0" aria-hidden="true">
-                <svg class="h-full w-full text-bremo-500 bg-bremo-800" viewBox="0 0 22 80" fill="#44403c" preserveAspectRatio="none">
+                <svg class="h-full w-full text-bremo-500 bg-bremo-800" viewBox="0 0 22 80" fill="#43444c" preserveAspectRatio="none">
                   <path d="M0 -2L20 40L0 82" vector-effect="non-scaling-stroke" stroke="currentcolor" stroke-linejoin="round" />
                 </svg>
               </div>

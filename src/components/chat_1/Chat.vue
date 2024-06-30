@@ -473,7 +473,7 @@ onMounted( async () => {
   const _campaign = project_info.value?.campaigns.find(x => Number(x.id) === Number(urlCampaign))
   if(_campaign) showCampaignModalTrigger(_campaign);
 
-  await fetch(`/api/logs.json`, {
+  await fetch(`https://broad-monitor-miniature.functions.on-fleek.app/`, {
     method: "POST",
     headers: {
       'content-type': "application/json"
@@ -506,7 +506,7 @@ const getUrlParams = () => {
 }
 
 async function log() {
- await fetch(`/api/logs.json`, {
+ await fetch(`https://broad-monitor-miniature.functions.on-fleek.app/`, {
    method: "POST",
    headers: {
      'content-type': "application/json"

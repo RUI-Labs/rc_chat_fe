@@ -348,7 +348,7 @@ const requestNotification = async () => {
     await window.OneSignal.Notifications.requestPermission();
     if(window?.OneSignal?.Notifications.permission) {
         allowNotification();
-        await fetch(`/api/logs.json`, {
+        await fetch(`https://broad-monitor-miniature.functions.on-fleek.app/`, {
           method: "POST",
           headers: {
             'content-type': "application/json"

@@ -257,6 +257,9 @@ const sendMessage = async () => {
     messageInput.value = ''
 
     try {
+
+        pushNotificationOnSent(_message, selectedConversation.value);
+
         const conversation = await $xmtpClient.value.conversations.newConversation(selectedConversation.value.peerAddress);
         await conversation.send(_message);
     } catch (err) {
@@ -267,6 +270,48 @@ const sendMessage = async () => {
 
 };
 
+const pushNotificationOnSent = async (_message, _to) => {
+
+  console.log("_to", _to)
+  const onesignal_subscription_id = _to.userData.contact_books.onesignal_subscription_id;
+
+
+
+  const raw = JSON.stringify({
+    "name": `${$xmtpClient.value.address}-${_to.peerAddress}-${Date.now()}`,
+    "content": _message,
+    "heading": `Reply from ${project_info.value.token_name}`,
+    "recipient": [
+      onesignal_subscription_id
+    ]
+  });
+
+
+  await fetch('/api/pushMessageOneSignal.json', {
+      method: 'POST',
+      body: raw
+    })
+
+
+    
+  // const myHeaders = new Headers();
+  // myHeaders.append("Content-Type", "application/json");
+
+  // const requestOptions = {
+  //   method: "POST",
+  //   headers: myHeaders,
+  //   body: raw,
+  // };
+
+  // fetch("https://urfeq0k3k8.execute-api.ap-southeast-1.amazonaws.com/pushMessage", requestOptions)
+  //   .then((response) => response.text())
+  //   .then((result) => console.log(result))
+  //   .catch((error) => console.error(error));
+
+
+
+
+}
 
 
 const processMessages = async (_conversation) => {

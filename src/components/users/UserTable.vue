@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, toRefs, h, computed, watch} from "vue";
+import { ref, defineProps, toRefs, h, computed, watch, onMounted} from "vue";
 import { useVueTable, getCoreRowModel,getFilteredRowModel, FlexRender, type ColumnDef } from "@tanstack/vue-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "../ui/button";
@@ -13,16 +13,24 @@ interface User {
   tags: string[];
 }
 
+
 const props = defineProps(["project_id"]);
 const { project_id } = toRefs(props);
 
+
 // Sample data
 const users = ref<User[]>([
-  { id: "1", name: "Alice", address: "123 Lane", subscribed: true, tags: ["premium", "new"] },
-  { id: "2", name: "Bob", address: "456 Drive", subscribed: false, tags: ["standard"] },
-  { id: "3", name: "Carol", address: "789 Way", subscribed: true, tags: ["premium", "frequent"] },
+  //{ id: "1", name: "Alice", address: "123 Lane", subscribed: true, tags: ["premium", "new"] },
+  //{ id: "2", name: "Bob", address: "456 Drive", subscribed: false, tags: ["standard"] },
+  //{ id: "3", name: "Carol", address: "789 Way", subscribed: true, tags: ["premium", "frequent"] },
 ]);
 
+
+onMounted(async () => {
+        users.value = await fetch(`/api/projects/${project_id.value}/users.json`).then(res => res.json())
+        console.log(users.value)
+
+})
 const tagFilterFn = (row:any, columnId:any, filterValue:any) => {
   return filterValue.length === 0 || filterValue.some((tag:any) => row.getValue(columnId).includes(tag));
 };
@@ -87,7 +95,10 @@ columns.push({
 })
 
 const table = useVueTable({
-  data: users.value,
+  get data() {
+        return users.value
+  },
+  //data: users.value,
   columns,
   getCoreRowModel: getCoreRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
@@ -144,6 +155,9 @@ const bulkselect = () => {
 
 const openChat = (userId: string) => {
   console.log(`Opening chat for user ID: ${userId}`);
+  console.log(users.value[userId])
+  window.location.href = `/admin/project/${project_id.value}/chat?user_address=${users.value[userId].address}`
+
   // Implementation depends on how you handle chats in your app
   // For example, this could dispatch a Vuex action or emit an event
 };

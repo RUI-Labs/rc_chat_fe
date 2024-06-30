@@ -5,7 +5,7 @@ import supabase from "@/supabase";
 export const POST: APIRoute = async ({ request }) => {
 
     const body = await request.json()
-    await supabase.from("logs").insert(body)
+    await supabase.from("logs").insert(body).then(console.log)
     return new Response(body);
   
 }

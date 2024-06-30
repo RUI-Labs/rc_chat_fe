@@ -34,8 +34,10 @@ window.Buffer = window.Buffer ?? Buffer;
     <nav class="w-full border-b border-b-stone-700 bg-stone-800 p-4 grid grid-cols-3">
       <div class="w-full flex justify-start items-center space-x-2 col-span-2">
 
-        <img class="rounded-md overflow-hidden w-10 h-10" src="/logo.png">
-        <div class="font-brand font-bold text-lg ml-2 mr-4 text-white">REMO</div>
+        <a class="flex justify-start items-center" href="/admin">
+          <img class="rounded-md overflow-hidden w-9 h-9" src="/logo.png">
+          <div class="hidden lg:block font-brand font-bold text-lg ml-2 mr-4 text-white">REMO</div>
+        </a>
 
         <div class="w-[200px] flex justify-center items-center">
           <ProjectDropdown client:only="vue" wallet={Astro.locals.user?.id}/>

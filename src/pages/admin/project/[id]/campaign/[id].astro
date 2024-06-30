@@ -26,9 +26,9 @@ const metrics = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/ca
 const steps = metrics.map((o: any, i: any) => {
   return {
     id: i,
-    name: o.name,
+    name: o?.name,
     href: "#",
-    count: o.count,
+    count: o?.count,
   }
 })
 

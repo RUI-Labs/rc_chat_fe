@@ -54,7 +54,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useDebounceFn } from '@vueuse/core'
 
-import { initUser, initXmtp } from "@/stores/stamp"
+import { $xmtpClient } from "@/stores/admin";
+let xmptClient = $xmtpClient.get()
 
 const open  = ref(false);
 
@@ -90,25 +91,23 @@ const searchAddress = useDebounceFn(async () => {
 
 const confirmCreateProject = async () => {
 
-  console.log(93, wallet.value)
-  await initUser()
-  await initXmtp(true)
+  await fetch(`/api/projects.json`, {
+         method: "POST",
+         headers: {
+                 'content-type': "application/json"
+         },
+         body: JSON.stringify({
+                 token_name: inputName.value,
+                 token_address: inputAddress.value.toLowerCase(),
+                 token_symbol: inputSymbol.value,
+                 owner_address: wallet.value.toLowerCase() 
 
-  ///await fetch(`/api/projects.json`, {
-  ///        method: "POST",
-  ///        headers: {
-  ///                'content-type': "application/json"
-  ///        },
-  ///        body: JSON.stringify({
-  ///                token_name: inputName.value,
-  ///                token_address: inputAddress.value,
-  ///                token_symbol: inputSymbol.value,
-  ///                owner_address: wallet.value 
-
-  ///        })
-  ///})
+         })
+  })
 
   hide();
+
+  window.location.href = `/admin/project/${inputSymbol.value}`
 }
 
 </script>

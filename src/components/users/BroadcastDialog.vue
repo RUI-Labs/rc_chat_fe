@@ -72,6 +72,8 @@
   import { Label } from '@/components/ui/label'
   import { useDebounceFn } from '@vueuse/core'
   import { Textarea } from '@/components/ui/textarea'
+  import { $xmtpClient } from "@/stores/admin";
+  let xmptClient = $xmtpClient.get()
 
   const props = defineProps({
     recipients: {
@@ -117,7 +119,23 @@
   
 //   }, 300)
   
-  const confirmBroadcast = () => {
+  const confirmBroadcast = async () => {
+    for (const recipient of recipients.value) {
+      // Check if the recipient is activated on the XMTP network
+      try {
+        if (await xmptClient.canMessage(recipient.address)) {
+          const conversation = await xmptClient.conversations.newConversation(recipient.address);
+          await conversation.send(inputMessage.value);
+          console.log(`Message successfully sent to ${recipient.address}`);
+        } else {
+          console.log(`Recipient ${recipient.address} is not activated on the XMTP network.`);
+        }
+
+      } catch(err) {
+        console.error(err)
+
+      }
+    }
     hide();
   }
   

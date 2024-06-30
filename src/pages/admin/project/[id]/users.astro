@@ -1,6 +1,6 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
-// import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import UserTable from "@/components/users/UserTable.vue";
 
 ---
@@ -10,7 +10,7 @@ import UserTable from "@/components/users/UserTable.vue";
     <div class="p-4 py-12 flex justify-between items-center">
       <h1 class="text-3xl pl-4 font-brand font-bold text-white">Users</h1>
 
-      
+      <Button class="bg-blue-500 hover:bg-blue-600">Export CSV</Button>
     </div>
     <UserTable project_id={Astro.params?.id} client:only="vue" />
 

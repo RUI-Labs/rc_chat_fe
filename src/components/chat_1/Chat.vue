@@ -1,5 +1,6 @@
 <template>
   <div class="flex justify-center items-center w-full h-full max-h-[70vh] lg:h-[60vh]">
+
     <div v-if="gotStamp" class="w-screen h-screen fixed top-0 left-0 z-10" :style="`background:${currentColor}20;`">
       <div class="w-full grid" style="grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr))">
         <div class="pointer-events-none changing-text w-full aspect-square flex justify-center items-center text-8xl filter font-brand font-black opacity-20" :style="`color:${currentColor};`" v-for="i in 200">{{ currentCharacter }}</div>
@@ -7,7 +8,7 @@
     </div>
 
     <ModalVue :project_info="project_info" :campaign_info="$selectedCampaign.value" @stamped="showStampedAnimation()"></ModalVue>
-    <NewStampModal @update="afterWelcome()"></NewStampModal>
+    <NewStampModal :project_info="project_info" @update="afterWelcome()"></NewStampModal>
     <ConnectWallet></ConnectWallet>
 
     <div id="snapshotParent" v-if="showReceipt" class="w-screen h-screen top-0 left-0 z-[999] fixed flex justify-center items-center">
@@ -242,6 +243,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+
+
 import { Button } from "@/components/ui/button";
 
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
@@ -259,6 +262,11 @@ import { connect, reconnect, getAccount, disconnect, getConnectors, watchConnect
 import { config } from '@/wagmiConfig';
 
 import { $showNewStampModal, $showWalletModal, initUser, initXmtp, $userData, $receiptImageData, $showReceipt, $xmtpClient, $refreshMessages, $showCampaignModal, $selectedCampaign } from "@/stores/stamp_1";
+
+
+import { useSound } from '@vueuse/sound'
+// import buttonSfx from '../assets/sounds/button.mp3'
+
 const conversations = ref([]);
 const messages = ref([]);
 
@@ -472,11 +480,11 @@ onMounted( async () => {
     body: JSON.stringify({
       payload: {
         token_symbol: project_info.value.token_symbol,
-        token_address: project_info.value.token_address,
+        token_address: project_info.value.token_address.toLowerCase(),
         campaign: parseInt(urlCampaign)
       },
       name: "visit",
-      user_data: {address: getAccount(config)?.address},
+      user_data: {address: getAccount(config)?.address.toLowerCase()},
     }),
   })
 
@@ -488,7 +496,6 @@ onMounted( async () => {
 
 const checkWalletAccount = async () => {
 
-  console.log(getAccount(config)?.address == true)
   if(getAccount(config)?.address) {
 
     await initUser();
@@ -499,6 +506,22 @@ const checkWalletAccount = async () => {
       // updateGotStamp();
       gotStamp.value = true;
       $showNewStampModal.set(false);
+
+      await fetch(`/api/logs.json`, {
+        method: "POST",
+        headers: {
+          'content-type': "application/json"
+        },
+        body: JSON.stringify({
+          payload: {
+            token_symbol: project_info.value.token_symbol,
+            token_address: project_info.value.token_address.toLowerCase(),
+            campaign: parseInt(urlCampaign)
+          },
+          name: "connect",
+          user_data: {address: getAccount(config)?.address.toLowerCase()},
+        }),
+      })
 
     } else {
       // wallet not found in supabase
@@ -671,6 +694,7 @@ const fetchMessages = async () => {
                   sender: message.senderAddress.toLowerCase() == $userData.value.xmtp_address.toLowerCase() ? 'me' : project_info.value.token_name,
               });
               
+              playIncoming()
               
           }
 
@@ -853,6 +877,9 @@ const receiptAnimation = async () => {
     }
 }
 
+const { play:playIncoming } = useSound('/ringtone.mp3',{
+  volume: 0.25
+})
 
 </script>
 

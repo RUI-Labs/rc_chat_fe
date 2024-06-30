@@ -260,6 +260,7 @@ const { project_info } = toRefs(props);
 
 import { connect, reconnect, getAccount, disconnect, getConnectors, watchConnections } from '@wagmi/core';
 import { config } from '@/wagmiConfig';
+import { getUserCookie } from '@/utils/userAuth'
 
 import { $showNewStampModal, $showWalletModal, initUser, initXmtp, $userData, $receiptImageData, $showReceipt, $xmtpClient, $refreshMessages, $showCampaignModal, $selectedCampaign } from "@/stores/stamp_1";
 
@@ -484,7 +485,10 @@ onMounted( async () => {
         campaign: parseInt(urlCampaign)
       },
       name: "visit",
-      user_data: {address: getAccount(config)?.address.toLowerCase()},
+      user_data: {
+        address: getAccount(config)?.address.toLowerCase(),
+        cookie: getUserCookie()
+      },
     }),
   })
 
@@ -514,7 +518,10 @@ async function log() {
        campaign: parseInt(getUrlParams())
      },
      name: "connect",
-     user_data: {address: getAccount(config)?.address.toLowerCase()},
+     user_data: {
+        address: getAccount(config)?.address.toLowerCase(),
+        cookie: getUserCookie()
+      },
    }),
  })
 }

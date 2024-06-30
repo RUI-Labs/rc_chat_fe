@@ -32,9 +32,7 @@ const xmtpOptions = {
 };
 
 export const initXmtp = async () => {
-    console.clear();
     console.log('onesignal', getUserSubscriptionId());
-    return;
 
     let xmtpBundleKeys = false;
 
@@ -67,7 +65,7 @@ export const initXmtp = async () => {
             });
 
             // store to local storage
-            // storeKeys(proxyAddress, xmtpBundleKeys);
+            storeKeys(proxyAddress, xmtpBundleKeys);
 
             // save to supabase
             // fetch('/api/keys.json', {
@@ -78,20 +76,20 @@ export const initXmtp = async () => {
             //     })
             // })
 
-            // // save contact to supabase
-            // const wallet =  getAccount(config)
-            // localStorage.setItem(`xmtp-wallet-${wallet.address.toLowerCase()}`, privateKey);
-            // fetch('/api/contactbook.json', {
-            //     method: 'POST',
-            //     body: JSON.stringify({
-            //         "wallet_address": wallet.address.toLowerCase(),
-            //         "xmtp_address": proxyAddress.toLowerCase(),
-            //         "onesignal_subscription_id": getUserSubscriptionId(),
-            //         "private_xmtp_address": privateKey,
-            //         "name": $username.get(),
-            //         "cookie": getUserCookie(),
-            //     })
-            // })
+            // save contact to supabase
+            const wallet =  getAccount(config)
+            localStorage.setItem(`xmtp-wallet-${wallet.address.toLowerCase()}`, privateKey);
+            fetch('/api/contactbook.json', {
+                method: 'POST',
+                body: JSON.stringify({
+                    "wallet_address": wallet.address.toLowerCase(),
+                    "xmtp_address": proxyAddress.toLowerCase(),
+                    "onesignal_subscription_id": getUserSubscriptionId(),
+                    "private_xmtp_address": privateKey,
+                    "name": $username.get(),
+                    "cookie": getUserCookie(),
+                })
+            })
 
 
 
@@ -113,7 +111,7 @@ export const initXmtp = async () => {
             });
 
             // store to local storage
-            // storeKeys(signer.address, xmtpBundleKeys);
+            storeKeys(signer.address, xmtpBundleKeys);
 
             // save to supabase
             // await fetch('/api/keys.json', {
@@ -124,19 +122,19 @@ export const initXmtp = async () => {
             //     })
             // })
 
-            // // save contact to supabase
-            // const wallet = getAccount(config)
-            // fetch('/api/contactbook.json', {
-            //     method: 'POST',
-            //     body: JSON.stringify({
-            //         "wallet_address": wallet.address.toLowerCase(),
-            //         "xmtp_address": wallet.address.toLowerCase(),
-            //         "onesignal_subscription_id": getUserSubscriptionId(),
-            //         "private_xmtp_address": `private-${wallet.address.toLowerCase()}`,
-            //         "name": $username.get(),
-            //         "cookie": getUserCookie(),
-            //     })
-            // })
+            // save contact to supabase
+            const wallet = getAccount(config)
+            fetch('/api/contactbook.json', {
+                method: 'POST',
+                body: JSON.stringify({
+                    "wallet_address": wallet.address.toLowerCase(),
+                    "xmtp_address": wallet.address.toLowerCase(),
+                    "onesignal_subscription_id": getUserSubscriptionId(),
+                    "private_xmtp_address": `private-${wallet.address.toLowerCase()}`,
+                    "name": $username.get(),
+                    "cookie": getUserCookie(),
+                })
+            })
 
 
         }

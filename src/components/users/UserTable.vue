@@ -14,8 +14,8 @@ interface User {
 }
 
 
-const props = defineProps(["project_id"]);
-const { project_id } = toRefs(props);
+const props = defineProps(["project_id", "campaigns"]);
+const { project_id, campaigns } = toRefs(props);
 
 
 // Sample data
@@ -47,7 +47,7 @@ const columns: ColumnDef<User>[] = [
       return h(
         "div",
         {},
-        row.getValue("tags").map((tag:any) => h("span", { class: "px-3 py-1.5 bg-bremo-700 text-white mx-1 rounded-full" }, tag))
+        row.getValue("tags").map((tag:any) => h("span", { class: "px-3 py-1.5 bg-bremo-700 text-white mx-1 rounded-full" }, formatTagDisplay(tag)))
       );
     },
     filterFn: tagFilterFn
@@ -141,6 +141,7 @@ const uniqueTags = computed(() => {
     });
   });
   const tagsArray = Array.from(tagsMap.entries()).map(([tag, count]) => ({ tag, count }));
+  console.log("tagsArray", tagsArray, users.value)
   return tagsArray;
 });
 
@@ -162,6 +163,15 @@ const openChat = (userId: string) => {
   // For example, this could dispatch a Vuex action or emit an event
 };
 
+
+const formatTagDisplay = (_tag:any) => {
+  console.log('formatTagDisplay', _tag, campaigns.value)
+  if(_tag.includes("CAMPAIGN")) {
+    const ct = campaigns?.value.find((x:any) => x.campaign_id == Number(_tag.split(":")[1]))
+    return ct?.tag?.toUpperCase() || _tag
+  }
+  return _tag
+}
 
 </script>
 
@@ -189,7 +199,7 @@ const openChat = (userId: string) => {
         <div v-for="tag_entry in uniqueTags" :key="tag_entry.tag" class="w-full">
           <Button class="w-full text-left bg-bremo-800 text-white mb-1" variant="ghost" @click="toggleTag(tag_entry.tag)">
             <div class="w-full flex justify-between items-center"> 
-              <span><strong>{{ tag_entry.tag }}</strong> ({{ tag_entry.count }})</span>
+              <span><strong>{{ formatTagDisplay(tag_entry.tag) }}</strong> ({{ tag_entry.count }})</span>
               <span v-if="selectedTags.includes(tag_entry.tag)">✓</span></div>
           </Button>
         </div>

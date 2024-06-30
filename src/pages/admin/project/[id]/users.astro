@@ -3,6 +3,10 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
 import { Button } from "@/components/ui/button";
 import UserTable from "@/components/users/UserTable.vue";
 
+
+let campaigns : any = await fetch(`${Astro.url.origin}/api/projects/${Astro.params.id}/campaigns.json`).then(res => res.json())
+console.log(Astro.params.id, JSON.stringify(campaigns))
+
 ---
 
 <AdminLayout>
@@ -12,7 +16,7 @@ import UserTable from "@/components/users/UserTable.vue";
 
       <Button class="bg-blue-500 hover:bg-blue-600">Export CSV</Button>
     </div>
-    <UserTable project_id={Astro.params?.id} client:only="vue" />
+    <UserTable project_id={Astro.params?.id} campaigns={campaigns} client:only="vue" />
 
   </div>
 </AdminLayout>

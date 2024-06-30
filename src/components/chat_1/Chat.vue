@@ -494,26 +494,36 @@ onMounted( async () => {
   
 });
 
+const getUrlParams = () => {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const urlCampaign = urlParams.get('campaign')
+  return urlCampaign
+}
+
+async function log() {
+ await fetch(`/api/logs.json`, {
+   method: "POST",
+   headers: {
+     'content-type': "application/json"
+   },
+   body: JSON.stringify({
+     payload: {
+       token_symbol: project_info.value.token_symbol,
+       token_address: project_info.value.token_address.toLowerCase(),
+       campaign: parseInt(getUrlParams())
+     },
+     name: "connect",
+     user_data: {address: getAccount(config)?.address.toLowerCase()},
+   }),
+ })
+}
+
 const checkWalletAccount = async () => {
 
   if(getAccount(config)?.address) {
 
-     await fetch(`/api/logs.json`, {
-       method: "POST",
-       headers: {
-         'content-type': "application/json"
-       },
-       body: JSON.stringify({
-         payload: {
-           token_symbol: project_info.value.token_symbol,
-           token_address: project_info.value.token_address.toLowerCase(),
-           campaign: parseInt(urlCampaign)
-         },
-         name: "connect",
-         user_data: {address: getAccount(config)?.address.toLowerCase()},
-       }),
-     })
-
+    log()
 
     await initUser();
 

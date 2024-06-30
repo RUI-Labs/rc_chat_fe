@@ -32,6 +32,7 @@ const xmtpOptions = {
 };
 
 export const initXmtp = async () => {
+        console.log(35)
 
 
     let xmtpBundleKeys = false;
@@ -77,8 +78,8 @@ export const initXmtp = async () => {
             // })
 
             // save contact to supabase
-            const wallet =  getAccount(config)
             localStorage.setItem(`xmtp-wallet-${wallet.address.toLowerCase()}`, privateKey);
+            const wallet =  getAccount(config)
             fetch('/api/contactbook.json', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -98,21 +99,26 @@ export const initXmtp = async () => {
 
     } else {
 
+        console.log(36)
 
         let signer = await getSigner();
         xmtpBundleKeys = loadKeys(signer.address);
 
+        console.log(37, xmtpBundleKeys)
         if(!xmtpBundleKeys) {
             // if no xmtpBundleKeys
 
+        console.log(38)
             // get xmtpBundleKeys
             xmtpBundleKeys = await Client.getKeys(signer, {
                 ...xmtpOptions,
             });
 
+        console.log(38)
             // store to local storage
             storeKeys(signer.address, xmtpBundleKeys);
 
+        console.log(40)
             // save to supabase
             // await fetch('/api/keys.json', {
             //     method: 'POST',
@@ -124,6 +130,7 @@ export const initXmtp = async () => {
 
             // save contact to supabase
             const wallet = getAccount(config)
+        console.log(41)
             fetch('/api/contactbook.json', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -135,6 +142,8 @@ export const initXmtp = async () => {
                     "cookie": getUserCookie(),
                 })
             })
+
+        console.log(41)
 
         }
 
@@ -185,6 +194,7 @@ const getSigner = async () => {
 
 export const $userData = atom(null);
 export const initUser = async () => {
+        console.log('inituser')
 
     const wallet = getAccount(config);
 

@@ -35,6 +35,9 @@ dependencies:
   '@vueuse/core':
     specifier: ^10.11.0
     version: 10.11.0(vue@3.4.30)
+  '@vueuse/sound':
+    specifier: ^2.0.1
+    version: 2.0.1(vue@3.4.30)
   '@wagmi/connectors':
     specifier: ^5.0.17
     version: 5.0.19(@upstash/redis@1.31.6)(@wagmi/core@2.11.5)(react-i18next@13.5.0)(react-native@0.74.2)(react@18.3.1)(typescript@5.5.2)(viem@2.16.3)(zod@3.23.8)
@@ -4767,6 +4770,20 @@ packages:
       - vue
     dev: false
 
+  /@vueuse/sound@2.0.1(vue@3.4.30):
+    resolution: {integrity: sha512-7Fbp9lQkuUnpTXS9vPbvT2FDYHuwJbvKPivOYETaVVSmcZKoczw6zcsebsARkH5Ged0f045YUOZnV/RuCzyLXQ==}
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^2.0.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      howler: 2.2.4
+      vue: 3.4.30(typescript@5.5.2)
+      vue-demi: 0.14.8(vue@3.4.30)
+    dev: false
+
   /@wagmi/connectors@5.0.19(@upstash/redis@1.31.6)(@wagmi/core@2.11.5)(react-i18next@13.5.0)(react-native@0.74.2)(react@18.3.1)(typescript@5.5.2)(viem@2.16.3)(zod@3.23.8):
     resolution: {integrity: sha512-yd0pkM3I7sJuIZf1lIiwxDApaWg5ZSFiN3ociM50SkcoWDAWAKcCWWP0FbaCZ4KT+TZQJEIqBpfk6eZ9mBAddQ==}
     peerDependencies:
@@ -7406,6 +7423,10 @@ packages:
 
   /hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
+    dev: false
+
+  /howler@2.2.4:
+    resolution: {integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==}
     dev: false
 
   /html-escaper@3.0.3:

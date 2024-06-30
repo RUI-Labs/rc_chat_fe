@@ -20,6 +20,7 @@
     "@tanstack/vue-table": "^8.17.3",
     "@upstash/redis": "^1.31.6",
     "@vueuse/core": "^10.11.0",
+    "@vueuse/sound": "^2.0.1",
     "@wagmi/connectors": "^5.0.17",
     "@wagmi/core": "^2.11.5",
     "@xmtp/content-type-remote-attachment": "^1.1.9",

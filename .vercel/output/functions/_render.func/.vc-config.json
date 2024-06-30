@@ -1,6 +1,0 @@
-{
-	"runtime": "nodejs20.x",
-	"handler": "Documents/lab/onchain24/rc_chat_fe/.vercel/output/_functions/entry.mjs",
-	"launcherType": "Nodejs",
-	"supportsResponseStreaming": true
-}

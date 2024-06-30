@@ -22,8 +22,6 @@ const metrics = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/ca
   },
 }).then((res) => res.json());
 
-  console.log(20, metrics)
-
 let steps =[{
   id: 0,
   name: 'visit',
@@ -79,19 +77,20 @@ await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_event
         sampleData.push({
           id: o.user_id,
           name: o.user_name,
-          address: o.user_address || o.user_cookie,
+          address: o.user_address,
+          tags: o.events,
           progress: o.events.reduce((a: number, o: string) => {
-            if (o === "connect") {
-              a += 50;
-            }
             if (o === "visit") {
-              a += 50;
+              a = 0;
             }
-            if (o === "reply") {
-              a += 50;
+            if (o === "connect") {
+              a = 34;
             }
             if (o === "subscribe") {
-              a += 50;
+              a = 67;
+            }
+            if (o === "reply") {
+              a = 100;
             }
             return a;
           }, 0),
@@ -100,6 +99,7 @@ await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_event
     }
   });
 
+  console.log(sampleData)
 const url = Astro.url.pathname;
 
 let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1];

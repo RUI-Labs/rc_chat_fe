@@ -92,7 +92,6 @@
 import { defineProps, toRefs, computed, h, ref } from "vue";
 const props = defineProps(["steps","data"]);
 const { steps, data } = toRefs(props);
-console.log(95)
 import { Button } from '@/components/ui/button'
 
 import {
@@ -299,6 +298,7 @@ const filterStep = (idx) => {
 };
 
 const isSelectedFilter = (idx) => {
+  console.log(301, idx, columnFilters.value)
     return columnFilters.value.filter((filter) => filter.metadata?.idx === idx).length > 0
 }
 

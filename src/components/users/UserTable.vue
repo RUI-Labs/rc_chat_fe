@@ -151,7 +151,7 @@ const bulkselect = () => {
   let _users = users.value.filter(user => selectedRowIds.value.has(user.id));
   // selectedRowIds.value.clear(); // Clear selection after action
   broadcastRecipients.value = _users;
-  // console.log(_users)
+  console.log('bulkselect', _users)
 };
 
 const openChat = (userId: string) => {
@@ -165,7 +165,7 @@ const openChat = (userId: string) => {
 
 
 const formatTagDisplay = (_tag:any) => {
-  console.log('formatTagDisplay', _tag, campaigns.value)
+  // console.log('formatTagDisplay', _tag, campaigns.value)
   if(_tag.includes("CAMPAIGN")) {
     const ct = campaigns?.value.find((x:any) => x.campaign_id == Number(_tag.split(":")[1]))
     return ct?.tag?.toUpperCase() || _tag

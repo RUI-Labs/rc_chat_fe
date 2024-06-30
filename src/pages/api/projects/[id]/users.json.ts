@@ -1,19 +1,56 @@
+import supabase from '@/supabase';
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async (context) => {
 
-  const resp = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_campaigns_by_token`, {
-    method: "POST",
-    headers: {
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI4OTE2OTksImV4cCI6MjAyODQ2NzY5OX0.67EZHcTdMsVFc9XF2BC1AlrcV-I-H5ho9G_9HiqzO4E",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI4OTE2OTksImV4cCI6MjAyODQ2NzY5OX0.67EZHcTdMsVFc9XF2BC1AlrcV-I-H5ho9G_9HiqzO4E",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      _token_symbol: context.params['id']
+  const project = await supabase
+    .from('projects')
+    .select()
+    .eq('token_symbol', context.params['id'])
+    .single()
+    .then(res => res.data)
+
+  const metrics = await supabase.from('wallet_metrics_view')
+    .select()
+    .eq('project_id', project.token_address)
+    .then(res => res.data)
+
+  const tagged = metrics?.map((metric, i) => {
+    const tags = new Set()
+    metric.stats.map((stat: {
+      key: string
+      value: number
+      campaign_id: number
+      subscribed: boolean
+    }) => {
+      metric.id = i
+      if (stat.campaign_id) {
+        tags.add('CAMPAIGN:' + stat.campaign_id)
+      }
+      if (stat.key === 'visit') {
+        if (stat.value > 10)
+          tags.add('FREQUENT_VISITOR')
+        else if (stat.value === 1)
+          tags.add('FIRST_TIME_VISITOR')
+      }
+      else if (stat.key === 'reply') {
+        if (stat.value > 10)
+          tags.add('FREQUENT_ENGAGEMENT')
+        else if (stat.value === 1)
+          tags.add('FIRST_TIME_ENGAGEMENT')
+
+      } else if (stat.key === 'subscribe') {
+        metric.subscribed = true
+      }
+      return stat
     })
+
+    metric.tags = Array.from(tags)
+
+    return metric
   })
-  const result = await resp.json();
-  return new Response(JSON.stringify(result))
+
+  //const result = await resp.json();
+  return new Response(JSON.stringify(tagged))
 }
 

@@ -359,7 +359,7 @@ const requestNotification = async () => {
               token_address: project_info.value.token_address.toLowerCase(),
               campaign: Number(getUrlParams()) 
             },
-            name: "subccribe",
+            name: "subscribe",
             user_data: {address: getAccount(config)?.address.toLowerCase()},
           }),
         })

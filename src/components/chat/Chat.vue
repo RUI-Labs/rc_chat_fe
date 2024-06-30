@@ -281,6 +281,7 @@ const pushNotificationOnSent = async (_message, _to) => {
     "name": `${$xmtpClient.value.address}-${_to.peerAddress}-${Date.now()}`,
     "content": _message,
     "heading": `Reply from ${project_info.value.token_name}`,
+    "project": project_info.value.token_name,
     "recipient": [
       onesignal_subscription_id
     ]

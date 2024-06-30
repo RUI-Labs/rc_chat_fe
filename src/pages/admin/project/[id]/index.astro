@@ -4,7 +4,7 @@ import AdminLayout from "@/layouts/AdminLayout.astro";
 import CardTooltip from "@/components/campaign/CardTooltip.vue";
 import NewCampaignDialog from "@/components/campaign/NewCampaignDialog.vue";
 
-let campaigns = await fetch(`${Astro.url.origin}/api/projects/${Astro.params.id}/campaigns.json`).then(res => res.json())
+let campaigns : any = await fetch(`${Astro.url.origin}/api/projects/${Astro.params.id}/campaigns.json`).then(res => res.json())
 console.log(JSON.stringify(campaigns))
 
 const url = Astro.url.pathname
@@ -25,7 +25,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
     <div class="p-4">
       <div class="w-full grid gap-4" style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr));">
         {
-          campaigns.map((campaign:any) => (
+          campaigns?.length > 0 ? campaigns?.map((campaign:any) => (
             <a href={`/admin/project/${projectSlug}/campaign/${campaign.campaign_id}`}>
               <div class="w-full h-48 bg-bremo-800 border-2 border-bremo-800 rounded-xl flex flex-col justify-between items-center p-4 group overflow-hidden cursor-pointer hover:ring-bremo-500 hover:ring-4 hover:shadow-xl duration-300">
                 <div class="w-full h-full flex justify-center items-center group-hover:scale-150 duration-300">
@@ -57,7 +57,7 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
                 </div>
               </div>
             </a>
-          ))
+          )) : <div></div>
         }
 
 <div class="flex flex-col justify-center items-center w-full py-8">

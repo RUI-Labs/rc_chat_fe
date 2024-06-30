@@ -30,7 +30,7 @@
       </div>
 
       <div class="w-full p-2">
-        <Button :disabled="signingBusy" @click="startSIWE()" class="w-full bg-blue-500 hover:bg-blue-600 font-brand text-lg py-6">
+        <Button :disabled="signingBusy" @click="startSIWERetryable()" class="w-full bg-blue-500 hover:bg-blue-600 font-brand text-lg py-6">
           {{ signingBusy ? "Continue in Wallet" : "Sign In" }}
           </Button>
       </div>
@@ -80,6 +80,22 @@ const _connect = async (_connector) => {
 const _disconnect = async () => {
   await disconnect(config);
   address.value = null;
+};
+
+const startSIWERetryable = async () => {
+  let max_tries = 3;
+
+  for (let i = 0; i < max_tries; i++) {
+    try {
+      await startSIWE();
+      break;
+    } catch (err) {
+      console.log(err);
+      await disconnect(config);
+      await reconnect(config);
+    }
+  }
+
 };
 
 const startSIWE = async () => {

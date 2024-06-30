@@ -39,6 +39,8 @@ export const POST: APIRoute = async ({cookies,request}) => {
             message: message,
             signature: signature
         })
+
+        // console.log("SIWE", siweMessageValid)
     } catch (error) {
         console.log(error)
     }

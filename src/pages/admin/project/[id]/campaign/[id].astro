@@ -15,8 +15,6 @@ const campaign = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/c
   .then((res) => res.json())
   .then((res) => res[0]);
 
-  console.log(18, campaign)
-
 const metrics = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/campaign_metrics?select=*&campaign_id=eq.${id}`, {
   headers: {
     apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
@@ -66,10 +64,6 @@ await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_event
   .then((res) => {
     if (res?.map) {
       res.map((o: any) => {
-      if (!['connect', 'visit'].includes(o)) {
-      return
-
-      }
         sampleData.push({
           id: o.user_id,
           name: o.user_name,
@@ -84,7 +78,7 @@ await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_event
             return a;
           }, 0),
         })
-        })
+      })
     }
   });
 
@@ -92,7 +86,6 @@ const url = Astro.url.pathname;
 
 let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1];
 
-console.log(campaign)
 ---
 
 <AdminLayout>

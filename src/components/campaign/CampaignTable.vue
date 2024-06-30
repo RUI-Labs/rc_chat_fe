@@ -92,6 +92,7 @@
 import { defineProps, toRefs, computed, h, ref } from "vue";
 const props = defineProps(["steps","data"]);
 const { steps, data } = toRefs(props);
+console.log(95)
 import { Button } from '@/components/ui/button'
 
 import {

@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center items-center w-full h-full max-h-[70vh] lg:h-[60vh]">
 
-    <div v-if="gotStamp" class="w-screen h-screen fixed top-0 left-0 z-10" :style="`background:${currentColor}20;`">
+    <div v-if="gotStamp" class="w-screen h-screen fixed top-0 left-0 z-10 pointer-events-none" :style="`background:${currentColor}20;`">
       <div class="w-full grid" style="grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr))">
         <div class="pointer-events-none changing-text w-full aspect-square flex justify-center items-center text-8xl filter font-brand font-black opacity-20" :style="`color:${currentColor};`" v-for="i in 200">{{ currentCharacter }}</div>
       </div>

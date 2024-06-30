@@ -33,25 +33,25 @@ let projectSlug = url.match(/\/admin\/project\/([^\/]*)/)?.[1]
                 </div>
 
                 <div class="grid grid-cols-3 justify-center items-center w-full text-stone-400">
-                  <CardTooltip client:load text={`Unique Visits: ${campaign.metrics.find((o:any) => o.name === 'visit').count}`}>
+                  <CardTooltip client:load text={`Unique Visits: ${campaign.metrics.find((o:any) => o && o.name === 'visit')?.count || 0}`}>
                     <div class="flex justify-center items-center w-full">
                       <iconify-icon class="text-xl" icon="mdi:eye" />
-                      &nbsp;{campaign.metrics.find((o:any) => o.name === 'visit').count}
+                      &nbsp;{campaign.metrics.find((o:any) => o && o.name === 'visit')?.count || 0}
                     </div>
                   </CardTooltip>
 
-                  <CardTooltip client:load text={`Connected Wallet: ${campaign.metrics.find((o:any) => o.name === 'connect')?.count}`}>
+                  <CardTooltip client:load text={`Connected Wallet: ${campaign.metrics.find((o:any) => o && o.name === 'connect')?.count || 0}`}>
                     <div class="flex justify-center items-center w-full">
                       <iconify-icon class="text-xl" icon="fluent:plug-connected-16-filled" />
                       <iconify-icon class="text-xl" icon="material-symbols:wallet" />
-                      &nbsp; {campaign.metrics.find( (o:any) => o.name === 'visit').count}
+                      &nbsp; {campaign.metrics.find( (o:any) => o && o.name === 'visit')?.count || 0}
                     </div>
                   </CardTooltip>
 
-                  <CardTooltip client:load text={`Engaged: ${campaign.metrics.find((o:any) => o.name === 'reply')?.count || 0}`}>
+                  <CardTooltip client:load text={`Engaged: ${campaign.metrics.find((o:any) => o && o.name === 'reply')?.count || 0}`}>
                     <div class="flex justify-center items-center w-full">
                       <iconify-icon class="text-xl" icon="gridicons:reader-following-conversation" />
-                      &nbsp; {campaign.metrics.find( (o:any) => o.name === 'reply')?.count || 0}
+                      &nbsp; {campaign.metrics.find( (o:any) => o && o.name === 'reply')?.count || 0}
                     </div>
                   </CardTooltip>
                 </div>

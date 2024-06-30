@@ -113,11 +113,14 @@
             },
             body: JSON.stringify({
                     project_id: project_id.value,
+                    title: inputTitle.value,
                     tag: inputTag.value,
                     message: inputReplyMessage.value,
             })
     })
     hide();
+
+    window.location.reload();
   }
   
   </script>

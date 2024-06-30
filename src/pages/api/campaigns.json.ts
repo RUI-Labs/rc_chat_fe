@@ -35,6 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const campaign = {
     project_id: project.token_address,
+    title: body.title,
     tag: body.tag,
     message: body.message,
   }

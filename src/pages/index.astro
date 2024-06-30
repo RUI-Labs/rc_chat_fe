@@ -1,16 +1,79 @@
 ---
+import "@/styles/globals.css";
 
+
+const resp = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/projects?select=*,campaigns(*)`, {
+			method: "GET",
+			headers: {
+			  "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI4OTE2OTksImV4cCI6MjAyODQ2NzY5OX0.67EZHcTdMsVFc9XF2BC1AlrcV-I-H5ho9G_9HiqzO4E",
+			  "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTI4OTE2OTksImV4cCI6MjAyODQ2NzY5OX0.67EZHcTdMsVFc9XF2BC1AlrcV-I-H5ho9G_9HiqzO4E",
+			}
+		  })
+
+const projects = await resp.json()
+
+console.log(projects)
+
+
+	
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href="/remo.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>REMO</title>
+
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet" crossorigin="anonymous" />
+
 	</head>
-	<body>
-		<h1>Astro</h1>
+	<body class="w-full h-full flex justify-start items-start min-h-screen bg-stone-200 flex-col">
+		
+		
+		<div class="p-4 w-full">
+			<div class="w-full grid gap-4" style="grid-template-columns: repeat(auto-fill,minmax(250px,1fr));">
+
+				<section class="col-span-full">
+					<img class="w-36 h-36 overflow-hidden rounded-xl shadow-lg shadow-stone-300 mb-12" src="/logo.png" alt="">
+
+		<p class="pl-2 font-brand text-xl">Available Campaigns</p>
+				</section>
+
+				{
+					projects.map((project:any) => (
+						<div class="w-full border p-4 bg-white rounded-xl">
+							
+							<p class="mb-4 text-black"><strong>{project.token_name}</strong></p>
+
+							{
+								// JSON.stringify(project.campaigns)
+								project.campaigns.map((campaign:any) => (
+									<a class="text-blue-500 underline mb-1" href={`/mo/${campaign.id}`}>
+										<p>{campaign.title}</p>
+									</a>
+								))
+							}
+
+							{/* <a class="text-blue-500 underline">{project.name}</a> */}
+
+						</div>
+					))
+				}
+
+				<!-- <div class="w-full border p-4 bg-white rounded-xl">
+					
+					<p class="mb-4"><strong>Project Name</strong></p>
+
+					<a class="text-blue-500 underline">Campaign 1</a>
+
+				</div> -->
+	
+			</div>
+		</div>
+
 	</body>
 </html>

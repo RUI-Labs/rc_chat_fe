@@ -32,7 +32,6 @@ const xmtpOptions = {
 };
 
 export const initXmtp = async () => {
-        console.log(35)
 
 
     let xmtpBundleKeys = false;
@@ -99,26 +98,21 @@ export const initXmtp = async () => {
 
     } else {
 
-        console.log(36)
 
         let signer = await getSigner();
         xmtpBundleKeys = loadKeys(signer.address);
 
-        console.log(37, xmtpBundleKeys)
         if(!xmtpBundleKeys) {
             // if no xmtpBundleKeys
 
-        console.log(38)
             // get xmtpBundleKeys
             xmtpBundleKeys = await Client.getKeys(signer, {
                 ...xmtpOptions,
             });
 
-        console.log(38)
             // store to local storage
             storeKeys(signer.address, xmtpBundleKeys);
 
-        console.log(40)
             // save to supabase
             // await fetch('/api/keys.json', {
             //     method: 'POST',
@@ -130,7 +124,6 @@ export const initXmtp = async () => {
 
             // save contact to supabase
             const wallet = getAccount(config)
-        console.log(41)
             fetch('/api/contactbook.json', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -143,7 +136,6 @@ export const initXmtp = async () => {
                 })
             })
 
-        console.log(41)
 
         }
 
@@ -159,7 +151,6 @@ export const initXmtp = async () => {
     xmtp.registerCodec(new AttachmentCodec());
     xmtp.registerCodec(new RemoteAttachmentCodec());
 
-    console.log("xmtp", xmtp);
     $xmtpClient.set(xmtp);
 
 }
@@ -168,19 +159,15 @@ export const initXmtp = async () => {
 
 
 const getSigner = async () => {
-    console.log("getting signer");
     let signer = false;
   
     try {
         signer = await getEthersSigner(config);
-        console.log(signer);
         // let _s = await signer.getSigner()
         let _s = await signer.provider.getSigner();
-        console.log(_s);
         // return _s;
         signer = _s;
     } catch (err) {
-        console.log(err);
         // throw err;
     }
   
@@ -194,7 +181,6 @@ const getSigner = async () => {
 
 export const $userData = atom(null);
 export const initUser = async () => {
-        console.log('inituser')
 
     const wallet = getAccount(config);
 
@@ -206,9 +192,7 @@ export const initUser = async () => {
     const sres = await fetch(`/api/wallet/${wallet.address.toLowerCase()}.json`, {
         method: 'GET'
     }).then(res => res.text()).then(result => JSON.parse(result)).catch(error => {
-        console.log(error);
     })
-    // console.log(sres)
 
     if(isSmartWalletConnected() && sres?.private_xmtp_address) {
         const pkey = sres.private_xmtp_address;
@@ -216,7 +200,6 @@ export const initUser = async () => {
     }
 
     $userData.set(sres);
-    console.log('$userData', $userData.value);
 }
 
 
@@ -248,7 +231,6 @@ export const sendImage = async (_projectInfo, _campaign) => {
     const imagetype = "image/png";
     
     const imagefile = base64ToFile($receiptImageData.value, filename, imagetype);
-    console.log('imagefile', imagefile)
 
     const imagedata = await new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -262,7 +244,6 @@ export const sendImage = async (_projectInfo, _campaign) => {
         reader.readAsArrayBuffer(imagefile);
     });
 
-    console.log("imagedata", imagedata);
 
     
     
@@ -291,7 +272,6 @@ export const sendImage = async (_projectInfo, _campaign) => {
 
     const url = `${SUPABASE_URL}/storage/v1/object/public/${imageUp.data.fullPath}`
     const encoded_url = `${SUPABASE_URL}/storage/v1/object/public/${encodedUp.data.fullPath}`
-    console.log('url', url);
 
     // const upload = await fetch("/api/uploadstamp.json", {
     fetch("/api/uploadstamp.json", {
@@ -304,9 +284,7 @@ export const sendImage = async (_projectInfo, _campaign) => {
             "project_id": _projectInfo.token_address.toLowerCase(),
         })
     }).then(res => res.text()).then(result => JSON.parse(result)).catch(err => {
-        console.log(err);
     })
-    // console.log("upload", upload);
 
 
     
@@ -325,14 +303,12 @@ export const sendImage = async (_projectInfo, _campaign) => {
 
 
     // const reattachment = await RemoteAttachmentCodec.load(remoteAttachment, $xmtpClient.value);
-    // console.log('wwwwww', reattachment, objectURL)
 
     // const objectURL = URL.createObjectURL(
     //     new Blob([Buffer.from(reattachment.data)], {
     //         type: reattachment.mimeType,
     //     }),
     // );
-    // console.log('wwwwww', reattachment, objectURL)
 
     const conversation = await $xmtpClient.value.conversations.newConversation(_projectInfo.owner_address.toLowerCase());
     

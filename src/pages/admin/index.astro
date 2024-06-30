@@ -41,7 +41,7 @@ projects = await projects.json()
         projects.map((project:any) => (
           <a href={`/admin/project/${String(project.token_name).toUpperCase()}`}>
             <button class="w-[200px] h-[200px] bg-bremo-800 border border-bremo-700 rounded-xl hover:scale-105 duration-300 p-8 flex flex-col justify-center items-center">
-            <span class="text-xl font-brand font-semibold mb-4">{project.token_name}</span>
+            <span class="text-xl break-all font-brand font-semibold mb-4">{project.token_name}</span>
             <span class="font-mono text-bremo-600 text-sm break-all">{project.token_address}</span>
           </button>
           </a>

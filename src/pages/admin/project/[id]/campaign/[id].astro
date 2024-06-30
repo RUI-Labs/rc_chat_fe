@@ -78,21 +78,19 @@ await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_event
           id: o.user_id,
           name: o.user_name,
           address: o.user_address,
-          tags: o.events,
           progress: o.events.reduce((a: number, o: string) => {
             if (o === "visit") {
-              a = 0;
+              return Math.max(a, 0)
             }
             if (o === "connect") {
-              a = 34;
+              return Math.max(a, 34)
             }
             if (o === "subscribe") {
-              a = 67;
+              return Math.max(a, 67)
             }
             if (o === "reply") {
-              a = 100;
+              return Math.max(a, 100)
             }
-            return a;
           }, 0),
         })
       })

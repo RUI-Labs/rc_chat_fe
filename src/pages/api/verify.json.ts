@@ -15,6 +15,8 @@ export const POST: APIRoute = async ({cookies,request}) => {
 
     let { message, signature, address } = await request.json()
 
+    console.log(message, signature, address)
+
     // console.log("VERIFY")
 
     // validate the session first
@@ -27,12 +29,20 @@ export const POST: APIRoute = async ({cookies,request}) => {
     } catch (error) {
         console.log(error)
     }
+
+    let siweMessageValid = false
+
+    try {
+
+        siweMessageValid = await publicClient.verifyMessage({
+            address: address,
+            message: message,
+            signature: signature
+        })
+    } catch (error) {
+        console.log(error)
+    }
     
-    const siweMessageValid = await publicClient.verifyMessage({
-        address: address,
-        message: message,
-        signature: signature
-    })
     // const fields = await siweMessage.verify({signature})
  
     if (!siweMessageValid) {

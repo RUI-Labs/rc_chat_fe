@@ -22,16 +22,30 @@ const metrics = await fetch(`https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/ca
   },
 }).then((res) => res.json());
 
-const steps = metrics.map((o: any, i: any) => {
-  return {
-    id: i,
-    name: o?.name,
-    href: "#",
-    count: o?.count,
-  };
-});
+let steps =[{
+  id: 0,
+  name: 'visit',
+  href: "#",
+  count: 0,
+}, {
+  id: 1,
+  name: 'connect',
+  href: "#",
+  count: 0,
+}]
 
-const sampleData = await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_events_by_campaign_id", {
+if (metrics.length > 0) {
+  const _steps = steps.map(step => {
+    const count = metrics.find((o: any) => o.name === step.name)
+    if (count > 0)
+      step.count = count
+    return step
+  })
+  steps = _steps
+}
+
+const sampleData = []
+await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1/rpc/get_user_events_by_campaign_id", {
   method: "POST",
   headers: {
     apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdm96aXJxZ3hnaXp0bG1hc3JtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxMjg5MTY5OSwiZXhwIjoyMDI4NDY3Njk5fQ.RnuTetoEW2cr_2yHfiTttQcidqe3Trour21lyrTRYxA",
@@ -46,7 +60,11 @@ const sampleData = await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1
   .then((res) => {
     if (res?.map) {
       res.map((o: any) => {
-        return {
+      if (!['connect', 'visit'].includes(o)) {
+      return
+
+      }
+        sampleData.push({
           id: o.user_id,
           name: o.user_name,
           address: o.user_address,
@@ -59,8 +77,8 @@ const sampleData = await fetch("https://ojvozirqgxgiztlmasrm.supabase.co/rest/v1
             }
             return a;
           }, 0),
-        };
-      });
+        })
+        })
     }
   });
 

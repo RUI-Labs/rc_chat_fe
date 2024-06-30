@@ -30,7 +30,7 @@
       </div>
 
       <div class="w-full p-2">
-        <Button :disabled="signingBusy" @click="startSIWERetryable()" class="w-full bg-blue-500 hover:bg-blue-600 font-brand text-lg py-6">
+        <Button :disabled="signingBusy" @click="startSIWE()" class="w-full bg-blue-500 hover:bg-blue-600 font-brand text-lg py-6">
           {{ signingBusy ? "Continue in Wallet" : "Sign In" }}
           </Button>
       </div>
@@ -64,7 +64,7 @@ onMounted(async () => {
 
   connectors.value = connectors.value.filter( _c => _c.id != "injected")
 
-  await reconnect(config);
+  // await reconnect(config);
   await checkAccount();
 });
 

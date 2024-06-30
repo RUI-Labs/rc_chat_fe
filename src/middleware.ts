@@ -30,7 +30,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		const result = await resp.json();
 		console.log(result)
 
-		let project = result[0].projects.token_name
+		let project = result[0].projects.token_symbol
 
 		return context.redirect(`/project_1/${project}?campaign=${id}`)
 	}

@@ -7,7 +7,7 @@ export const config = createConfig({
   connectors: [
     injected(),
     coinbaseWallet({
-      appName: "Ruilabs",
+      appName: "Remo : Reach More, Growth More",
       preference: "smartWalletOnly",
     }),
   ],

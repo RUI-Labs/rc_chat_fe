@@ -27,7 +27,13 @@ const users = ref<User[]>([
 
 
 onMounted(async () => {
-        users.value = await fetch(`/api/projects/${project_id.value}/users.json`).then(res => res.json())
+        users.value = await fetch(`/api/projects/${project_id.value}/users.json`).then(res => res.json()).then(res => res.map( o => {
+                delete o.project_id
+                delete o.status
+                return o
+
+        }))
+        console.log(users.value)
 
 })
 const tagFilterFn = (row:any, columnId:any, filterValue:any) => {
@@ -36,7 +42,7 @@ const tagFilterFn = (row:any, columnId:any, filterValue:any) => {
 
 const columns: ColumnDef<User>[] = [
   { accessorKey: "name", header: () => h("div",{class:"text-blue-200 font-brand"},"Name"), cell: ({ row }) => h("div", {class:"text-white"}, row.getValue("name")) },
-  //{ accessorKey: "id", header: () => h("div", {class:"text-blue-200 font-brand"},"ID"), cell: ({ row }) => h("div", {class:"text-white"}, row.getValue("id")) },
+  { accessorKey: "id", header: () => h("div", {class:"text-blue-200 font-brand"},"ID"), cell: ({ row }) => h("div", {class:"text-white"}, row.getValue("id")) },
   { accessorKey: "address", header: () => h("div", {class:"text-blue-200 font-brand"},"Address"), cell: ({ row }) => h("div", {class:"text-white"}, row.getValue("address")) },
   { accessorKey: "subscribed", header: () => h("div", {class:"text-blue-200 font-brand"},"Subscribed"), cell: ({ row }) => h("div", {class:"text-white"}, row.getValue("subscribed") ? "Yes" : "No") },
   {
@@ -94,7 +100,10 @@ columns.push({
 })
 
 const table = useVueTable({
-  data: users.value,
+  get data() {
+        return users.value
+  },
+  //data: users.value,
   columns,
   getCoreRowModel: getCoreRowModel(),
   getFilteredRowModel: getFilteredRowModel(),

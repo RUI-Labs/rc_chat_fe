@@ -30,7 +30,9 @@
       </div>
 
       <div class="w-full p-2">
-        <Button @click="startSIWE()" class="w-full bg-blue-500 hover:bg-blue-600 font-brand text-lg py-6">Sign In</Button>
+        <Button :disabled="signingBusy" @click="startSIWE()" class="w-full bg-blue-500 hover:bg-blue-600 font-brand text-lg py-6">
+          {{ signingBusy ? "Continue in Wallet" : "Sign In" }}
+          </Button>
       </div>
     </div>
   </div>
@@ -43,6 +45,8 @@ import { Button } from "@/components/ui/button";
 
 const connectors = ref();
 const address = ref();
+
+const signingBusy = ref(false);
 
 const checkAccount = async () => {
   try {
@@ -79,6 +83,8 @@ const _disconnect = async () => {
 };
 
 const startSIWE = async () => {
+
+  signingBusy.value = true;
   /// Get Nonce
 
   let { address:_account, chainId: _chainId} = getAccount(config)
@@ -149,6 +155,8 @@ const startSIWE = async () => {
   }
 
   // console.log(signature)
+
+  signingBusy.value = false;
 };
 
 

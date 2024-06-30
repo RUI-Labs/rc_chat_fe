@@ -240,9 +240,11 @@ const getSubtitle = (idx) => {
   if (idx === 0) return false;
 
   let _countDiff = steps.value[idx].count - steps.value[idx - 1].count;
-  let _percentDiff  = 0
-  if (_countDiff > 0) {
-    _percentDiff = ((_countDiff / steps.value[idx - 1].count) * 100).toFixed(2);
+
+  let _percentDiff = ((_countDiff / steps.value[idx - 1].count) * 100).toFixed(2);
+
+  if (_countDiff === 0) {
+    _percentDiff = 0
   }
 
   return `${_countDiff} (${_percentDiff}%)`;
@@ -250,9 +252,9 @@ const getSubtitle = (idx) => {
 
 const conversionPercent = computed(() => {
   let _countDiff = steps.value[steps.value.length - 1].count;
-  let _percentDiff  = 0
-  if (_countDiff > 0) {
-    _percentDiff = ((_countDiff / steps.value[0].count) * 100).toFixed(2);
+  let _percentDiff = ((_countDiff / steps.value[0].count) * 100).toFixed(2);
+  if (_countDiff === 0) {
+    _percentDiff = 0
   }
 
   return {

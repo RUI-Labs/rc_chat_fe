@@ -29,7 +29,7 @@
 
             <div class="col-span-2 flex flex-col justify-center items-end row-span-2">
               <div class="flex flex-wrap gap-2 justify-start items-center">
-                <div v-for="i in 3" class="text-sm border px-3 py-1 rounded-full bg-bremo-700 border-bremo-500 text-white">Tag {{ i }}</div>
+                <div v-for="tag in selectedConversation.tags" class="text-sm border px-3 py-1 rounded-full bg-bremo-700 border-bremo-500 text-white">{{ tag }}</div>
               </div>
             </div>
 
@@ -118,7 +118,12 @@ const { project_info } = toRefs(props);
 import { ContentTypeRemoteAttachment, RemoteAttachmentCodec, AttachmentCodec } from "@xmtp/content-type-remote-attachment";
 const selectedConversation = ref(null);
 
+const users = ref([])
+
 onMounted(async () => {
+
+  users.value = await fetch(`/api/projects/${project_info.value.token_symbol}/users.json`).then(res => res.json())
+
   // console.log('aaa')
   connectors.value = getConnectors(config);
   // console.log(connectors.value)
@@ -149,6 +154,10 @@ onMounted(async () => {
             conversations.value.map( async (c) => {
               c['userData'] = $projectStampList.value.find(x => x.contact_books?.xmtp_address.toLowerCase() === c?.peerAddress.toLowerCase());
               c['messages'] = await processMessages(c)
+
+          const foundUser = users.value.find(user => user.address = c.userData.wallet_address )
+              c['tags'] = foundUser.tags
+          console.log(161, c)
 
               streamMessage(c);
 

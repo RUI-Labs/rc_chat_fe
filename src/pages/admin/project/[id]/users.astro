@@ -1,8 +1,8 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import UserTable from "@/components/users/UserTable.vue";
-
+import ExportCsvButton from "@/components/ExportCsvButton.vue";
 
 let campaigns : any = await fetch(`${Astro.url.origin}/api/projects/${Astro.params.id}/campaigns.json`).then(res => res.json())
 console.log(Astro.params.id, JSON.stringify(campaigns))
@@ -16,16 +16,22 @@ let users = await fetch(`${Astro.url.origin}/api/projects/${Astro.params?.id}/us
     <div class="p-4 py-6 flex justify-between items-center">
       <h1 class="text-3xl pl-4 font-brand font-bold text-white">Users</h1>
 
-      <Button id="export-csv" class="bg-blue-500 hover:bg-blue-600">Export CSV</Button>
+      <!-- <button id="export-csv">
+        <Button  class="bg-blue-500 hover:bg-blue-600">Export CSV</Button>
+      </button> -->
+      <ExportCsvButton users={users} client:only="vue" />
     </div>
     <UserTable users={users} project_id={Astro.params?.id} campaigns={campaigns} client:only="vue" />
 
   </div>
 </AdminLayout>
-
+<!-- 
 <script is:inline define:vars={{ users }}>
 
   document.getElementById('export-csv').addEventListener('click', () => {
+
+    console.log(users)
+
   //  // Your CSV data
     const csvData = users.map(user => {
         return [user.name || "", user.address, user.tags.join(' ')]
@@ -58,4 +64,4 @@ let users = await fetch(`${Astro.url.origin}/api/projects/${Astro.params?.id}/us
     document.body.removeChild(a);
   });
 </script>
-
+ -->

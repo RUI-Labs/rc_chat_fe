@@ -1,0 +1,57 @@
+<template>
+    <div>
+        <Button @click="exportCsv()" class="bg-blue-500 hover:bg-blue-600">Export CSV</Button>
+    </div>
+</template>
+
+<script setup>
+
+import { defineProps, toRefs } from "vue";
+
+import { Button } from "@/components/ui/button";
+const props = defineProps(["users"]);
+const { users } = toRefs(props);
+
+const exportCsv = () => {
+    // console.log(users)
+
+    const csvData = users.value.map(user => {
+        return [user.name || "", user.address, user.tags.join(' ')]
+    })
+
+    // Convert array to CSV string
+    const csvString = "name,address,tags\n" + csvData.map(row => row.join(",")).join("\n");
+
+
+    // Create a Blob from the CSV string
+    const blob = new Blob([csvString], { type: 'text/csv' });
+
+    // Create a URL for the Blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a temporary link element
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'data.csv';
+
+    // Append the link to the document body
+    document.body.appendChild(a);
+
+    // Trigger a click event on the link
+    a.click();
+
+    // Clean up
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+// document.getElementById('export-csv').addEventListener('click', () => {
+
+// console.log(users)
+
+// //  // Your CSV data
+
+// });
+
+</script>

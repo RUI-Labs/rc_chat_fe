@@ -192,6 +192,7 @@ export const initUser = async () => {
     const sres = await fetch(`/api/wallet/${wallet.address.toLowerCase()}.json`, {
         method: 'GET'
     }).then(res => res.text()).then(result => JSON.parse(result)).catch(error => {
+        console.log(error)
     })
 
     if(isSmartWalletConnected() && sres?.private_xmtp_address) {
@@ -284,6 +285,7 @@ export const sendImage = async (_projectInfo, _campaign) => {
             "project_id": _projectInfo.token_address.toLowerCase(),
         })
     }).then(res => res.text()).then(result => JSON.parse(result)).catch(err => {
+        console.log(err)
     })
 
 

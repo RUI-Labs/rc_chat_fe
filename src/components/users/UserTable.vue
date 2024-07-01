@@ -14,23 +14,23 @@ interface User {
 }
 
 
-const props = defineProps(["project_id", "campaigns"]);
-const { project_id, campaigns } = toRefs(props);
+const props = defineProps(["project_id", "campaigns", "users"]);
+const { project_id, campaigns, users } = toRefs(props);
 
 
 // Sample data
-const users = ref<User[]>([
-  //{ id: "1", name: "Alice", address: "123 Lane", subscribed: true, tags: ["premium", "new"] },
-  //{ id: "2", name: "Bob", address: "456 Drive", subscribed: false, tags: ["standard"] },
-  //{ id: "3", name: "Carol", address: "789 Way", subscribed: true, tags: ["premium", "frequent"] },
-]);
+//const users = ref<User[]>([
+//  //{ id: "1", name: "Alice", address: "123 Lane", subscribed: true, tags: ["premium", "new"] },
+//  //{ id: "2", name: "Bob", address: "456 Drive", subscribed: false, tags: ["standard"] },
+//  //{ id: "3", name: "Carol", address: "789 Way", subscribed: true, tags: ["premium", "frequent"] },
+//]);
 
 
-onMounted(async () => {
-        users.value = await fetch(`/api/projects/${project_id.value}/users.json`).then(res => res.json())
-        console.log(users.value)
-
-})
+//onMounted(async () => {
+//        users.value = await fetch(`/api/projects/${project_id.value}/users.json`).then(res => res.json())
+//        console.log(users.value)
+//
+//})
 const tagFilterFn = (row:any, columnId:any, filterValue:any) => {
   return filterValue.length === 0 || filterValue.some((tag:any) => row.getValue(columnId).includes(tag));
 };
